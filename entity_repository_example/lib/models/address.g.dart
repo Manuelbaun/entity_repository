@@ -1,0 +1,59 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'address.dart';
+
+// **************************************************************************
+// EntityRepositoryGenerator
+// **************************************************************************
+
+/// Interface to/off the class [Address]
+abstract class _$Address extends DataModel<Address> {
+  _$Address(String id) : super(id);
+  String street;
+  int houseNumber;
+}
+
+class _Address extends DataModel<Address> implements Address {
+  _Address({String id, this.street, this.houseNumber}) : super(id);
+
+  @override
+  String street;
+  @override
+  int houseNumber;
+  @override
+  String toString() =>
+      '''Address(id: $id, street: $street, houseNumber: $houseNumber)''';
+}
+
+/// The serialize adapter of type [_Address]
+class $AddressAdapter implements Serializer<_Address> {
+  @override
+  final int typeId = 12;
+
+  @override
+  _Address read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+
+    return _Address(id: fields[0] as String)
+      ..street = fields[1] as String
+      ..houseNumber = fields[2] as int;
+  }
+
+  @override
+  void write(BinaryWriter writer, _Address obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.street)
+      ..writeByte(2)
+      ..write(obj.houseNumber);
+  }
+}
+
+/// The [$AddressRepo] class of type [Address]
+class $AddressRepo extends RepositoryHive<Address> {}

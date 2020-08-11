@@ -1,0 +1,1 @@
+The example package for the entity_repository package.

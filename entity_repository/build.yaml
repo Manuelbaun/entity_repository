@@ -1,0 +1,9 @@
+# Read about `build.yaml` at https://pub.dev/packages/build_config
+builders:
+  property_entity_repo:
+    import: "package:entity_repository/builder/builder.dart"
+    builder_factories: ["entityRepositoryGenerator"]
+    build_extensions: { ".dart": [".g.part"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

@@ -1,0 +1,14 @@
+name: entity_repository_example
+description: The example repo for the entity_repository package
+version: 0.1.0
+author: Manuel Baun <manuel.baun@gmail.com>
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  entity_repository: ^0.1.0
+
+dev_dependencies:
+  build_runner:
+  entity_repository_generator: ^0.1.0
