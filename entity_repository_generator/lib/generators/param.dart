@@ -14,7 +14,7 @@ class Param {
     this.name,
     this.field,
     this.type,
-    @required Map<String, ClassElement> entitiesTypes,
+    Map<String, ClassElement> entitiesTypes,
   }) : _entitiesTypes = entitiesTypes {
     if (type.isDartCoreList || type.isDartCoreSet || type.isDartCoreMap) {
       subTypes = getAllTypes(type).toSet();
