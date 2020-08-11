@@ -1,4 +1,4 @@
-part of entity_repo_generator;
+part of entity_repository_generator;
 
 class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   @override

@@ -1,4 +1,4 @@
-library entity_repo_generator;
+library entity_repository_generator;
 
 import 'package:build/build.dart';
 

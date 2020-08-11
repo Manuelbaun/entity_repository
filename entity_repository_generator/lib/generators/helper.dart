@@ -1,4 +1,4 @@
-part of entity_repo_generator;
+part of entity_repository_generator;
 
 const _fieldChecker = TypeChecker.fromRuntime(Field);
 // const _dataModelChecker = TypeChecker.fromRuntime(DataModel);
