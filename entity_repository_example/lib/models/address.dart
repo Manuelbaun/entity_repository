@@ -1,5 +1,4 @@
 import 'package:entity_repository/entity_repository.dart';
-
 import 'adapterIds.dart';
 
 part 'address.g.dart';

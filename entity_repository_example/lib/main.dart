@@ -1,3 +1,5 @@
+import 'package:entity_repository/entity_repository.dart';
+
 import 'entity.repos.dart';
 import 'models/address.dart';
 
