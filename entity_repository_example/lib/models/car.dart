@@ -20,3 +20,8 @@ abstract class Car extends _$Car {
     @Field(4) Person owner,
   }) = _Car;
 }
+
+void main() {
+  final c = Car();
+  // ''sdf
+}

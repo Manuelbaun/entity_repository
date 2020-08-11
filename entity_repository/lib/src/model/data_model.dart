@@ -6,7 +6,6 @@ abstract class DataModel<T extends DataModel<T>> {
       : id = DataHelper.checkOrGenerateID(id),
         _base = repositoryLocator.get<T>();
 
-  // ignore: prefer_final_fields
   final RepositoryBase<T> _base;
 
   /// Through the constructur checkin,
@@ -17,7 +16,7 @@ abstract class DataModel<T extends DataModel<T>> {
   void _checkBase() {
     if (_base == null) {
       throw EntityRepoError(
-          'Could not find "${T}Dao" in the locator. Did you register it before use?');
+          'Could not find "$T" in the locator. Did you register it before use?');
     }
   }
 

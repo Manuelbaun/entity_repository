@@ -9,12 +9,25 @@ part of 'tag.dart';
 /// Interface to/off the class [Tag]
 abstract class _$Tag extends DataModel<Tag> {
   _$Tag(String id) : super(id);
+
+  Tag copyWith({
+    String id,
+  });
 }
 
 class _Tag extends DataModel<Tag> implements Tag {
   _Tag({
     String id,
   }) : super(id);
+
+  @override
+  Tag copyWith({
+    String id,
+  }) {
+    return _Tag(
+      id: id ?? this.id,
+    );
+  }
 
   @override
   String toString() => '''Tag(id: $id, )''';

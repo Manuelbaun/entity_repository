@@ -16,6 +16,15 @@ abstract class _$Person extends DataModel<Person> {
   Set<Person> friends5;
   Map<int, Address> a5sf;
   Map<Person, Address> p2a;
+  Person copyWith(
+      {String id,
+      String name,
+      int age,
+      Address address,
+      List<Person> friends,
+      Set<Person> friends5,
+      Map<int, Address> a5sf,
+      Map<Person, Address> p2a});
 }
 
 mixin _PersonReferenceLookUp {
@@ -136,6 +145,27 @@ class _Person extends DataModel<Person>
   set p2a(Map<Person, Address> p2a) => _p2a = p2a;
 
   Map<Person, Address> _p2a;
+  @override
+  Person copyWith(
+      {String id,
+      String name,
+      int age,
+      Address address,
+      List<Person> friends,
+      Set<Person> friends5,
+      Map<int, Address> a5sf,
+      Map<Person, Address> p2a}) {
+    return _Person(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        age: age ?? this.age,
+        address: address ?? this.address,
+        friends: friends ?? this.friends,
+        friends5: friends5 ?? this.friends5,
+        a5sf: a5sf ?? this.a5sf,
+        p2a: p2a ?? this.p2a);
+  }
+
   @override
   String toString() =>
       '''Person(id: $id, name: $name, age: $age, address: ${address?.id}, friends: ${friends.map((e) => e.id)}), friends5: ${friends5.map((e) => e.id)}), a5sf: ${a5sf.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a.map((key, value) => MapEntry(key.id, value.id))})''';

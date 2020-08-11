@@ -13,6 +13,8 @@ abstract class _$Car extends DataModel<Car> {
   String type;
   int buildYear;
   Person owner;
+  Car copyWith(
+      {String id, String model, String type, int buildYear, Person owner});
 }
 
 mixin _CarReferenceLookUp {
@@ -41,6 +43,17 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   set owner(Person owner) => _owner = owner;
 
   Person _owner;
+  @override
+  Car copyWith(
+      {String id, String model, String type, int buildYear, Person owner}) {
+    return _Car(
+        id: id ?? this.id,
+        model: model ?? this.model,
+        type: type ?? this.type,
+        buildYear: buildYear ?? this.buildYear,
+        owner: owner ?? this.owner);
+  }
+
   @override
   String toString() =>
       '''Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})''';

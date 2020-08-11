@@ -6,7 +6,7 @@ import 'models/person.dart';
 import 'models/song.dart';
 import 'models/tag.dart';
 
-Future<void> daosInit() async {
+Future<void> initRepository() async {
   Hive
     ..init('./hive_test')
     ..registerAdapter<IndexImpl>(IndexAdapter())

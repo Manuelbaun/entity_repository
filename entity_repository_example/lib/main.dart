@@ -9,7 +9,7 @@ import 'models/song.dart';
 import 'models/tag.dart';
 
 void main() async {
-  await daosInit();
+  await initRepository();
 
   final dao = repositoryLocator.get<Person>();
 

@@ -11,6 +11,7 @@ abstract class _$Address extends DataModel<Address> {
   _$Address(String id) : super(id);
   String street;
   int houseNumber;
+  Address copyWith({String id, String street, int houseNumber});
 }
 
 class _Address extends DataModel<Address> implements Address {
@@ -20,6 +21,14 @@ class _Address extends DataModel<Address> implements Address {
   String street;
   @override
   int houseNumber;
+  @override
+  Address copyWith({String id, String street, int houseNumber}) {
+    return _Address(
+        id: id ?? this.id,
+        street: street ?? this.street,
+        houseNumber: houseNumber ?? this.houseNumber);
+  }
+
   @override
   String toString() =>
       '''Address(id: $id, street: $street, houseNumber: $houseNumber)''';

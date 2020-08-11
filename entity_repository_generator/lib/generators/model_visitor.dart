@@ -11,10 +11,6 @@ class ModelVisitor extends SimpleElementVisitor {
 
   Map<String, ConstructorElement> constructors = {};
 
-  Map<int, ParameterElement> paramsAll = {};
-  Map<int, ParameterElement> paramsRegular = {};
-  Map<int, ParameterElement> paramsEntities = {};
-
   // should generete interface with only get fields?
   final onlyGetter = false;
 

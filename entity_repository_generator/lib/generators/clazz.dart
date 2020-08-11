@@ -5,26 +5,26 @@ class Clazz {
   String name;
   List<Param> params = [];
 
-  final List<Param> _non = [];
-  final List<Param> _en = [];
+  final List<Param> _nonEnitityParam = [];
+  final List<Param> _entityParam = [];
 
-  List<Param> get paramsNonEntity => _non;
-  List<Param> get paramsEntities => _en;
+  List<Param> get paramsNonEntity => _nonEnitityParam;
+  List<Param> get paramsEntities => _entityParam;
 
   Map<String, ClassElement> enitiyTypes = {};
 
   void add(Param p) {
     final res = _isEntityType(p);
     if (res) {
-      _en.add(p);
+      _entityParam.add(p);
     } else {
-      _non.add(p);
+      _nonEnitityParam.add(p);
     }
 
     params.add(p);
   }
 
-  bool get hasEntityReference => _en.isNotEmpty;
+  bool get hasEntityReference => _entityParam.isNotEmpty;
 
   bool _isEntityType(Param par) {
     if (par.hasSubType) {

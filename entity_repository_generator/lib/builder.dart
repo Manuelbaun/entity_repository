@@ -2,7 +2,6 @@ library entity_repository_generator;
 
 import 'package:build/build.dart';
 
-// import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:entity_repository/entity_repository.dart';
 

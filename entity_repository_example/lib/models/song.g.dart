@@ -21,6 +21,20 @@ abstract class _$Song extends DataModel<Song> {
   String copyright;
   List<Person> translator;
   List<Tag> tags;
+  Song copyWith(
+      {String id,
+      String title,
+      int bpm,
+      int transpose,
+      String songKey,
+      int capo,
+      String lyrics,
+      String notes,
+      String ccli,
+      List<Person> authors,
+      String copyright,
+      List<Person> translator,
+      List<Tag> tags});
 }
 
 mixin _SongReferenceLookUp {
@@ -111,6 +125,37 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   set tags(List<Tag> tags) => _tags = tags;
 
   List<Tag> _tags;
+  @override
+  Song copyWith(
+      {String id,
+      String title,
+      int bpm,
+      int transpose,
+      String songKey,
+      int capo,
+      String lyrics,
+      String notes,
+      String ccli,
+      List<Person> authors,
+      String copyright,
+      List<Person> translator,
+      List<Tag> tags}) {
+    return _Song(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        bpm: bpm ?? this.bpm,
+        transpose: transpose ?? this.transpose,
+        songKey: songKey ?? this.songKey,
+        capo: capo ?? this.capo,
+        lyrics: lyrics ?? this.lyrics,
+        notes: notes ?? this.notes,
+        ccli: ccli ?? this.ccli,
+        authors: authors ?? this.authors,
+        copyright: copyright ?? this.copyright,
+        translator: translator ?? this.translator,
+        tags: tags ?? this.tags);
+  }
+
   @override
   String toString() =>
       '''Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors.map((e) => e.id)}), copyright: $copyright, translator: ${translator.map((e) => e.id)}), tags: ${tags.map((e) => e.id)}))''';

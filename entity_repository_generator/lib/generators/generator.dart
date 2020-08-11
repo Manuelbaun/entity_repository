@@ -34,6 +34,10 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('abstract class _\$$className extends DataModel<$className> {')
       ..writeln('_\$$className(String id): super(id);')
       ..writeAll(cls.params.map((e) => e.toPublicField), '\n')
+
+      /// copy with
+      ..write(generateCopyWithSigniture(visitor))
+      ..write(';')
       ..writeln('}');
 
     return buff;
@@ -98,9 +102,59 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('super(id);\n')
       ..writeAll(classFieldsRegular, '\n')
       ..writeAll(classFieldsEntityGetterSetter, '\n')
+      ..write(generateClassCopyConstructor(visitor))
       ..write(toString)
       ..writeln('}'); // end
 
+    return buff;
+  }
+
+  StringBuffer generateCopyWithSigniture(ModelVisitor visitor,
+      {bool override = false}) {
+    final buff = StringBuffer();
+    final className = visitor.className.getDisplayString();
+    final cls = visitor.clazz;
+
+    buff
+      ..writeln(override ? '\n@override' : '')
+      ..writeln('$className copyWith({String id,')
+      ..writeAll(cls.params.map((e) => e.toParamInit), ',')
+      ..writeln('})');
+    return buff;
+  }
+
+  StringBuffer generateClassCopyConstructor(ModelVisitor visitor) {
+    final buff = StringBuffer();
+    final cls = visitor.clazz;
+
+    buff
+      ..write(generateCopyWithSigniture(visitor, override: true))
+      ..writeln('{')
+      ..writeln('return ${cls.name}(')
+      ..writeln('id:id ?? this.id,')
+      ..writeAll(
+          cls.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'), ',')
+      ..writeln(');')
+      ..writeln('}');
+
+    return buff;
+  }
+
+  StringBuffer generateClassHashAndEquality(ModelVisitor visitor) {
+    final buff = StringBuffer();
+
+    final cls = visitor.clazz;
+
+    // buff.writeln('${cls.name}')
+    // @override
+    // int get hashCode => typeId.hashCode;
+
+    // @override
+    // bool operator ==(Object other) =>
+    //     identical(this, other) ||
+    //     other is SongSheetThemeAdapter &&
+    //         runtimeType == other.runtimeType &&
+    //         typeId == other.typeId;
     return buff;
   }
 
