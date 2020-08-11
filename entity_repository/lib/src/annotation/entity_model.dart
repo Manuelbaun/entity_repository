@@ -1,3 +1,5 @@
+part of entity_repository;
+
 class EntityModel {
   const EntityModel(
     this.typeId, {
