@@ -7,28 +7,30 @@ const int _base = 36; // size of the alphabet
 const _max = 0xFFFFFFFF;
 
 final _secureRandom = Random.secure();
-const int _discreteValues = _base << 1;
+
+/// fix upper limit of 65536
+const int _discreteValues = 0xffff;
 
 int _counter = 0;
+String _counterBlock() {
+  _counter = _counter < _discreteValues ? _counter : 0;
 
+  return _pad((_counter++).toRadixString(_base), 4);
+}
+
+/// The time block will get the milliseconds since epoch
 String _timeBlock() {
   final now = DateTime.now().toUtc().millisecondsSinceEpoch;
   return now.toRadixString(_base);
 }
 
-String _counterBlock() {
-  _counter = _counter < _discreteValues ? _counter : 0;
-  _counter++;
-  return _pad((_counter - 1).toRadixString(_base), 2);
-}
-
-String _secureRandomBlock() {
-  return _pad(_secureRandom.nextInt(_max).toRadixString(_base), 4);
-}
+String _secureRandomBlock() =>
+    _pad(_secureRandom.nextInt(_max).toRadixString(_base), 4);
 
 String _pad(String s, int l) {
   s = s.padLeft(l, '0');
-  return s.substring(s.length - l);
+  final ss = s.substring(s.length - l);
+  return ss;
 }
 
 /// This function generates a new Id and is inspired by the cuid.
