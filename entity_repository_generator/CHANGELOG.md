@@ -1,3 +1,5 @@
+# 0.1.5
+* bump entity repository version
 # 0.1.4
 ### changes
 * added copy with
