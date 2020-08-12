@@ -17,6 +17,7 @@ part 'generators/model_visitor.dart';
 part 'generators/clazz.dart';
 part 'generators/param.dart';
 part 'utils/errors.dart';
+part 'utils/color_print.dart';
 
 Builder entityRepositoryGenerator(BuilderOptions options) =>
     SharedPartBuilder([EntityRepositoryGenerator()], 'property_entity_repo');

@@ -7,7 +7,6 @@ class GeneratorError extends Error {
   @override
   String toString() {
     final red = AnsiPen()..red();
-    return red('[GeneratorError] Entity Repository Generator: \n$message')
-        .toString();
+    return red('[Entity Repository Generator ERROR] $message').toString();
   }
 }

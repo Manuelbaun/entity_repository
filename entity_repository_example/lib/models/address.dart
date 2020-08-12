@@ -11,4 +11,6 @@ abstract class Address implements _$Address {
     @Field(1) String street,
     @Field(2) int houseNumber,
   }) = _Address;
+
+  factory Address.defaulty2() => Address();
 }

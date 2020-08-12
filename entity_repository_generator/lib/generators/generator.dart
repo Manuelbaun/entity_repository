@@ -18,7 +18,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateReferenceLookup(visitor))
       ..write(generateClass(visitor))
       ..write(generateSerializerAdapter(visitor))
-      ..write(generateRepositoryDaoClass(visitor));
+      ..write(generateRepositoryClass(visitor));
 
     final str = res.toString();
     return str;
@@ -197,28 +197,32 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateRepositoryDaoClass(ModelVisitor visitor) {
+  StringBuffer generateRepositoryClass(ModelVisitor visitor) {
     final buff = StringBuffer();
     final clazz = visitor.className;
-    final withIndex = false; //visitor.model.index.isNotEmpty;
 
     if (visitor.model.repository) {
       buff
         ..writeln('/// The [\$${clazz}Repo] class of type [$clazz]')
         ..write(
             'class \$${clazz}Repo extends ${(RepositoryHive).$name}<$clazz> ')
-        ..write(withIndex ? 'with ${(IndicesAccess).$name}<$clazz>' : '')
-        ..write('{');
-
-      /// TODO: generate indices here!
-      buff.write('}');
+        ..write(visitor.generateIndicies
+            ? 'with ${(IndicesAccess).$name}<$clazz>'
+            : '')
+        ..write('{')
+        ..write(generateRepositoryClassIndices(visitor))
+        ..write('}');
     }
 
     return buff;
   }
 }
 
-/// TODO: create index, when clear, what todo with index
+StringBuffer generateRepositoryClassIndices(ModelVisitor visitor) {
+  final buff = StringBuffer();
+
+  if (visitor.generateIndicies) {
+    /// TODO: create index, when clear, what todo with index
 // if (false) {
 //   final indices = visitor.model.index;
 //   final indexLength = indices.length + 1;
@@ -251,6 +255,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 //   //   buff.writeln("static const String _index$i = '${e.join('-')}';");
 //   // }
 // }
+  }
 
-///
-// class $PersonDao extends DaoHive<Person> {}
+  return buff;
+}

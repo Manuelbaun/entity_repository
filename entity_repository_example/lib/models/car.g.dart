@@ -106,4 +106,4 @@ class $CarAdapter implements Serializer<_Car> {
 }
 
 /// The [$CarRepo] class of type [Car]
-class $CarRepo extends RepositoryHive<Car> {}
+class $CarRepo extends RepositoryHive<Car> with IndicesAccess<Car> {}
