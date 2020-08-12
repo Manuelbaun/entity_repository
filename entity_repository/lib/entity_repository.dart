@@ -1,6 +1,7 @@
 library entity_repository;
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
@@ -26,6 +27,29 @@ part 'src/annotation/field.dart';
 part 'src/mixins/indices_access.dart';
 part 'src/mixins/reference_lookup.dart';
 
-part 'src/consts.dart';
 part 'src/utils/data_helper.dart';
 part 'src/utils/equality.dart';
+
+// ignore: avoid_classes_with_only_static_members
+class CustomAdapterTypes {
+  static const int setAdapter = 0;
+  static const int indexAdapter = 1;
+
+  static const map = <Type, int>{
+    SetAdapter: 0,
+    IndexAdapter: 1,
+  };
+
+  static int get maxAdapter {
+    var i = 0;
+
+    for (final v in map.values) {
+      if (i < v) i = v;
+    }
+
+    return i;
+  }
+}
+
+/// dao locator instance singelton
+final _RepositoryLocator repositoryLocator = _RepositoryLocator();

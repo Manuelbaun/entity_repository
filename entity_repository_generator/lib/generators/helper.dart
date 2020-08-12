@@ -44,9 +44,6 @@ EntityModel getEntityModel(Element element) {
   final obj = entityModelChecker.annotationsOfExact(element)?.first;
   if (obj == null) return null;
 
-  // if (obj.type is InterfaceType) {
-  //   for (final ac in (obj.type as InterfaceType).accessors) {}
-  // }
   final index = obj
           .getField('index')
           ?.toListValue()
@@ -58,6 +55,12 @@ EntityModel getEntityModel(Element element) {
   final immo = obj.getField('immutable').toBoolValue();
   final typeId = obj.getField('typeId').toIntValue();
 
+  if (typeId < CustomAdapterTypes.maxAdapter) {
+    throw GeneratorError(
+      '''TypeId of $element is less or equal then ${CustomAdapterTypes.maxAdapter}.'''
+      ''' Please increase it.''',
+    );
+  }
   return EntityModel(
     typeId,
     index: index,

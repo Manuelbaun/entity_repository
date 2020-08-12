@@ -167,7 +167,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('\n@override')
       ..writeln('bool operator ==(Object o) {')
       ..writeln('if (identical(this, o)) return true;')
-      ..writeln('return o is ${visitor.clazz.name}')
+      ..writeln('return o is ${visitor.clazz.name} &&')
+      ..write('o.id == id')
       ..write(cls.params.isNotEmpty ? ' && ' : '')
       ..writeAll(cls.params.map((e) {
         if (e.type.isDartCoreList) {
@@ -185,7 +186,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       /// hashCode Gen
       ..writeln('\n@override')
       ..writeln('int get hashCode {')
-      ..writeln('return')
+      ..writeln('return id.hashCode')
+      ..write(cls.params.isNotEmpty ? ' ^ ' : '')
       ..writeAll(cls.params.map((e) => '${e.name}.hashCode'), ' ^ ')
       ..write(';')
       ..writeln('}');
@@ -205,8 +207,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     buff
       ..writeln('/// The serialize adapter of type [${visitor.clazz.name}]')
-      ..writeln(
-          'class ${visitor.adapterName} implements ${(Serializer).$name}<${visitor.clazz.name}> {')
+      ..write('class ${visitor.adapterName} implements ')
+      ..write('${(Serializer).$name}<${visitor.clazz.name}> {')
       ..writeln('@override\n final int typeId = ${visitor.model.typeId};\n')
 
       /// read bin
