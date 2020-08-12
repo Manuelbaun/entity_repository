@@ -13,6 +13,8 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   /// Returns null, if key does not exist
   Stream<T> watch(dynamic key);
 
+  Stream<Iterable<T>> watchAll();
+
   T findOne(dynamic key);
   Iterable<T> findMany(Iterable keys);
   Iterable<T> findAll();

@@ -95,6 +95,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
       if (_box.containsKey(en.id)) {
         await _box.put(en.id, en);
       }
+      // TODO: errors?
     }
 
     return entities;
@@ -108,6 +109,12 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     if (key == null || !_box.containsKey(key)) return null;
 
     return _box.watch(key: key).map<T>((BoxEvent event) => event.value as T);
+  }
+
+  /// This will return a [Stream<Iterable<T>>]
+  @override
+  Stream<Iterable<T>> watchAll() {
+    return _box.watch().map<Iterable<T>>((_) => _box.values);
   }
 
   /// This will insert an entity in the box if the key does not exists.
