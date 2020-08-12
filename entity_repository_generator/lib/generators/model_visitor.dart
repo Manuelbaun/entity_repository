@@ -46,9 +46,17 @@ class ModelVisitor extends SimpleElementVisitor {
       ..name = _getRedirectConstructorName(element)
       ..enitiyTypes = referenceEntities;
 
+    final fieldHelper = <int>{};
+
     for (final par in element.parameters) {
       if (par.displayName == 'id') continue;
       final field = getFieldAnn(par);
+
+      if (!fieldHelper.add(field.index)) {
+        throw GeneratorError(
+            '''Field number ${field.index} on $par was already used.'''
+            ''' Please choose another one.''');
+      }
 
       final p = Param(
         field: field,

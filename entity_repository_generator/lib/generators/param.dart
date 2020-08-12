@@ -181,30 +181,34 @@ class Param {
     return '$tt $toReferenceName;';
   }
 
-  /// to serialize
+  /// serialize
   ///
+  /// ..writeByte(...)
+  /// ..write(...)
   String get toSerializeWrite {
-    var wrr = '..writeByte(${field.index})\n..';
-    if (type.isDartCoreList) {
-      if (_contains(subTypes.first)) {
-        wrr += 'write(obj.$name?.map((e) => e.id)?.toList())';
-      }
-    } else if (type.isDartCoreSet) {
-      if (_contains(subTypes.first)) {
-        wrr += 'write(obj.$name?.map((e) => e.id)?.toSet())';
-      }
+    var str = '..writeByte(${field.index})\n..';
+    if (type.isDartCoreList && _contains(subTypes.first)) {
+      str += 'write(obj.$name?.map((e) => e.id)?.toList())';
+    } else if (type.isDartCoreSet && _contains(subTypes.first)) {
+      str += 'write(obj.$name?.map((e) => e.id)?.toSet())';
     } else if (type.isDartCoreMap) {
-      final t1 = _contains(subTypes.first) ? 'key.id' : 'key';
-      final t2 = _contains(subTypes.last) ? 'value.id' : 'value';
+      final has1 = _contains(subTypes.first);
+      final has2 = _contains(subTypes.last);
+      final t1 = has1 ? 'key.id' : 'key';
+      final t2 = has2 ? 'value.id' : 'value';
 
-      wrr += 'write(obj.$name?.map((key, value) => MapEntry($t1, $t2)))';
+      if (has1 || has2) {
+        str += 'write(obj.$name?.map((key, value) => MapEntry($t1, $t2)))';
+      } else {
+        str += 'write(obj.$name)';
+      }
     } else if (_contains(type)) {
-      wrr += 'write(obj.$name?.id)';
+      str += 'write(obj.$name?.id)';
     } else {
-      wrr += 'write(obj.$name)';
+      str += 'write(obj.$name)';
     }
 
-    return wrr;
+    return str;
   }
 
   String get toSerializeRead {
