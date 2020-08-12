@@ -1,9 +1,9 @@
 part of entity_repository;
 
-/// should be hive internal ??
-class SetAdapter extends TypeAdapter<Set> {
+class SetAdapter extends Serializer<Set> {
   @override
-  final int typeId = CustomAdapterTypes.setAdapter;
+  final int typeId;
+  SetAdapter(this.typeId);
 
   @override
   Set read(BinaryReader reader) => Set.from(reader.readList());

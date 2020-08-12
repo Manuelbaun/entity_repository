@@ -2,13 +2,34 @@ part of entity_repository;
 
 class _RepositoryLocator {
   final _map = <String, RepositoryBase>{};
+  bool _isConfigured = false;
+  void configure({String path}) {
+    Hive.init(path);
+    _isConfigured = true;
+  }
 
-  /// Register a [dao] of type [T]
-  void registerDao<T extends DataModel<T>>(RepositoryBase<T> dao) {
+  void _registerAdapter<T>(Serializer<T> adapter) {
+    try {
+      Hive.registerAdapter<T>(adapter);
+    } catch (e) {
+      // throw HIveError
+      rethrow;
+    }
+  }
+
+  /// Register a [repository] of type [T]
+  void registerEntity<T extends DataModel<T>>(
+      RepositoryBase<T> repository, Serializer<T> adapter) {
+    if (!_isConfigured) {
+      throw EntityRepositoryException(
+          'Please configure the $_RepositoryLocator first.');
+    }
     final typeString = T.toString();
+
     if (!_map.containsKey(typeString)) {
-      _map[typeString] = dao;
-      // registerAdapter<T>(dao);
+      _map[typeString] = repository;
+
+      _registerAdapter<T>(adapter);
     } else {
       throw EntityRepositoryException(
           'Type ${T.runtimeType} is already registered');

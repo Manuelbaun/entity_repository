@@ -1,8 +1,9 @@
 part of entity_repository;
 
-class IndexAdapter extends TypeAdapter<IndexImpl> {
+class IndexAdapter extends Serializer<IndexImpl> {
+  IndexAdapter(this.typeId);
   @override
-  final int typeId = CustomAdapterTypes.indexAdapter;
+  final int typeId;
 
   @override
   IndexImpl read(BinaryReader reader) {
