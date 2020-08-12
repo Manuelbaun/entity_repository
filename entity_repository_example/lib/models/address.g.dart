@@ -30,8 +30,20 @@ class _Address extends DataModel<Address> implements Address {
   }
 
   @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+    return o is _Address && o.street == street && o.houseNumber == houseNumber;
+  }
+
+  @override
+  int get hashCode {
+    return street.hashCode ^ houseNumber.hashCode;
+  }
+
+  @override
   String toString() =>
-      '''Address(id: $id, street: $street, houseNumber: $houseNumber)''';
+// ignore: lines_longer_than_80_chars
+      'Address(id: $id , street: $street, houseNumber: $houseNumber)';
 }
 
 /// The serialize adapter of type [_Address]

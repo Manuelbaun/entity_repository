@@ -36,7 +36,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(cls.params.map((e) => e.toPublicField), '\n')
 
       /// copy with
-      ..write(generateCopyWithSigniture(visitor))
+      ..write(generateCopyWithSignature(visitor))
       ..write(';')
       ..writeln('}');
 
@@ -103,13 +103,32 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(classFieldsRegular, '\n')
       ..writeAll(classFieldsEntityGetterSetter, '\n')
       ..write(generateClassCopyConstructor(visitor))
-      ..write(toString)
+      ..write(generateClassEquality(visitor))
+      ..write(generateClassToString(visitor))
       ..writeln('}'); // end
 
     return buff;
   }
 
-  StringBuffer generateCopyWithSigniture(ModelVisitor visitor,
+  StringBuffer generateClassToString(ModelVisitor visitor) {
+    final buff = StringBuffer();
+    final cls = visitor.clazz;
+    final name = visitor.classNaming;
+
+    buff
+      ..writeln('\n@override')
+      ..writeln('String toString() => ')
+      ..writeln('// ignore: lines_longer_than_80_chars')
+      ..write("'$name(id: \$id ")
+      ..write(cls.params.isNotEmpty ? ', ' : '')
+      ..writeAll(cls.params.map((e) => e.stringfy), ', ')
+      ..write(")'")
+      ..write(';');
+
+    return buff;
+  }
+
+  StringBuffer generateCopyWithSignature(ModelVisitor visitor,
       {bool override = false}) {
     final buff = StringBuffer();
     final className = visitor.className.getDisplayString();
@@ -128,13 +147,47 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final cls = visitor.clazz;
 
     buff
-      ..write(generateCopyWithSigniture(visitor, override: true))
+      ..write(generateCopyWithSignature(visitor, override: true))
       ..writeln('{')
       ..writeln('return ${cls.name}(')
       ..writeln('id:id ?? this.id,')
       ..writeAll(
           cls.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'), ',')
       ..writeln(');')
+      ..writeln('}');
+
+    return buff;
+  }
+
+  StringBuffer generateClassEquality(ModelVisitor visitor) {
+    final buff = StringBuffer();
+    final cls = visitor.clazz;
+
+    buff
+      ..writeln('\n@override')
+      ..writeln('bool operator ==(Object o) {')
+      ..writeln('if (identical(this, o)) return true;')
+      ..writeln('return o is ${visitor.clazz.name}')
+      ..write(cls.params.isNotEmpty ? ' && ' : '')
+      ..writeAll(cls.params.map((e) {
+        if (e.type.isDartCoreList) {
+          return 'listEquality(o.${e.name}, ${e.name})';
+        } else if (e.type.isDartCoreSet) {
+          return 'setEquality(o.${e.name}, ${e.name})';
+        } else if (e.type.isDartCoreMap) {
+          return 'mapEquality(o.${e.name}, ${e.name})';
+        }
+
+        return 'o.${e.name} == ${e.name}';
+      }), ' && ')
+      ..writeln(';}')
+
+      /// hashCode Gen
+      ..writeln('\n@override')
+      ..writeln('int get hashCode {')
+      ..writeln('return')
+      ..writeAll(cls.params.map((e) => '${e.name}.hashCode'), ' ^ ')
+      ..write(';')
       ..writeln('}');
 
     return buff;

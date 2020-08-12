@@ -55,8 +55,24 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   }
 
   @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+    return o is _Car &&
+        o.model == model &&
+        o.type == type &&
+        o.buildYear == buildYear &&
+        o.owner == owner;
+  }
+
+  @override
+  int get hashCode {
+    return model.hashCode ^ type.hashCode ^ buildYear.hashCode ^ owner.hashCode;
+  }
+
+  @override
   String toString() =>
-      '''Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})''';
+// ignore: lines_longer_than_80_chars
+      'Car(id: $id , model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})';
 }
 
 /// The serialize adapter of type [_Car]

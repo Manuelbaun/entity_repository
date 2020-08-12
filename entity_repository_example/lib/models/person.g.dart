@@ -167,8 +167,33 @@ class _Person extends DataModel<Person>
   }
 
   @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+    return o is _Person &&
+        o.name == name &&
+        o.age == age &&
+        o.address == address &&
+        listEquality(o.friends, friends) &&
+        setEquality(o.friends5, friends5) &&
+        mapEquality(o.a5sf, a5sf) &&
+        mapEquality(o.p2a, p2a);
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+        age.hashCode ^
+        address.hashCode ^
+        friends.hashCode ^
+        friends5.hashCode ^
+        a5sf.hashCode ^
+        p2a.hashCode;
+  }
+
+  @override
   String toString() =>
-      '''Person(id: $id, name: $name, age: $age, address: ${address?.id}, friends: ${friends.map((e) => e.id)}), friends5: ${friends5.map((e) => e.id)}), a5sf: ${a5sf.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a.map((key, value) => MapEntry(key.id, value.id))})''';
+// ignore: lines_longer_than_80_chars
+      'Person(id: $id , name: $name, age: $age, address: ${address?.id}, friends: ${friends.map((e) => e.id)}), friends5: ${friends5.map((e) => e.id)}), a5sf: ${a5sf.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a.map((key, value) => MapEntry(key.id, value.id))})';
 }
 
 /// The serialize adapter of type [_Person]

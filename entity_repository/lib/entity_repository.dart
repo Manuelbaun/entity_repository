@@ -28,3 +28,4 @@ part 'src/mixins/reference_lookup.dart';
 
 part 'src/consts.dart';
 part 'src/utils/data_helper.dart';
+part 'src/utils/equality.dart';

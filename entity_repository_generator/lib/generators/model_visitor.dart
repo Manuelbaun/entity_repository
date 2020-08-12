@@ -87,7 +87,7 @@ class ModelVisitor extends SimpleElementVisitor {
       if (!element.isFactory) {
         throw GeneratorError('''$element must be a factory constructor!''');
       }
-    } else {
+    } else if (element.isFactory) {
       Print.yellow('''[Entity Repository Generator INFO] '''
           '''$element will be ignored, as it is not the default factory constructor.''');
     }

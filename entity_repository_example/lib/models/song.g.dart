@@ -18,6 +18,7 @@ abstract class _$Song extends DataModel<Song> {
   String notes;
   String ccli;
   List<Person> authors;
+  List<int> authors2;
   String copyright;
   List<Person> translator;
   List<Tag> tags;
@@ -32,6 +33,7 @@ abstract class _$Song extends DataModel<Song> {
       String notes,
       String ccli,
       List<Person> authors,
+      List<int> authors2,
       String copyright,
       List<Person> translator,
       List<Tag> tags});
@@ -77,6 +79,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
       this.lyrics,
       this.notes,
       this.ccli,
+      this.authors2,
       this.copyright})
       : _authors = authors,
         _translator = translator,
@@ -99,6 +102,8 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   String notes;
   @override
   String ccli;
+  @override
+  List<int> authors2;
   @override
   String copyright;
 
@@ -137,6 +142,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
       String notes,
       String ccli,
       List<Person> authors,
+      List<int> authors2,
       String copyright,
       List<Person> translator,
       List<Tag> tags}) {
@@ -151,14 +157,52 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
         notes: notes ?? this.notes,
         ccli: ccli ?? this.ccli,
         authors: authors ?? this.authors,
+        authors2: authors2 ?? this.authors2,
         copyright: copyright ?? this.copyright,
         translator: translator ?? this.translator,
         tags: tags ?? this.tags);
   }
 
   @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+    return o is _Song &&
+        o.title == title &&
+        o.bpm == bpm &&
+        o.transpose == transpose &&
+        o.songKey == songKey &&
+        o.capo == capo &&
+        o.lyrics == lyrics &&
+        o.notes == notes &&
+        o.ccli == ccli &&
+        listEquality(o.authors, authors) &&
+        listEquality(o.authors2, authors2) &&
+        o.copyright == copyright &&
+        listEquality(o.translator, translator) &&
+        listEquality(o.tags, tags);
+  }
+
+  @override
+  int get hashCode {
+    return title.hashCode ^
+        bpm.hashCode ^
+        transpose.hashCode ^
+        songKey.hashCode ^
+        capo.hashCode ^
+        lyrics.hashCode ^
+        notes.hashCode ^
+        ccli.hashCode ^
+        authors.hashCode ^
+        authors2.hashCode ^
+        copyright.hashCode ^
+        translator.hashCode ^
+        tags.hashCode;
+  }
+
+  @override
   String toString() =>
-      '''Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors.map((e) => e.id)}), copyright: $copyright, translator: ${translator.map((e) => e.id)}), tags: ${tags.map((e) => e.id)}))''';
+// ignore: lines_longer_than_80_chars
+      'Song(id: $id , title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors.map((e) => e.id)}), authors2: $authors2, copyright: $copyright, translator: ${translator.map((e) => e.id)}), tags: ${tags.map((e) => e.id)}))';
 }
 
 /// The serialize adapter of type [_Song]
@@ -183,15 +227,16 @@ class $SongAdapter implements Serializer<_Song> {
       ..notes = fields[7] as String
       ..ccli = fields[8] as String
       ..authorsRefs = (fields[9] as List)?.cast<String>()
-      ..copyright = fields[10] as String
-      ..translatorRefs = (fields[11] as List)?.cast<String>()
-      ..tagsRefs = (fields[12] as List)?.cast<String>();
+      ..authors2 = (fields[10] as List)?.cast<int>()
+      ..copyright = fields[11] as String
+      ..translatorRefs = (fields[12] as List)?.cast<String>()
+      ..tagsRefs = (fields[13] as List)?.cast<String>();
   }
 
   @override
   void write(BinaryWriter writer, _Song obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -213,10 +258,12 @@ class $SongAdapter implements Serializer<_Song> {
       ..writeByte(9)
       ..write(obj.authors?.map((e) => e.id)?.toList())
       ..writeByte(10)
-      ..write(obj.copyright)
+      ..write(obj.authors2)
       ..writeByte(11)
-      ..write(obj.translator?.map((e) => e.id)?.toList())
+      ..write(obj.copyright)
       ..writeByte(12)
+      ..write(obj.translator?.map((e) => e.id)?.toList())
+      ..writeByte(13)
       ..write(obj.tags?.map((e) => e.id)?.toList());
   }
 
