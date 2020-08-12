@@ -86,10 +86,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final classFieldsEntityGetterSetter =
         cls.paramsEntities.map((e) => e.toGetSetPrivate).toList();
 
-    final stringFields = cls.params.map((e) => e.stringfy).join(', ');
-    final toString =
-        "@override\nString toString() => '''$name(id: \$id, $stringFields)''';";
-
     buff
       ..write('class ${cls.name} extends ${(DataModel).$name}<$name> ')
       ..write(cls.hasEntityReference ? 'with ${cls.referenceClassName}' : '')

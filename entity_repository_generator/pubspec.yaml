@@ -1,5 +1,5 @@
 name: entity_repository_generator
-description: The generator for the entity_repository package
+description: This is the entity_repository_generator package, which should be used with the entity_repository package.
 version: 0.1.5
 homepage: https://mbaun.dev
 repository: https://github.com/Manuelbaun/entity_repository
