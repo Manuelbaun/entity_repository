@@ -167,6 +167,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
     return o is _Song &&
+        o.id == id &&
         o.title == title &&
         o.bpm == bpm &&
         o.transpose == transpose &&
@@ -184,7 +185,8 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
 
   @override
   int get hashCode {
-    return title.hashCode ^
+    return id.hashCode ^
+        title.hashCode ^
         bpm.hashCode ^
         transpose.hashCode ^
         songKey.hashCode ^

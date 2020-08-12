@@ -58,6 +58,7 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
     return o is _Car &&
+        o.id == id &&
         o.model == model &&
         o.type == type &&
         o.buildYear == buildYear &&
@@ -66,7 +67,11 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
 
   @override
   int get hashCode {
-    return model.hashCode ^ type.hashCode ^ buildYear.hashCode ^ owner.hashCode;
+    return id.hashCode ^
+        model.hashCode ^
+        type.hashCode ^
+        buildYear.hashCode ^
+        owner.hashCode;
   }
 
   @override

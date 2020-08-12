@@ -32,12 +32,12 @@ class _Tag extends DataModel<Tag> implements Tag {
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
-    return o is _Tag;
+    return o is _Tag && o.id == id;
   }
 
   @override
   int get hashCode {
-    return;
+    return id.hashCode;
   }
 
   @override

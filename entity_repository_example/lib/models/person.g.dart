@@ -170,6 +170,7 @@ class _Person extends DataModel<Person>
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
     return o is _Person &&
+        o.id == id &&
         o.name == name &&
         o.age == age &&
         o.address == address &&
@@ -181,7 +182,8 @@ class _Person extends DataModel<Person>
 
   @override
   int get hashCode {
-    return name.hashCode ^
+    return id.hashCode ^
+        name.hashCode ^
         age.hashCode ^
         address.hashCode ^
         friends.hashCode ^

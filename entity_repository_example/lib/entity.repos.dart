@@ -7,24 +7,15 @@ import 'models/song.dart';
 import 'models/tag.dart';
 
 Future<void> initRepository() async {
-  Hive
-    ..init('./hive_test')
-    ..registerAdapter<IndexImpl>(IndexAdapter())
-    ..registerAdapter<Set>(SetAdapter())
-    ..registerAdapter<Person>($PersonAdapter())
-    ..registerAdapter<Address>($AddressAdapter())
-    ..registerAdapter<Car>($CarAdapter())
-    ..registerAdapter<Song>($SongAdapter())
-    ..registerAdapter<Tag>($TagAdapter());
-
   /// First Register all daos and as hive adapters
   /// should it be done by Type?
   repositoryLocator
-    ..registerDao<Person>($PersonRepo())
-    ..registerDao<Address>($AddressRepo())
-    ..registerDao<Car>($CarRepo())
-    ..registerDao<Song>($SongRepo())
-    ..registerDao<Tag>($TagRepo());
+    ..configure(path: './hive_test')
+    ..registerEntity<Person>($PersonRepo(), $PersonAdapter())
+    ..registerEntity<Address>($AddressRepo(), $AddressAdapter())
+    ..registerEntity<Car>($CarRepo(), $CarAdapter())
+    ..registerEntity<Song>($SongRepo(), $SongAdapter())
+    ..registerEntity<Tag>($TagRepo(), $TagAdapter());
 
   // init all daos, will open the boxes
   await repositoryLocator.initAll();

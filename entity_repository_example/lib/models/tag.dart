@@ -6,6 +6,6 @@ part 'tag.g.dart';
 
 @EntityModel(AdapterIds.tag)
 abstract class Tag extends _$Tag {
-  /// Id can be used as the tag name asdfsdf
+  /// Id can be used as the tag name asdfsdfsdf
   factory Tag({@Field(0) String id}) = _Tag;
 }

@@ -32,12 +32,15 @@ class _Address extends DataModel<Address> implements Address {
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
-    return o is _Address && o.street == street && o.houseNumber == houseNumber;
+    return o is _Address &&
+        o.id == id &&
+        o.street == street &&
+        o.houseNumber == houseNumber;
   }
 
   @override
   int get hashCode {
-    return street.hashCode ^ houseNumber.hashCode;
+    return id.hashCode ^ street.hashCode ^ houseNumber.hashCode;
   }
 
   @override
