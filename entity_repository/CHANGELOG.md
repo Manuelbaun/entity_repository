@@ -1,3 +1,6 @@
+# 0.1.5
+* added equality for set, list, map
+
 # 0.1.4
 ### Changes
 * renamed indexes into indices
