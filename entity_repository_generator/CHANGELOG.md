@@ -1,3 +1,6 @@
+# 0.1.4+2
+* throws an error, when field index is already used
+* fixed adapter generator, when list or set are not `entityModels`
 # 0.1.4+1
 * bump entity repository version
 # 0.1.4
