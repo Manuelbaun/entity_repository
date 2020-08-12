@@ -1,8 +1,8 @@
-# Entity Repository Library [Dart] [Experimental]
+# Entity Repository Library [Experimental]
 
-This library is an experimental package and is based on Hive as the persistent layer. The main motivation to create this package where some feature I was missing, when using Hive (since Hive does not provide it or not fully, and that is ok):
+This library is an experimental package and is based on Hive as the persistent layer. The main motivation to create this package where some feature I was missing, when using [Hive](https://github.com/hivedb/hive) [HiveWebpage](https://docs.hivedb.dev/#/) (since Hive does not provide it or not fully, and that is ok):
 
-1. Fields to other classes (I know HiveList) but other class types as well
+1. Fields to other classes (I know [HiveList](https://docs.hivedb.dev/#/custom-objects/relationships?id=hivelists)) but other class types as well
 2. Automatically generate Repositories to the HiveType (e.g. 'PersonRepository) for CRUD
 3. Circular References
 
@@ -79,7 +79,6 @@ The entity model is inspired by the freezed package and how freezed uses the abs
   AdapterIds.person,
   //index: [ {'name', 'age'} ], // WIP
 )
-@EntityModel(11)
 abstract class Person implements _$Person {
   factory Person({
     @Field(0) String id,
@@ -318,10 +317,3 @@ abstract class Car extends _$Car {
   }) = _Car;
 }
 ```
-
-## TODOs
-[ ] write Tests
-[ ] implement indices generation
-[ ] copy constructor
-[ ] equality's..
-[ ] to and from map (probably with json serializer)
