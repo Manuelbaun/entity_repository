@@ -55,6 +55,16 @@ class $TagAdapter implements Serializer<_Tag> {
       ..writeByte(0)
       ..write(obj.id);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is $TagAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 /// The [$TagRepo] class of type [Tag]

@@ -4,6 +4,7 @@ class ModelVisitor extends SimpleElementVisitor {
   EntityModel model;
   Map<String, ClassElement> referenceEntities = {};
 
+  String adapterName;
   DartType className;
   int typeId;
   String get classNaming => className.getDisplayString();
@@ -21,8 +22,8 @@ class ModelVisitor extends SimpleElementVisitor {
 
   @override
   void visitConstructorElement(ConstructorElement element) {
-    /// First: get classname!
     className = element.type.returnType;
+    adapterName = '\$${className}Adapter';
 
     _checkIfAbstractClass(element);
     _checkIfFactoryDefaultClass(element);

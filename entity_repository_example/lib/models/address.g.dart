@@ -62,6 +62,16 @@ class $AddressAdapter implements Serializer<_Address> {
       ..writeByte(2)
       ..write(obj.houseNumber);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is $AddressAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 /// The [$AddressRepo] class of type [Address]

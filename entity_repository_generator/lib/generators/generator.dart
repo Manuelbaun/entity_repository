@@ -140,24 +140,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateClassHashAndEquality(ModelVisitor visitor) {
-    final buff = StringBuffer();
-
-    final cls = visitor.clazz;
-
-    // buff.writeln('${cls.name}')
-    // @override
-    // int get hashCode => typeId.hashCode;
-
-    // @override
-    // bool operator ==(Object other) =>
-    //     identical(this, other) ||
-    //     other is SongSheetThemeAdapter &&
-    //         runtimeType == other.runtimeType &&
-    //         typeId == other.typeId;
-    return buff;
-  }
-
   StringBuffer generateSerializerAdapter(ModelVisitor visitor) {
     final buff = StringBuffer();
     final params = visitor.clazz.params;
@@ -171,7 +153,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     buff
       ..writeln('/// The serialize adapter of type [${visitor.clazz.name}]')
       ..writeln(
-          'class \$${visitor.className}Adapter implements ${(Serializer).$name}<${visitor.clazz.name}> {')
+          'class ${visitor.adapterName} implements ${(Serializer).$name}<${visitor.clazz.name}> {')
       ..writeln('@override\n final int typeId = ${visitor.model.typeId};\n')
 
       /// read bin
@@ -190,8 +172,28 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('..writeByte(0)')
       ..writeln('..write(obj.id)')
       ..writeAll(params.map((e) => e.toSerializeWrite), '\n')
-      ..writeln(';}}');
+      ..writeln(';}')
+      ..write(generateSerializerAdapterEquality(visitor))
+      ..write('}');
 
+    return buff;
+  }
+
+  StringBuffer generateSerializerAdapterEquality(ModelVisitor visitor) {
+    final buff = StringBuffer();
+
+    final equal = '''@override
+    int get hashCode => typeId.hashCode;
+
+    @override
+    bool operator ==(Object other) =>
+        identical(this, other) ||
+        other is ${visitor.adapterName} &&
+            runtimeType == other.runtimeType &&
+            typeId == other.typeId;
+            ''';
+
+    buff.write(equal);
     return buff;
   }
 

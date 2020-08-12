@@ -93,6 +93,16 @@ class $CarAdapter implements Serializer<_Car> {
       ..writeByte(4)
       ..write(obj.owner?.id);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is $CarAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 /// The [$CarRepo] class of type [Car]

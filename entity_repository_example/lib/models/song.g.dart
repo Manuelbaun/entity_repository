@@ -219,6 +219,16 @@ class $SongAdapter implements Serializer<_Song> {
       ..writeByte(12)
       ..write(obj.tags?.map((e) => e.id)?.toList());
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is $SongAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 /// The [$SongRepo] class of type [Song]

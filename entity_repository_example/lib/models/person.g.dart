@@ -214,6 +214,16 @@ class $PersonAdapter implements Serializer<_Person> {
       ..writeByte(7)
       ..write(obj.p2a?.map((key, value) => MapEntry(key.id, value.id)));
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is $PersonAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 /// The [$PersonRepo] class of type [Person]
