@@ -65,15 +65,17 @@ class ModelVisitor extends SimpleElementVisitor {
     final isDefault = element.isFactory && element.isDefaultConstructor;
 
     if (!isDefault) {
-      throw UnsupportedError('''${element.location}\n'''
-          '''${className.getDisplayString()} must be default factory constructor!''');
+      throw GeneratorError('''${element.location}\n'''
+          '''${className.getDisplayString()} must be a factory constructor and the default constuctor.''');
     }
   }
 
+  /// This method ensures, that a class must be abstract
+  /// when annotated with [EntityModel] annotation
   void _checkIfAbstractClass(ConstructorElement element) {
     if (className.element is ClassElement &&
         !(className.element as ClassElement).isAbstract) {
-      throw UnsupportedError('''${element.location}\n'''
+      throw GeneratorError('''${element.location}\n'''
           '''${className.getDisplayString()} must be an abstract class!''');
     }
   }
