@@ -6,10 +6,10 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
 
   Box<T> _box;
 
-  /// performs init of the dao.
-  /// using hive under the hood, opens the hive box of type [T]
-
-  /// TODO: open box parameter strategy
+  /// The [initialize] method is used to open a hive box
+  /// to the matching [RepositoryHive] of type [T]
+  ///
+  // TODO: open box parameter strategy
   @override
   FutureOr<RepositoryBase<T>> initialize() async {
     final typeString = T.toString().toLowerCase();
@@ -17,11 +17,14 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return this;
   }
 
+  /// This closese the box
   @override
   Future<void> dispose() async {
     await _box.close();
   }
 
+  /// This will delete the entity of [T], when it is exists. Otherwise it will
+  /// do nothing.
   @override
   Future<void> delete(T entity) async {
     assert(entity != null);
@@ -29,18 +32,20 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     await _box.delete(entity.id);
   }
 
+  /// This will delete all provided enities
   @override
-  Future<void> deleteMany(Iterable<T> entity) async {
-    assert(entity != null);
+  Future<void> deleteMany(Iterable<T> entities) async {
+    assert(entities != null);
 
-    await _box.deleteAll(entity.map((e) => e.id));
+    await _box.deleteAll(entities.map((e) => e.id));
   }
 
+  /// This will return all enitites, which are currently in the box
+  /// works only for a regular hive box and not a lazy box
   @override
-  Iterable<T> findAll() {
-    return _box.values;
-  }
+  Iterable<T> findAll() => _box.values;
 
+  /// This will iterate through the provided Keys, could be an int or String
   @override
   Iterable<T> findMany(Iterable keys) {
     assert(keys != null);
@@ -54,13 +59,17 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return list;
   }
 
+  /// This will lookup the key. If it exists, it will return the enitiy,
+  /// otherwise null
   @override
-  T findOne(dynamic key) {
-    return _box.get(key);
-  }
+  T findOne(dynamic key) => _box.get(key);
 
-  /// Updates only if the key is present!
-  /// else it throws a error
+  /// This will update the enitiy. If the enitity did not exists prior to that
+  /// it will throw an [EntityRepositoryException]
+  /// So make sure, the enitiy exists.
+  ///
+  /// This API might change in the future, into something like upsert.
+  /// Otherwise use [insert] with override= true
   @override
   Future<bool> update(T entity) async {
     assert(entity != null);
@@ -91,6 +100,9 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return entities;
   }
 
+  /// This will return a [Stream<T>], on a specific entity of the provided key
+  /// if the key is null or the key does not exist in that box,
+  /// this method will return *null*
   @override
   Stream<T> watch(dynamic key) {
     if (key == null || !_box.containsKey(key)) return null;
@@ -98,8 +110,11 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return _box.watch(key: key).map<T>((BoxEvent event) => event.value as T);
   }
 
-  /// inserts only if the key is *NOT* present!
-  /// When override =true, then it will
+  /// This will insert an entity in the box if the key does not exists.
+  /// If the key does exist, it will throw an [EntityRepositoryException].
+  ///
+  /// To override an existing enitity use override = true
+  /// This method acts then as an upsert
   @override
   Future<bool> insert(T entity, {bool override = false}) async {
     assert(entity != null);
@@ -128,7 +143,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return entities;
   }
 
-  /// This will clear the Hive box.
+  /// This will clear the Hive box and remove all entries
   @override
   Future<void> clearRepository() async {
     await _box.clear();
