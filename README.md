@@ -297,7 +297,7 @@ class $PersonRepo extends RepositoryHive<Person> {}
 
 
 
-## Indexes [wip]
+## indices [wip]
 It is possible to specify index fields, which then will check, whether an entity with the same `model` and `owner` is already present in the index or not.
 
 ```dart
@@ -320,7 +320,7 @@ abstract class Car extends _$Car {
 
 ## TODOs
 [ ] write Tests
-[ ] implement indexes generation
+[ ] implement indices generation
 [ ] copy constructor
 [ ] equality's..
 [ ] to and from map (probably with json serializer)

@@ -94,7 +94,7 @@ void main() async {
   // await p.delete();
   print(dao.findAll().length);
 
-  print(IndexesAccess.toStringy());
+  print(IndicesAccess.toStringy());
 
   // final resID = (repositoryLocator.get<Car>() as $CarRepo).findBy('Van', p);
   // print('Found ID $resID');

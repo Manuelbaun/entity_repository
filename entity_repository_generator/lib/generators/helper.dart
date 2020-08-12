@@ -9,8 +9,8 @@ Field getFieldAnn(Element element) {
     final obj = _fieldChecker.annotationsOfExact(element)?.first;
     return Field(obj.getField('index').toIntValue());
   } catch (e) {
-    throw EntityRepoError('''$e
-  Could not find a field annotation on constructor parameter ${element}. 
+    throw GeneratorError('''$e
+  Could not find a field annotation on constructor parameter $element. 
   Plase provide field annotation\n''');
   }
 }

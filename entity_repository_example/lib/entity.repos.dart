@@ -32,6 +32,4 @@ Future<void> initRepository() async {
 
 Future<void> daoDispose() async {
   await repositoryLocator.disposeAll();
-
-  /// TODO: indexbox dispose!
 }

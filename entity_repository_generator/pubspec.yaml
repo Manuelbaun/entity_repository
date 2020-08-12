@@ -22,3 +22,7 @@ dev_dependencies:
 
 analyzer:
   strong-mode: true
+
+dependency_overrides:
+  entity_repository:
+    path: ..\entity_repository

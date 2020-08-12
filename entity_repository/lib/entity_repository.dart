@@ -17,13 +17,13 @@ part 'src/core/errors.dart';
 part 'src/core/index_base.dart';
 part 'src/core/serializer.dart';
 
-part 'src/adapters/indexes_adapter.dart';
+part 'src/adapters/index_adapter.dart';
 part 'src/adapters/set_adapter.dart';
 
 part 'src/annotation/entity_model.dart';
 part 'src/annotation/field.dart';
 
-part 'src/mixins/indexes_access.dart';
+part 'src/mixins/indices_access.dart';
 part 'src/mixins/reference_lookup.dart';
 
 part 'src/consts.dart';

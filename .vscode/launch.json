@@ -12,7 +12,7 @@
         },
         {
             "name": "Dart Gen",
-            "program": "example/.dart_tool/build/entrypoint/build.dart",
+            "program": "entity_repository_example/.dart_tool/build/entrypoint/build.dart",
             "args": [
                 "watch",
                 "--delete-conflicting-outputs"

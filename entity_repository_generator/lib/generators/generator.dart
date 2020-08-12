@@ -205,10 +205,10 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
         ..writeln('/// The [\$${clazz}Repo] class of type [$clazz]')
         ..write(
             'class \$${clazz}Repo extends ${(RepositoryHive).$name}<$clazz> ')
-        ..write(withIndex ? 'with ${(IndexesAccess).$name}<$clazz>' : '')
+        ..write(withIndex ? 'with ${(IndicesAccess).$name}<$clazz>' : '')
         ..write('{');
 
-      /// TODO: generate Indexes here!
+      /// TODO: generate indices here!
       buff.write('}');
     }
 
@@ -218,12 +218,12 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
 /// TODO: create index, when clear, what todo with index
 // if (false) {
-//   final indexes = visitor.model.index;
-//   final indexLength = indexes.length + 1;
+//   final indices = visitor.model.index;
+//   final indexLength = indices.length + 1;
 
 //   // generate index names
 //   for (var i = 1; i < indexLength; i++) {
-//     final e = indexes.elementAt(i - 1);
+//     final e = indices.elementAt(i - 1);
 //     buff.writeln("static const String _index$i = '${e.join('-')}';");
 //   }
 
@@ -237,15 +237,15 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
 //   // generate register
 //   final indexNames =
-//       List.generate(indexes.length, (i) => '_index${i + 1}').join(',');
+//       List.generate(indices.length, (i) => '_index${i + 1}').join(',');
 //   buff
-//     ..write('Future<void> _ensureRegisterdIndexes() ')
-//     ..write('=> registerIndexes([$indexNames]);')
+//     ..write('Future<void> _ensureRegisterdindices() ')
+//     ..write('=> registerindices([$indexNames]);')
 //     ..writeln('\n');
 
 //   // get index keys
 //   // for (var i = 1; i < indexLength; i++) {
-//   //   final e = indexes.elementAt(i - 1);
+//   //   final e = indices.elementAt(i - 1);
 //   //   buff.writeln("static const String _index$i = '${e.join('-')}';");
 //   // }
 // }
