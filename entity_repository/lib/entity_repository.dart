@@ -1,13 +1,12 @@
 library entity_repository;
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'src/utils/cuid.dart';
 
-export 'package:hive/hive.dart' show BinaryReader, BinaryWriter, Hive;
+export 'package:hive/hive.dart' show BinaryReader, BinaryWriter;
 
 part 'src/model/data_model.dart';
 
