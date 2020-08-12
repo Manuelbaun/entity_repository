@@ -8,6 +8,8 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
 
   /// performs init of the dao.
   /// using hive under the hood, opens the hive box of type [T]
+
+  /// TODO: open box parameter strategy
   @override
   FutureOr<RepositoryBase<T>> initialize() async {
     final typeString = T.toString().toLowerCase();
@@ -91,13 +93,9 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
 
   @override
   Stream<T> watch(dynamic key) {
-    if (key != null && _box.containsKey(key)) {
-      return _box.watch(key: key).map<T>((BoxEvent event) {
-        final m = event.value as T;
-        return m;
-      });
-    }
-    return null;
+    if (key == null || !_box.containsKey(key)) return null;
+
+    return _box.watch(key: key).map<T>((BoxEvent event) => event.value as T);
   }
 
   /// inserts only if the key is *NOT* present!
