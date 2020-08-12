@@ -1,6 +1,6 @@
 name: entity_repository
 description: A package to annotate abstract classes with entityModel and it generates the references and lookups. It uses hive under the hood
-version: 0.1.3
+version: 0.1.4
 homepage: https://mbaun.dev
 repository: https://github.com/Manuelbaun/entity_repository
 

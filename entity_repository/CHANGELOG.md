@@ -1,5 +1,6 @@
-
-### added copy with
+# 0.1.4
+### Changes
+* renamed indexes into indices
 # 0.1.3
 ### match entity_repository_generator version
 # 0.1.2

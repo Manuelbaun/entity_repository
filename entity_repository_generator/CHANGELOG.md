@@ -1,5 +1,11 @@
+# 0.1.4
+### changes
+* added copy with
+* added adapter equality 
+* generator will now ignore other constructors then the default factory and not throw an error
+* better generator error and info messages
+* renamed indexes into indices
 
-### added copy with
 # 0.1.3
 ### fixed path specific issue in build.yaml for the builder.dart file
 # 0.1.2
