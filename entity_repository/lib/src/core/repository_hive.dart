@@ -70,7 +70,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
 
     /// TODO: should this be done here? maybe throw exception?
     /// or just return false
-    throw EntityRepoError('''
+    throw EntityRepositoryException('''
       ${entity.runtimeType} with id: ${entity.id} does not exists. 
       Insert before update is called''');
   }
@@ -100,8 +100,8 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return null;
   }
 
-  /// inserts only if the key is *NOT* present! When override =true, then it will
-  /// upsert!
+  /// inserts only if the key is *NOT* present!
+  /// When override =true, then it will
   @override
   Future<bool> insert(T entity, {bool override = false}) async {
     assert(entity != null);
@@ -111,12 +111,13 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
       return true;
     }
 
-    throw EntityRepoError(
-        'Could insert Type $T, since a $T with id of "${entity.id}" already exist.');
+    throw EntityRepositoryException(
+        '''Could insert Type $T, since a $T with id '''
+        '''of "${entity.id}" already exist.''');
   }
 
-  /// inserts only if the key is *NOT* present! When override =true, then it will
-  /// upsert!
+  /// inserts only if the key is *NOT* present!
+  /// When override =true, then it will insert the entity
   @override
   Future<Iterable<T>> insertMany(Iterable<T> entities,
       {bool override = false}) async {
@@ -129,8 +130,9 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return entities;
   }
 
+  /// This will clear the Hive box.
   @override
-  Future<void> clearDao() async {
+  Future<void> clearRepository() async {
     await _box.clear();
   }
 }

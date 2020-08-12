@@ -15,7 +15,7 @@ abstract class DataModel<T extends DataModel<T>> {
 
   void _checkBase() {
     if (_base == null) {
-      throw EntityRepoError(
+      throw EntityRepositoryException(
           'Could not find "$T" in the locator. Did you register it before use?');
     }
   }

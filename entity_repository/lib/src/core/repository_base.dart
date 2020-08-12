@@ -26,5 +26,6 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   Future<void> delete(T entity);
   Future<void> deleteMany(Iterable<T> entities);
 
-  Future<void> clearDao();
+  /// This will remove all entries from the repository
+  Future<void> clearRepository();
 }

@@ -10,7 +10,8 @@ class _RepositoryLocator {
       _map[typeString] = dao;
       // registerAdapter<T>(dao);
     } else {
-      throw EntityRepoError('Type ${T.runtimeType} is already registered');
+      throw EntityRepositoryException(
+          'Type ${T.runtimeType} is already registered');
     }
   }
 
@@ -25,7 +26,7 @@ class _RepositoryLocator {
     if (_map.containsKey(typeString)) {
       return _map[typeString] as RepositoryBase<T>;
     }
-    throw EntityRepoError(
+    throw EntityRepositoryException(
         'Type $typeString does exist. Did you register the type?');
   }
 
