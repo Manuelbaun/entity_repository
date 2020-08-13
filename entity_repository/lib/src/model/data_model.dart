@@ -23,6 +23,7 @@ abstract class DataModel<T extends DataModel<T>> implements Comparable<T> {
 
   // TODO: Remove this. or make a nice API!
   Future<bool> upsert({bool override = true}) {
+    _checkBase();
     return _base.insert(this as T, override: override);
   }
 

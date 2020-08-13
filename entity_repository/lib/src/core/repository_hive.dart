@@ -79,11 +79,13 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
       return true;
     }
 
+    return false;
+
     /// TODO: should this be done here? maybe throw exception?
     /// or just return false
-    throw EntityRepositoryException('''
-      ${entity.runtimeType} with id: ${entity.id} does not exists. 
-      Insert before update is called''');
+    // throw EntityRepositoryException('''
+    //   ${entity.runtimeType} with id: ${entity.id} does not exists.
+    //   Insert before update is called''');
   }
 
   /// Updates only if the key is present!
@@ -131,9 +133,12 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
       return true;
     }
 
-    throw EntityRepositoryException(
-        '''Could insert Type $T, since a $T with id '''
-        '''of "${entity.id}" already exist.''');
+    /// TODO: Think again
+    return false;
+
+    // throw EntityRepositoryException(
+    //     '''Could insert Type $T, since a $T with id '''
+    //     '''of "${entity.id}" already exist.''');
   }
 
   /// inserts only if the key is *NOT* present!

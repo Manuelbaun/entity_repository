@@ -24,7 +24,7 @@ class _RepositoryLocator {
   void registerEntity<T extends DataModel<T>>(
       RepositoryBase<T> repository, Serializer<T> adapter) {
     if (!_isConfigured) {
-      throw EntityRepositoryException(
+      throw EntityRepositoryError(
           'Please configure the $_RepositoryLocator first.');
     }
     final typeString = T.toString();
@@ -34,7 +34,7 @@ class _RepositoryLocator {
 
       registerAdapter<T>(adapter);
     } else {
-      throw EntityRepositoryException(
+      throw EntityRepositoryError(
           'Type ${T.runtimeType} is already registered');
     }
   }
@@ -54,7 +54,7 @@ class _RepositoryLocator {
       return _map[typeString] as RepositoryBase<T>;
     }
 
-    throw EntityRepositoryException(
+    throw EntityRepositoryError(
         'Type $typeString does exist. Did you register the type?');
   }
 
