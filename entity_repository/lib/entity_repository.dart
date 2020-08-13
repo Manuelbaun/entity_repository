@@ -52,5 +52,5 @@ class CustomAdapterTypes {
 
 /// dao locator instance singelton
 final _RepositoryLocator repositoryLocator = _RepositoryLocator()
-  .._registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter))
-  .._registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
+  ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter))
+  ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));

@@ -11,7 +11,7 @@ class _RepositoryLocator {
   }
 
   /// use this internally, to [Serializer] adapter
-  void _registerAdapter<T>(Serializer<T> adapter) {
+  void registerAdapter<T>(Serializer<T> adapter) {
     try {
       Hive.registerAdapter<T>(adapter);
     } catch (e) {
@@ -32,7 +32,7 @@ class _RepositoryLocator {
     if (!_map.containsKey(typeString)) {
       _map[typeString] = repository;
 
-      _registerAdapter<T>(adapter);
+      registerAdapter<T>(adapter);
     } else {
       throw EntityRepositoryException(
           'Type ${T.runtimeType} is already registered');

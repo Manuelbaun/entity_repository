@@ -8,7 +8,7 @@ class ModelVisitor extends SimpleElementVisitor {
   Clazz clazz;
 
   /// TODO: remove false, when generator is implemented
-  bool get generateIndicies => false || model?.index.isNotEmpty;
+  bool get generateIndicies => false || model?.index?.isNotEmpty;
 
   String adapterName;
   DartType className;
@@ -67,6 +67,11 @@ class ModelVisitor extends SimpleElementVisitor {
 
       clazz.add(p);
     }
+  }
+
+  @override
+  void visitMethodElement(MethodElement element) {
+    // print(element);
   }
 
   String _getRedirectConstructorName(ConstructorElement element) {
