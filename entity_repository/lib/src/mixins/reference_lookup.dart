@@ -7,13 +7,16 @@ part of entity_repository;
 /// best would be a mixin, which is only visible here in this class
 ///
 mixin ReferenceLookUp {
-  static T findOne<T extends DataModel<T>>(String id) {
+  static T findOne<T extends DataModel<T>>(String refId) {
+    if (refId == null) return null;
     final dao = repositoryLocator.get<T>();
-    return dao.findOne(id);
+    return dao.findOne(refId);
   }
 
-  static Iterable<T> findMany<T extends DataModel<T>>(Iterable<String> refs) {
+  static Iterable<T> findMany<T extends DataModel<T>>(Iterable<String> refIds) {
+    if (refIds == null) return null;
+
     final dao = repositoryLocator.get<T>();
-    return dao.findMany(refs);
+    return dao.findMany(refIds);
   }
 }
