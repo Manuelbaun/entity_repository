@@ -4,4 +4,4 @@
 packages
 pubspec.lock
 hive_test
-archive
+.archive
