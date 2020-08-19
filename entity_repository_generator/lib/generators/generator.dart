@@ -238,7 +238,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     buff
       ..write('/// The [\$${visitor.entityName}Repo] class ')
-      ..write('of type [${visitor.entityName}]')
+      ..write('of type [${visitor.entityName}]\n')
       ..write('class \$${visitor.entityName}Repo ')
       ..write('extends ${(RepositoryHive).$name}<${visitor.entityName}> ')
       ..write(visitor.generateIndicies
