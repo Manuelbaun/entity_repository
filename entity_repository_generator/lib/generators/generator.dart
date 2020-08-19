@@ -25,40 +25,36 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return str;
   }
 
-  StringBuffer generateAbstractClassInterface(ModelVisitor v) {
-    final buff = StringBuffer();
-    final entityName = v.entityName;
+  StringBuffer generateAbstractClassInterface(ModelVisitor visitor) {
+    final buff = StringBuffer()
+      ..writeln('/// Interface to/off the class [${visitor.entityName}]')
+      ..write('abstract class _\$${visitor.entityName} ')
+      ..write('extends DataModel<${visitor.entityName}> {\n')
+      ..writeln('_\$${visitor.entityName}(String id): super(id);')
+      ..writeAll(visitor.params.map((e) => e.toPublicField), '\n')
 
-    buff
-      ..writeln('/// Interface to/off the class [$entityName]')
-      ..writeln(
-          'abstract class _\$$entityName extends DataModel<$entityName> {')
-      ..writeln('_\$$entityName(String id): super(id);')
-      ..writeAll(v.params.map((e) => e.toPublicField), '\n')
-
-      /// copy with
-      ..write(generateCopyWithSignature(v))
+      // copy with
+      ..write(generateCopyWithSignature(visitor))
       ..write(';')
       ..writeln('}');
 
     return buff;
   }
 
-  StringBuffer generateReferenceLookup(ModelVisitor v) {
+  StringBuffer generateReferenceLookup(ModelVisitor visitor) {
     final buff = StringBuffer();
 
-    if (!v.hasEntityReference) return buff;
-
-    final refs = v.paramsEntities.map((e) => e.toReferenceField);
-
-    final accessors = v.paramsEntities.map(
-      (e) => e.toLookupMethod(),
-    );
+    if (!visitor.hasEntityReference) return buff;
 
     buff
-      ..writeln('mixin ${v.referenceClassName} {')
-      ..writeAll(refs, '\n')
-      ..writeAll(accessors, '\n')
+      ..writeln('/// Generate the reference look up mixin')
+      ..writeln('mixin ${visitor.referenceClassName} {')
+      ..writeAll(visitor.paramsEntities.map((e) => e.toReferenceField), '\n')
+      ..writeAll(
+          visitor.paramsEntities.map(
+            (e) => e.toLookupMethod(),
+          ),
+          '\n')
       ..writeln('}');
 
     return buff;
@@ -66,33 +62,33 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateClass(ModelVisitor visitor) {
     final buff = StringBuffer();
-    // final name = visitor.entityName;
-    final cls = visitor;
 
     /// assign parameter to class fields
 
     final constructorParams = [
-      ...cls.paramsEntities.map((e) => e.toParamInit).toList(),
-      ...cls.paramsNonEntity.map((e) => e.toParamInitThis).toList(),
+      ...visitor.paramsEntities.map((e) => e.toParamInit).toList(),
+      ...visitor.paramsNonEntity.map((e) => e.toParamInitThis).toList(),
     ];
 
     final constructorPrivateParamsInit =
-        cls.paramsEntities.map((e) => e.toParamInitPrivate).toList();
+        visitor.paramsEntities.map((e) => e.toParamInitPrivate).toList();
 
     // class fields
     final classFieldsRegular =
-        cls.paramsNonEntity.map((e) => e.toPublicFieldOverride).toList();
+        visitor.paramsNonEntity.map((e) => e.toPublicFieldOverride).toList();
 
     /// remove set if only readable???
     final classFieldsEntityGetterSetter =
-        cls.paramsEntities.map((e) => e.toGetSetPrivate).toList();
+        visitor.paramsEntities.map((e) => e.toGetSetPrivate).toList();
 
     buff
-      ..write('class ${cls.redirectName} extends ')
+      ..write('class ${visitor.redirectName} extends ')
       ..write('${(DataModel).$name}<${visitor.entityName}> ')
-      ..write(cls.hasEntityReference ? 'with ${cls.referenceClassName}' : '')
+      ..write(visitor.hasEntityReference
+          ? 'with ${visitor.referenceClassName}'
+          : '')
       ..write(' implements ${visitor.entityName} {\n')
-      ..write('${cls.redirectName}({String id,') // constructor
+      ..write('${visitor.redirectName}({String id,') // constructor
       ..writeAll(constructorParams, ',')
       ..write('}) : ') // constructor
       ..writeAll(constructorPrivateParamsInit, ',')
@@ -109,16 +105,13 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateClassToString(ModelVisitor visitor) {
-    final buff = StringBuffer();
-    final cls = visitor;
-
-    buff
+    final buff = StringBuffer()
       ..writeln('\n@override')
       ..writeln('String toString() => ')
       ..writeln('// ignore: lines_longer_than_80_chars')
       ..write("'${visitor.entityName}(id: \$id ")
-      ..write(cls.params.isNotEmpty ? ', ' : '')
-      ..writeAll(cls.params.map((e) => e.stringfy), ', ')
+      ..write(visitor.params.isNotEmpty ? ', ' : '')
+      ..writeAll(visitor.params.map((e) => e.stringfy), ', ')
       ..write(")'")
       ..write(';');
 
@@ -127,29 +120,24 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateCopyWithSignature(ModelVisitor visitor,
       {bool override = false}) {
-    final buff = StringBuffer();
-    final className = visitor.entityName;
-    final cls = visitor;
-
-    buff
+    final buff = StringBuffer()
       ..writeln(override ? '\n@override' : '')
-      ..writeln('$className copyWith({String id,')
-      ..writeAll(cls.params.map((e) => e.toParamInit), ',')
+      ..writeln('${visitor.entityName} copyWith({String id,')
+      ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
       ..writeln('})');
+
     return buff;
   }
 
   StringBuffer generateClassCopyConstructor(ModelVisitor visitor) {
-    final buff = StringBuffer();
-    final cls = visitor;
-
-    buff
+    final buff = StringBuffer()
       ..write(generateCopyWithSignature(visitor, override: true))
       ..writeln('{')
-      ..writeln('return ${cls.redirectName}(')
+      ..writeln('return ${visitor.redirectName}(')
       ..writeln('id:id ?? this.id,')
       ..writeAll(
-          cls.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'), ',')
+          visitor.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'),
+          ',')
       ..writeln(');')
       ..writeln('}');
 
@@ -157,17 +145,14 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateClassEquality(ModelVisitor visitor) {
-    final buff = StringBuffer();
-    final cls = visitor;
-
-    buff
+    final buff = StringBuffer()
       ..writeln('\n@override')
       ..writeln('bool operator ==(Object o) {')
       ..writeln('if (identical(this, o)) return true;')
-      ..writeln('return o is ${cls.redirectName} &&')
+      ..writeln('return o is ${visitor.redirectName} &&')
       ..write('o.id == id')
-      ..write(cls.params.isNotEmpty ? ' && ' : '')
-      ..writeAll(cls.params.map((e) {
+      ..write(visitor.params.isNotEmpty ? ' && ' : '')
+      ..writeAll(visitor.params.map((e) {
         if (e.type.isDartCoreList) {
           return 'listEquality(o.${e.name}, ${e.name})';
         } else if (e.type.isDartCoreSet) {
@@ -184,8 +169,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('\n@override')
       ..writeln('int get hashCode {')
       ..writeln('return id.hashCode')
-      ..write(cls.params.isNotEmpty ? ' ^ ' : '')
-      ..writeAll(cls.params.map((e) => '${e.name}.hashCode'), ' ^ ')
+      ..write(visitor.params.isNotEmpty ? ' ^ ' : '')
+      ..writeAll(visitor.params.map((e) => '${e.name}.hashCode'), ' ^ ')
       ..write(';')
       ..writeln('}');
 
@@ -194,7 +179,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateSerializerAdapter(ModelVisitor visitor) {
     final buff = StringBuffer();
-    final params = visitor.params;
 
     const readerField = '''
     final numOfFields = reader.readByte();
@@ -213,7 +197,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('${visitor.redirectName} read(BinaryReader reader) {')
       ..writeln(readerField)
       ..writeln('\n\nreturn ${visitor.redirectName}(id: fields[0] as String)')
-      ..writeAll(params.map((e) => e.toSerializeRead), '\n')
+      ..writeAll(visitor.params.map((e) => e.toSerializeRead), '\n')
       ..writeln(';}')
 
       ///Write bin
@@ -221,10 +205,10 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln(
           'void write(BinaryWriter writer, ${visitor.redirectName} obj) {')
       ..writeln('writer')
-      ..writeln('..writeByte(${params.length + 1})')
+      ..writeln('..writeByte(${visitor.params.length + 1})')
       ..writeln('..writeByte(0)')
       ..writeln('..write(obj.id)')
-      ..writeAll(params.map((e) => e.toSerializeWrite), '\n')
+      ..writeAll(visitor.params.map((e) => e.toSerializeWrite), '\n')
       ..writeln(';}')
       ..write(generateSerializerAdapterEquality(visitor))
       ..write('}');
@@ -233,9 +217,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateSerializerAdapterEquality(ModelVisitor visitor) {
-    final buff = StringBuffer();
-
-    final equal = '''@override
+    final buff = StringBuffer()..write('''@override
     int get hashCode => typeId.hashCode;
 
     @override
@@ -244,9 +226,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
         other is ${visitor.adapterName} &&
             runtimeType == other.runtimeType &&
             typeId == other.typeId;
-            ''';
+            ''');
 
-    buff.write(equal);
     return buff;
   }
 
@@ -255,13 +236,13 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     if (!visitor.model.repository) return buff;
 
-    final name = visitor.entityName;
-
     buff
-      ..writeln('/// The [\$${name}Repo] class of type [$name]')
-      ..write('class \$${name}Repo extends ${(RepositoryHive).$name}<$name> ')
+      ..write('/// The [\$${visitor.entityName}Repo] class ')
+      ..write('of type [${visitor.entityName}]')
+      ..write('class \$${visitor.entityName}Repo ')
+      ..write('extends ${(RepositoryHive).$name}<${visitor.entityName}> ')
       ..write(visitor.generateIndicies
-          ? 'with ${(IndicesAccess).$name}<$name>'
+          ? 'with ${(IndicesAccess).$name}<${visitor.entityName}>'
           : '')
       ..write('{')
       ..write(generateRepositoryClassIndices(visitor))
