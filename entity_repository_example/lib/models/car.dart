@@ -19,9 +19,14 @@ abstract class Car extends _$Car {
     @Field(3) int buildYear,
     @Field(4) Person owner,
   }) = _Car;
+
+  @override
+  String toString() {
+    return 'Hello World';
+  }
 }
 
 void main() {
   final c = Car();
-  // ''sdfdsfsdf sdfdsfsdf
+  // ''sdfdsfsdf sdfdsfsdfsdf
 }

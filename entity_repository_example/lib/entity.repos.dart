@@ -11,11 +11,11 @@ Future<void> initRepository() async {
   /// should it be done by Type?
   repositoryLocator
     ..configure(path: './hive_test')
+    ..registerAdapter<Tag>($TagAdapter())
     ..registerEntity<Person>($PersonRepo(), $PersonAdapter())
     ..registerEntity<Address>($AddressRepo(), $AddressAdapter())
     ..registerEntity<Car>($CarRepo(), $CarAdapter())
-    ..registerEntity<Song>($SongRepo(), $SongAdapter())
-    ..registerEntity<Tag>($TagRepo(), $TagAdapter());
+    ..registerEntity<Song>($SongRepo(), $SongAdapter());
 
   // init all daos, will open the boxes
   await repositoryLocator.initAll();

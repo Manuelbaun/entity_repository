@@ -15,8 +15,9 @@ Field getFieldAnn(Element element) {
   }
 }
 
-Map<String, ClassElement> checkEntityReference(Element element) {
-  final map = <String, ClassElement>{};
+Map<InterfaceType, AnnotatedClazz> getAllEntityModelReferences(
+    Element element) {
+  final map = <InterfaceType, AnnotatedClazz>{};
 
   if (element is ClassElement) {
     final alltypes = <InterfaceType>[];
@@ -32,7 +33,13 @@ Map<String, ClassElement> checkEntityReference(Element element) {
       final res = entityModelChecker.hasAnnotationOf(type.element);
 
       if (res) {
-        map[type.getDisplayString()] = type.element;
+        final meta = getEntityModel(type.element, addGlobal: false);
+
+        map[type] = AnnotatedClazz(
+          type: type,
+          element: type.element,
+          model: meta,
+        );
       }
     }
   }
@@ -40,9 +47,24 @@ Map<String, ClassElement> checkEntityReference(Element element) {
   return map;
 }
 
-EntityModel getEntityModel(Element element) {
-  final obj = entityModelChecker.annotationsOfExact(element)?.first;
-  if (obj == null) return null;
+final allEntityModels = <int, EntityModel>{};
+final allEntityModelElements = <int, Element>{};
+
+EntityModel getEntityModel(Element element, {bool addGlobal = true}) {
+  final res = entityModelChecker.annotationsOfExact(element);
+  if (res.isEmpty) return null;
+
+  if (res.length > 1) {
+    throw GeneratorError('$element has more then one EntityModel annotation.');
+  }
+
+  final obj = res?.first;
+  final typeId = obj.getField('typeId').toIntValue();
+
+  /// if typeId already exists, just return
+  if (!addGlobal && allEntityModels[typeId] != null) {
+    return allEntityModels[typeId];
+  }
 
   final index = obj
           .getField('index')
@@ -53,7 +75,6 @@ EntityModel getEntityModel(Element element) {
 
   final repo = obj.getField('repository').toBoolValue();
   final immo = obj.getField('immutable').toBoolValue();
-  final typeId = obj.getField('typeId').toIntValue();
 
   if (typeId < CustomAdapterTypes.maxAdapter) {
     throw GeneratorError(
@@ -61,12 +82,29 @@ EntityModel getEntityModel(Element element) {
       ''' Please increase it.''',
     );
   }
-  return EntityModel(
+
+  final entityModel = EntityModel(
     typeId,
     index: index,
     repository: repo,
     immutable: immo,
   );
+
+  if (addGlobal) {
+    /// throws error, if the typeid was previously used
+    if (allEntityModelElements[typeId] != null &&
+        allEntityModelElements[typeId] != element) {
+      final em = allEntityModelElements[typeId];
+      throw GeneratorError(
+        '''TypeId $typeId of $element is already in use of the $em''',
+      );
+    }
+
+    allEntityModels[typeId] = entityModel;
+    allEntityModelElements[typeId] = element;
+  }
+
+  return entityModel;
 }
 
 /// runs through all sub types

@@ -55,7 +55,7 @@ class _RepositoryLocator {
     }
 
     throw EntityRepositoryError(
-        'Type $typeString does exist. Did you register the type?');
+        'Type $typeString does not exist. Did you register the type?');
   }
 
   /// This will initialize all repositories, which are registered.

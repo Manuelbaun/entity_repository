@@ -1,53 +1,54 @@
 part of entity_repository_generator;
 
-/// Only default factory constructor is supported and it will be stored in the [Clazz]
+/// Only default factory constructor is supported and
+/// it will be stored in the [ClassParams]
 class ModelVisitor extends SimpleElementVisitor {
-  EntityModel model;
-  Map<String, ClassElement> referenceEntities = {};
+  ModelVisitor({@required this.entityTypes, @required this.model})
+      : assert(entityTypes != null),
+        assert(model != null);
 
-  Clazz clazz;
+  EntityModel model;
+
+  Map<InterfaceType, AnnotatedClazz> entityTypes = {};
+
+  DartType _className;
+  String redirectName;
+
+  String get entityName => _className.getDisplayString();
+  String get adapterName => '\$${entityName}Adapter';
+  String get referenceClassName => '${redirectName}ReferenceLookUp';
 
   /// TODO: remove false, when generator is implemented
   bool get generateIndicies => false || model?.index?.isNotEmpty;
 
-  String adapterName;
-  DartType className;
-  int typeId;
-  String get classNaming => className.getDisplayString();
-  Map<String, DartType> fields = {};
-
-  Map<String, ConstructorElement> constructors = {};
-
-  // should generete interface with only get fields?
-  final onlyGetter = false;
-
   String _sourceCode;
+
+  List<Param> get params => _allParams;
+  List<Param> get paramsNonEntity => _nonEnitityParam;
+  List<Param> get paramsEntities => _entityParam;
+  bool get hasEntityReference => _entityParam.isNotEmpty;
+
+  final _allParams = <Param>[];
+  final _nonEnitityParam = <Param>[];
+  final _entityParam = <Param>[];
 
   @override
   void visitConstructorElement(ConstructorElement element) {
-    InterfaceType type;
+    // Check, if the requirements are met
+    if (element.type.returnType is! InterfaceType) return;
 
-    if (element.type.returnType is InterfaceType) {
-      type = element.type.returnType as InterfaceType;
-    } else {
-      return;
-    }
+    final type = element.type.returnType as InterfaceType;
+
+    if (!_checkIfFactoryDefaultConstructor(element)) return;
 
     _checkIfAbstractClass(type);
 
-    // will only generate for the default constructor
-    if (!_checkIfFactoryDefaultConstructor(element)) return;
-
-    className = element.type.returnType;
-    adapterName = '\$${className}Adapter';
-
-    clazz = Clazz()
-      ..type = element.type.returnType
-      ..name = _getRedirectConstructorName(element)
-      ..enitiyTypes = referenceEntities;
+    _setSourceCode(element);
+    // start generating
+    _className = element.type.returnType;
+    redirectName = _getRedirectConstructorName(element);
 
     final fieldHelper = <int>{};
-
     for (final par in element.parameters) {
       if (par.displayName == 'id') continue;
       final field = getFieldAnn(par);
@@ -62,21 +63,32 @@ class ModelVisitor extends SimpleElementVisitor {
         field: field,
         name: par.displayName,
         type: par.type as InterfaceType,
-        entitiesTypes: referenceEntities,
+        entitiesTypes: entityTypes,
       );
 
-      clazz.add(p);
+      final res = _isEntityType(p);
+      if (res) {
+        _entityParam.add(p);
+      } else {
+        _nonEnitityParam.add(p);
+      }
+
+      _allParams.add(p);
     }
   }
 
   @override
   void visitMethodElement(MethodElement element) {
-    // print(element);
+    /// TODO: copy method to the class and abstract class
   }
 
-  String _getRedirectConstructorName(ConstructorElement element) {
-    // constructor fields!
+  void _setSourceCode(ConstructorElement element) {
     _sourceCode = element.source.contents.data;
+  }
+
+  /// This method will find the redirect constructor name of a factory
+  /// constructor.
+  String _getRedirectConstructorName(ConstructorElement element) {
     final con = _sourceCode.substring(element.nameOffset);
     final name = getRedirectedConstructorName(con);
 
@@ -87,6 +99,10 @@ class ModelVisitor extends SimpleElementVisitor {
     return name;
   }
 
+  /// This will check, if the constructor is the default factory constructur
+  /// all other factory constructors will be ignored
+  ///
+  /// It throws an error, if element is not a factory constructor
   bool _checkIfFactoryDefaultConstructor(ConstructorElement element) {
     if (element.isDefaultConstructor) {
       if (!element.isFactory) {
@@ -94,7 +110,7 @@ class ModelVisitor extends SimpleElementVisitor {
       }
     } else if (element.isFactory) {
       Print.yellow('''[Entity Repository Generator INFO] '''
-          '''$element will be ignored, as it is not the default factory constructor.''');
+          '''Ignore $element, as it is not the default factory constructor.''');
     }
     return element.isFactory && element.isDefaultConstructor;
   }
@@ -102,11 +118,27 @@ class ModelVisitor extends SimpleElementVisitor {
   /// This method ensures, that a class must be abstract
   /// when annotated with [EntityModel] annotation
   void _checkIfAbstractClass(InterfaceType type) {
-    final el = type.element;
-
     /// if abstract, => all good
-    if (el.isAbstract) return;
+    if (type.element.isAbstract) return;
 
-    throw GeneratorError('''$el must be an abstract class!''');
+    throw GeneratorError('''${type.element} must be an abstract class!''');
+  }
+
+  bool _isEntityType(Param par) {
+    if (par.hasSubType) {
+      final res = par.subTypes.firstWhere(_testType, orElse: () => null);
+
+      if (res != null) {
+        return true;
+      }
+    } else {
+      return _testType(par.type);
+    }
+    return false;
+  }
+
+  bool _testType(InterfaceType type) {
+    final anno = entityTypes[type];
+    return anno != null && anno.model.repository;
   }
 }

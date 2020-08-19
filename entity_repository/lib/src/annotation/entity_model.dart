@@ -12,4 +12,16 @@ class EntityModel {
   final bool immutable;
   final List<Set<String>> index;
   final int typeId;
+
+  @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+
+    return o is EntityModel && o.typeId == typeId;
+  }
+
+  @override
+  int get hashCode {
+    return typeId.hashCode;
+  }
 }

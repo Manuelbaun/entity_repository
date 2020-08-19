@@ -5,17 +5,22 @@ class Param {
   String name;
   InterfaceType type;
   Set<InterfaceType> subTypes = {};
-  final Map<String, ClassElement> _entitiesTypes;
+  final Map<InterfaceType, AnnotatedClazz> _entityTypes;
 
-  bool _contains(InterfaceType type) =>
-      _entitiesTypes.containsKey(type.getDisplayString());
+  bool _isEntityParam(InterfaceType type) {
+    // final name = type.getDisplayString();
+    final anno = _entityTypes[type];
+    return anno != null && anno.model.repository;
+    // return _entitiesTypes.containsKey(type);
+    // && _entitiesTypes[name].model.repository;
+  }
 
   Param({
     this.name,
     this.field,
     this.type,
-    Map<String, ClassElement> entitiesTypes,
-  }) : _entitiesTypes = entitiesTypes {
+    Map<InterfaceType, AnnotatedClazz> entitiesTypes,
+  }) : _entityTypes = entitiesTypes {
     if (type.isDartCoreList || type.isDartCoreSet || type.isDartCoreMap) {
       subTypes = getAllTypes(type).toSet();
     }
@@ -24,15 +29,15 @@ class Param {
   bool get hasSubType => subTypes.isNotEmpty;
 
   String get stringfy {
-    if (_contains(type)) {
+    if (_isEntityParam(type)) {
       return '$name: \${$name?.id}';
     } else if (type.isDartCoreList || type.isDartCoreSet) {
-      if (_contains(subTypes.first)) {
+      if (_isEntityParam(subTypes.first)) {
         return '$name: \${$name.map((e) => e.id)})';
       }
     } else if (type.isDartCoreMap) {
-      final ass1 = _contains(subTypes.first) ? 'key.id' : 'key';
-      final ass2 = _contains(subTypes.last) ? 'value.id' : 'value';
+      final ass1 = _isEntityParam(subTypes.first) ? 'key.id' : 'key';
+      final ass2 = _isEntityParam(subTypes.last) ? 'value.id' : 'value';
 
       return '$name: \${$name.map((key, value) => MapEntry($ass1, $ass2))}';
     }
@@ -88,7 +93,7 @@ class Param {
     String method;
 
     if (subTypes.isEmpty) {
-      if (_contains(type)) {
+      if (_isEntityParam(type)) {
         method = '''$type $toLookUpMethodName {
         return ${(ReferenceLookUp).$name}.findOne<$typeName>($toReferenceName);
       }''';
@@ -118,11 +123,11 @@ class Param {
       final type1 = subTypes.first;
       final type2 = subTypes.last;
 
-      final ass1 = _contains(type1)
+      final ass1 = _isEntityParam(type1)
           ? '${(ReferenceLookUp).$name}.findOne<$type1>(entry.key)'
           : 'entry.key';
 
-      final ass2 = _contains(type2)
+      final ass2 = _isEntityParam(type2)
           ? '${(ReferenceLookUp).$name}.findOne<$type2>(entry.value)'
           : 'entry.value';
 
@@ -159,19 +164,19 @@ class Param {
     var tt = 'String';
 
     if (type.isDartCoreList) {
-      if (_contains(subTypes.first)) {
+      if (_isEntityParam(subTypes.first)) {
         tt = 'List<String>';
       } else {
         tt = 'List<${subTypes.first}>';
       }
     } else if (type.isDartCoreMap) {
-      final t1 = _contains(subTypes.first) ? 'String' : subTypes.first;
+      final t1 = _isEntityParam(subTypes.first) ? 'String' : subTypes.first;
 
-      final t2 = _contains(subTypes.last) ? 'String' : subTypes.last;
+      final t2 = _isEntityParam(subTypes.last) ? 'String' : subTypes.last;
 
       tt = 'Map<$t1, $t2>';
     } else if (type.isDartCoreSet) {
-      if (_contains(subTypes.first)) {
+      if (_isEntityParam(subTypes.first)) {
         tt = 'Set<String>';
       } else {
         tt = 'Set<${subTypes.first}>';
@@ -187,13 +192,13 @@ class Param {
   /// ..write(...)
   String get toSerializeWrite {
     var str = '..writeByte(${field.index})\n..';
-    if (type.isDartCoreList && _contains(subTypes.first)) {
+    if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
       str += 'write(obj.$name?.map((e) => e.id)?.toList())';
-    } else if (type.isDartCoreSet && _contains(subTypes.first)) {
+    } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
       str += 'write(obj.$name?.map((e) => e.id)?.toSet())';
     } else if (type.isDartCoreMap) {
-      final has1 = _contains(subTypes.first);
-      final has2 = _contains(subTypes.last);
+      final has1 = _isEntityParam(subTypes.first);
+      final has2 = _isEntityParam(subTypes.last);
       final t1 = has1 ? 'key.id' : 'key';
       final t2 = has2 ? 'value.id' : 'value';
 
@@ -202,7 +207,7 @@ class Param {
       } else {
         str += 'write(obj.$name)';
       }
-    } else if (_contains(type)) {
+    } else if (_isEntityParam(type)) {
       str += 'write(obj.$name?.id)';
     } else {
       str += 'write(obj.$name)';
@@ -215,7 +220,7 @@ class Param {
     if (type.isDartCoreList) {
       final st = subTypes.first;
 
-      if (_contains(st)) {
+      if (_isEntityParam(st)) {
         return '..$toReferenceName = (fields[${field.index}] as List)?.cast<String>()';
       } else {
         // .songIds = (fields[0] as List)?.cast<String>()
@@ -224,15 +229,15 @@ class Param {
     } else if (type.isDartCoreSet) {
       final st = subTypes.first;
 
-      if (_contains(st)) {
+      if (_isEntityParam(st)) {
         return '..$toReferenceName = (fields[${field.index}] as Set)?.cast<String>()';
       } else {
         // .songIds = (fields[0] as List)?.cast<String>()
         return '..$name = (fields[${field.index}] as Set)?.cast<$st>()';
       }
     } else if (type.isDartCoreMap) {
-      final enType1 = _contains(subTypes.first);
-      final enType2 = _contains(subTypes.last);
+      final enType1 = _isEntityParam(subTypes.first);
+      final enType2 = _isEntityParam(subTypes.last);
 
       final t1 = enType1 ? 'String' : subTypes.first;
       final t2 = enType2 ? 'String' : subTypes.last;
@@ -240,7 +245,7 @@ class Param {
       final fieldName = (enType1 || enType2) ? toReferenceName : name;
 
       return '..$fieldName = (fields[${field.index}] as Map)?.cast<$t1, $t2>()';
-    } else if (_contains(type)) {
+    } else if (_isEntityParam(type)) {
       return '..$toReferenceName = (fields[${field.index}] as String)';
     }
 
