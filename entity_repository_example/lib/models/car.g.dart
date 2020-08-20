@@ -17,6 +17,7 @@ abstract class _$Car extends DataModel<Car> {
       {String id, String model, String type, int buildYear, Person owner});
 }
 
+/// Generate the reference look up mixin
 mixin _CarReferenceLookUp {
   String ownerRefs;
   Person _lookUpOwner() {

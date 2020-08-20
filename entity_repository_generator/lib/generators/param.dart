@@ -10,7 +10,8 @@ class Param {
   bool _isEntityParam(InterfaceType type) {
     // final name = type.getDisplayString();
     final anno = _entityTypes[type];
-    return anno != null && anno.model.repository;
+    return anno != null;
+    //  && anno.model.repository;
     // return _entitiesTypes.containsKey(type);
     // && _entitiesTypes[name].model.repository;
   }

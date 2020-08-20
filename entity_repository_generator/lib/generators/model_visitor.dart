@@ -139,6 +139,7 @@ class ModelVisitor extends SimpleElementVisitor {
 
   bool _testType(InterfaceType type) {
     final anno = entityTypes[type];
-    return anno != null && anno.model.repository;
+    return anno != null;
+    // && anno.model.repository;
   }
 }

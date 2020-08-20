@@ -39,6 +39,7 @@ abstract class _$Song extends DataModel<Song> {
       List<Tag> tags});
 }
 
+/// Generate the reference look up mixin
 mixin _SongReferenceLookUp {
   List<String> authorsRefs;
   List<String> translatorRefs;

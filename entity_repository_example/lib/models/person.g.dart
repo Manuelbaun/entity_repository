@@ -27,6 +27,7 @@ abstract class _$Person extends DataModel<Person> {
       Map<Person, Address> p2a});
 }
 
+/// Generate the reference look up mixin
 mixin _PersonReferenceLookUp {
   String addressRefs;
   List<String> friendsRefs;
