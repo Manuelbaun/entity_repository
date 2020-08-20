@@ -10,6 +10,8 @@ class _RepositoryLocator {
     _isConfigured = true;
   }
 
+  List<RepositoryBase> get values => _map.values.toList();
+
   /// use this internally, to [Serializer] adapter
   void registerAdapter<T>(Serializer<T> adapter) {
     try {
