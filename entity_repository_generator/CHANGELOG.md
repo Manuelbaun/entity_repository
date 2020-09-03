@@ -1,3 +1,7 @@
+# 0.1.6
+* bugfixes
+* generating repository is false by default
+
 # 0.1.5
 * throws an error, when field index is already used
 * fixed adapter generator, when list or set are not `entityModels`

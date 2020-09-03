@@ -1,3 +1,7 @@
+# 0.1.6
+* bug fixes 
+* generate repository by default = false
+
 # 0.1.5
 * added equality for set, list, map
 
