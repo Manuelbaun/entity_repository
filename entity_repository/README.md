@@ -1,10 +1,10 @@
 # Entity Repository Library [Experimental]
 
-This library is an experimental package and is based on Hive as the persistent layer. The main motivation to create this package where some feature I was missing, when using [Hive](https://github.com/hivedb/hive) [HiveWebpage](https://docs.hivedb.dev/#/) (since Hive does not provide it or not fully, and that is ok):
+This library is an experimental package and is based on Hive as the persistent layer. The main motivation to create this package were some feature I was missing, when using [Hive](https://github.com/hivedb/hive) ([HiveWebpage](https://docs.hivedb.dev/#/)):
 
-1. Fields to other classes (I know [HiveList](https://docs.hivedb.dev/#/custom-objects/relationships?id=hivelists)) but other class types as well
-2. Automatically generate Repositories to the HiveType (e.g. 'PersonRepository) for CRUD
-3. Circular References
+1. Fields to other hive classes, basically referencing ([HiveList](https://docs.hivedb.dev/#/custom-objects/relationships?id=hivelists) does it, but only if it is in the same box)
+2. Automatically generate Repositories to the HiveType (e.g. 'PersonRepository) for CRUD operation
+3. Circular References (WIP)
 
 ```Dart
 @HiveType(typeId: 1)
@@ -18,15 +18,15 @@ class Person {
   @HiveField(2)
   List<Person> friends; /// <- Here, use HiveList, to solve the list problem
 
-  @HiveField(3) 
+  @HiveField(3)
   Address address;  /// This will serialize the address and not a reference
 
   @HiveField(4)
   Person friend; /// <- Here, how would hive do that?
-  
+
   @HiveField(5)
   Map<String, Person> someMap; /// what ever that is, it also would not work
-  
+
   @HiveField(6)
   Set<Person> someSet; /// This also would not work out of the box -> convert to hive list first
 }
@@ -45,40 +45,35 @@ class Address {
 void test(){
     final p1 = Person();
     final p2 = Person();
-    
+
     // this is a problem, when call toString() or the adapter
     p1.friend = p2;
     p2.friend = p1;
 }
 ```
 
-I know some projects do a great job [flutter_data](https://pub.dev/packages/flutter_data). I also wanted to learn more about code generation, so, that's what it is. 
-
-
+I know some projects do a great job [flutter_data](https://pub.dev/packages/flutter_data). I also wanted to learn more about code generation, so, that's what it is.
 
 ### Disclaimer
-This package is in a experimental state and not stable, as well as the API will most likely change.
-And the code design might not be the best.
 
+This package is in a experimental stage and not stable and the API will most likely change. Code quality is another aspect of its own :).
 
 ### Requirement
-this package requires the entity_repository_generator package.
+
+this package requires the [entity_repository_generator](https://github.com/Manuelbaun/entity_repository/tree/master/entity_repository_generator) package.
 
 ## How does it work
-The entity model is inspired by the freezed package and how freezed uses the abstract class with constructor redirection.
+
+The entity model is inspired by the freezed package and how freezed uses the abstract class with a constructor redirection.
 
 1. Create an abstract class
-2. use the default factory constructor and specify the constructor params with the 'Field' (basically the HiveField).
-3. choose a constructor redirecting name
-4. generate the code.
-
-
+2. Use the _default_ factory constructor and specify the constructor params with the 'Field' (basically the HiveField).
+3. Choose the constructor redirecting name
+4. Run the code generator.
+5. Then register the Adapter and Repository to the **repositoryLocator** instance
 
 ```dart
-@EntityModel(
-  AdapterIds.person,
-  //index: [ {'name', 'age'} ], // WIP
-)
+@EntityModel(AdapterIds.person)
 abstract class Person implements _$Person {
   factory Person({
     @Field(0) String id,
@@ -93,7 +88,11 @@ abstract class Person implements _$Person {
 }
 ```
 
-The Generator will then Generate the following code for the person entity:
+The generator will generate:
+1. Abstract class of that enity model
+2. Mixin as a reference lookup, when other models are part of this enitiy model
+3. The redirected class with all the field accessor
+4. The model serializer, which is basically the HiveAdapter
 
 ```dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
@@ -104,7 +103,8 @@ part of 'person.dart';
 // EntityRepositoryGenerator
 // **************************************************************************
 
-/// class [Person] Interface 
+/// class [Person] Interface  extends the DataModel<Person>
+/// The DataModel provides the upsert, update, delete and watch api
 abstract class _$Person extends DataModel<Person> {
   _$Person(String id) : super(id);
   String name;
@@ -116,8 +116,9 @@ abstract class _$Person extends DataModel<Person> {
   Map<Person, Address> p2a;
 }
 
-/// So, since only the Id of an other entity model will be stored and not the serialized entity it self,
-/// the mixin will lookup the entities by the ids, only when the fields are accessed. 
+/// Only the Id of an other entity model will be stored and not the serialized
+/// entity it self. The mixin will perform a lookup by the id (aka reference) only
+/// when the field is accessed.
 mixin _PersonReferenceLookUp {
   String addressRefs;
   List<String> friendsRefs;
@@ -173,7 +174,10 @@ mixin _PersonReferenceLookUp {
   }
 }
 
-/// This is the class, which instantiate the person
+/// This is the actual class implementation with the lookup. The name is given by the
+/// the redirected constructor, choosen before. It can be seen here, when class attribute
+/// which referenes other entities is accessed, the lookup will be performed.
+///
 class _Person extends DataModel<Person>
     with _PersonReferenceLookUp
     implements Person {
@@ -198,13 +202,16 @@ class _Person extends DataModel<Person>
   @override
   int age;
 
+  /// If _address is null, the lookUpAddress() method gets called and the result is stored
+  /// in the _address property.
+  Address _address;
+
   @override
   Address get address => _address ??= _lookUpAddress();
 
   @override
   set address(Address address) => _address = address;
 
-  Address _address;
 
   @override
   List<Person> get friends => _friends ??= _lookUpFriends();
@@ -239,7 +246,9 @@ class _Person extends DataModel<Person>
   Map<Person, Address> _p2a;
 
 
-  /// The string method will print only the ids other other entity, to avoid circular calling of the to string method
+  /// Importent: The toString() method will only call the id on another entity
+  /// instead of calling the toString method of that entity. Otherwise it could
+  /// result in a circual toString calling loop, when two entities references each other
   @override
   String toString() =>
       '''Person(id: $id, name: $name, age: $age, address: ${address?.id}, friends: ${friends.map((e) => e.id)}), friends5: ${friends5.map((e) => e.id)}), a5sf: ${a5sf.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a.map((key, value) => MapEntry(key.id, value.id))})''';
@@ -289,13 +298,101 @@ class $PersonAdapter implements Serializer<_Person> {
       ..write(obj.p2a?.map((key, value) => MapEntry(key.id, value.id)));
   }
 }
-
-/// The [$PersonRepo] class of type [Person]
-class $PersonRepo extends RepositoryHive<Person> {}
 ```
 
+## Repository
+
+The entity package comes with a repository class. This is the process to register an entity in order to use it. Both, `RepositoryBase` and `RepositoryHive<Person>` are provided with this package:
+
+1. Create an Interface, in order to be able to inject it somewhere.
+2. Create a class which implements the Repositoy 
+3. Register it to the `repositoryLocater` instance
+
+The interface/abstract class
+```dart
+/// This will reside somewhere, where the domain code is
+abstract class IPersonRepository implements RepositoryBase<Person> {}
+```
+This implements the Repository:
+```dart
+/// The [$PersonRepo] class of type [Person] will resided somewhere in the Infrastructure code
+class PersonRepo extends RepositoryHive<Person> implements IPersonRepository {}
+```
+
+At first, the class `PersonRepo` was also generated in the `*.g.dart` and if the repo should be used, someone would import the entity model and automatically the repository would also be available. But this seemed to be a little spagetti code like in the context of DDD. (The goal is it, to also generate this somewhere and it is *WIP*) 
+
+<!-- To use the Repositories, the following approach is currently recommened and it is easier to use with the injectable package and a DDD design. At a later stage, this might also be generated in a file. -->
 
 
+
+#### Register Repository
+The `repositoryLocator` is an instance of the class `_RepositoryLocator` and used to register the serilizer adapter and the repositories. It will use the model like `Person` and it assoiated `PersonRepository` and `$PersonAdapter`.
+
+```dart
+class Database {
+  /// Initialize all serialisation adapters
+  /// then then the enities
+  static Future<void> initialize() async {
+    final path = Platform.isWindows
+        ? './hive_db'
+        : (await getApplicationDocumentsDirectory()).path;
+
+    repositoryLocator
+      ..configure(path: path)
+      /// example adatpers
+      ..registerAdapter<Color>(ColorAdapter())
+      ..registerAdapter<Duration>(DurationAdapter())
+      ..registerAdapter<TextStyle>(TextStyleAdapter())
+
+      /// Register Entities: Sequence is importent
+      ..registerEntity<Person>(PersonRepository(), $PersonAdapter());
+
+
+    // init all daos, will open the boxes
+    await repositoryLocator.initAll();
+  }
+
+  /// DANGER: will delete all entries in all repositories
+  static Future<void> clearAllRepos() async {
+    repositoryLocator.values.forEach((element) async {
+      await element.clearRepository();
+    });
+  }
+
+  /// Will close all `boxes`
+  static Future<void> dispose() async {
+    await repositoryLocator.disposeAll();
+  }
+}
+```
+
+use the repository locator:
+```dart
+
+void main(){
+  final repo = repositoryLocator.get<Person>() as IPersonRepository;
+
+  /// perform some cruds..
+}
+```
+
+### Injectable example
+If your project uses the getIt package with the injectable package, then you could use the `module` annotation. The injectable package would then register all repositories to the `getIt` instance.
+
+
+```dart
+@module
+abstract class RepositoryModule {
+  /// another repository
+
+  @singleton
+  IPersonRepository get personRepository =>
+      repositoryLocator.get<Person>() as IPersonRepository;
+
+  /// another repository
+  /// ...
+}
+```
 
 ## indices [wip]
 It is possible to specify index fields, which then will check, whether an entity with the same `model` and `owner` is already present in the index or not.
