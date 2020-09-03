@@ -88,6 +88,3 @@ class $AddressAdapter implements Serializer<_Address> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-/// The [$AddressRepo] class of type [Address]
-class $AddressRepo extends RepositoryHive<Address> {}

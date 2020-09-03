@@ -280,6 +280,3 @@ class $SongAdapter implements Serializer<_Song> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-/// The [$SongRepo] class of type [Song]
-class $SongRepo extends RepositoryHive<Song> {}

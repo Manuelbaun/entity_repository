@@ -253,6 +253,3 @@ class $PersonAdapter implements Serializer<_Person> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-/// The [$PersonRepo] class of type [Person]
-class $PersonRepo extends RepositoryHive<Person> {}

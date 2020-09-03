@@ -126,6 +126,3 @@ class $CarAdapter implements Serializer<_Car> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-/// The [$CarRepo] class of type [Car]
-class $CarRepo extends RepositoryHive<Car> with IndicesAccess<Car> {}
