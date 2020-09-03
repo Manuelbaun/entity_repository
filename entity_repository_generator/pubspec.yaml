@@ -1,6 +1,6 @@
 name: entity_repository_generator
 description: This is the entity_repository_generator package, which should be used with the entity_repository package.
-version: 0.1.5
+version: 0.1.6
 homepage: https://mbaun.dev
 repository: https://github.com/Manuelbaun/entity_repository
 
@@ -8,7 +8,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  meta: ^1.2.2  
+  meta: ^1.1.8  
   build: ^1.3.0
   source_gen: ^0.9.6
   analyzer: ">=0.39.12 <0.40.0"
