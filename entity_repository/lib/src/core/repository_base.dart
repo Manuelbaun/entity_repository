@@ -18,15 +18,18 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   Iterable<T> findMany(Iterable keys);
   Iterable<T> findAll();
 
-  Future<bool> insert(T entity, {bool override = false});
-  Future<Iterable<T>> insertMany(Iterable<T> entities, {bool override = false});
+  Future<bool> insert(T entity,
+      {bool override = false, bool fromRemote = false});
+  Future<Iterable<T>> insertMany(Iterable<T> entities,
+      {bool override = false, bool fromRemote = false});
 
-  Future<bool> update(T entity);
-  Future<Iterable<T>> updateMany(Iterable<T> entities);
+  Future<bool> update(T entity, {bool fromRemote = false});
+  Future<Iterable<T>> updateMany(Iterable<T> entities,
+      {bool fromRemote = false});
 
-  Future<void> delete(T entity);
-  Future<void> deleteById(String id);
-  Future<void> deleteMany(Iterable<T> entities);
+  Future<void> delete(T entity, {bool fromRemote = false});
+  Future<void> deleteById(String id, {bool fromRemote = false});
+  Future<void> deleteMany(Iterable<T> entities, {bool fromRemote = false});
 
   /// This will remove all entries from the repository
   Future<void> clearRepository();

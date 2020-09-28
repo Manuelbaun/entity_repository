@@ -56,7 +56,7 @@ class Synchronizer {
         print(res);
         print('---');
 
-        await repo.insert(res);
+        await repo.insert(res, fromRemote: true);
         break;
       case Action.update:
         final entity = repo.findOne(atom.id);
@@ -67,7 +67,7 @@ class Synchronizer {
 
         break;
       case Action.delete:
-        await repo.deleteById(atom.id);
+        await repo.deleteById(atom.id, fromRemote: true);
         break;
     }
   }

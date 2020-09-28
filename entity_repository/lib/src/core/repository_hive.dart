@@ -1,10 +1,6 @@
 part of entity_repository;
 
 class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
-  // once late final field, remove ignore on class
-  /// protect etc..
-  ///
-
   Box<T> _box;
 
   /// The [initialize] method is used to open a hive box
@@ -22,32 +18,6 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   @override
   Future<void> dispose() async {
     await _box.close();
-  }
-
-  /// This will delete the entity of [T], when it is exists. Otherwise it will
-  /// do nothing.
-  @override
-  Future<void> delete(T entity) async {
-    assert(entity != null);
-
-    Synchronizer.delete<T>(entity);
-
-    await _box.delete(entity.id);
-  }
-
-  @override
-  Future<void> deleteById(String id) async {
-    await _box.delete(id);
-  }
-
-  /// This will delete all provided enities
-  @override
-  Future<void> deleteMany(Iterable<T> entities) async {
-    assert(entities != null);
-
-    Synchronizer.deleteMany<T>(entities);
-
-    await _box.deleteAll(entities.map((e) => e.id));
   }
 
   /// This will return all enitites, which are currently in the box
@@ -81,32 +51,32 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// This API might change in the future, into something like upsert.
   /// Otherwise use [insert] with override= true
   @override
-  Future<bool> update(T entity) async {
+  Future<bool> update(
+    T entity, {
+    bool fromRemote = false,
+  }) async {
     assert(entity != null);
 
     if (_box.containsKey(entity.id)) {
-      Synchronizer.update<T>(entity);
+      if (!fromRemote) Synchronizer.update<T>(entity);
 
       await _box.put(entity.id, entity);
       return true;
     }
 
     return false;
-
-    /// TODO: should this be done here? maybe throw exception?
-    /// or just return false
-    // throw EntityRepositoryException('''
-    //   ${entity.runtimeType} with id: ${entity.id} does not exists.
-    //   Insert before update is called''');
   }
 
   /// Updates only if the key is present!
   @override
-  Future<Iterable<T>> updateMany(Iterable<T> entities) async {
+  Future<Iterable<T>> updateMany(
+    Iterable<T> entities, {
+    bool fromRemote = false,
+  }) async {
     assert(entities != null);
 
     for (final entity in entities) {
-      Synchronizer.update<T>(entity);
+      if (!fromRemote) Synchronizer.update<T>(entity);
       await _box.put(entity.id, entity);
     }
 
@@ -135,11 +105,15 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// To override an existing enitity use override = true
   /// This method acts then as an upsert
   @override
-  Future<bool> insert(T entity, {bool override = false}) async {
+  Future<bool> insert(
+    T entity, {
+    bool override = false,
+    bool fromRemote = false,
+  }) async {
     assert(entity != null);
 
     if (override || (!override && !_box.containsKey(entity.id))) {
-      Synchronizer.insert<T>(entity);
+      if (!fromRemote) Synchronizer.insert<T>(entity);
 
       await _box.put(entity.id, entity);
       return true;
@@ -151,12 +125,15 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// inserts only if the key is *NOT* present!
   /// When override =true, then it will insert the entity
   @override
-  Future<Iterable<T>> insertMany(Iterable<T> entities,
-      {bool override = false}) async {
+  Future<Iterable<T>> insertMany(
+    Iterable<T> entities, {
+    bool override = false,
+    bool fromRemote = false,
+  }) async {
     assert(entities != null);
 
     for (final e in entities) {
-      await insert(e, override: override);
+      await insert(e, override: override, fromRemote: fromRemote);
     }
     return entities;
   }
@@ -165,5 +142,34 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   @override
   Future<void> clearRepository() async {
     await _box.clear();
+  }
+
+  /// This will delete the entity of [T], when it is exists. Otherwise it will
+  /// do nothing.
+  @override
+  Future<void> delete(T entity, {bool fromRemote = false}) async {
+    assert(entity != null);
+
+    if (!fromRemote) Synchronizer.delete<T>(entity);
+
+    await _box.delete(entity.id);
+  }
+
+  @override
+  Future<void> deleteById(String id, {bool fromRemote = false}) async {
+    await _box.delete(id);
+  }
+
+  /// This will delete all provided enities
+  @override
+  Future<void> deleteMany(
+    Iterable<T> entities, {
+    bool fromRemote = false,
+  }) async {
+    assert(entities != null);
+
+    if (!fromRemote) Synchronizer.deleteMany<T>(entities);
+
+    await _box.deleteAll(entities.map((e) => e.id));
   }
 }
