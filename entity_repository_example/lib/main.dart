@@ -11,7 +11,14 @@ import 'models/tag.dart';
 Future<void> main() async {
   final list = <Atom>[];
 
-  Synchronizer.onAtomUpdate = list.add;
+  Synchronizer.onAtomUpdate = (a) async {
+    final bytes = msgpackEncode(a);
+    final aa = msgpackDecode<Atom>(bytes);
+
+    list.add(a);
+    print(aa == a);
+    await Synchronizer.receivedRemoteAtom(aa);
+  };
 
   final db = Database();
   await db.initRepository();
@@ -91,9 +98,11 @@ Future<void> main() async {
   await db.songRepository.insert(song);
   await song.update();
 
-  for (final a in list) {
-    await Synchronizer.receivedRemoteAtom(a);
-  }
+  await person2.delete();
+
+  // for (final a in list) {
+  //   await Synchronizer.receivedRemoteAtom(a);
+  // }
 
   await db.dispose();
 }

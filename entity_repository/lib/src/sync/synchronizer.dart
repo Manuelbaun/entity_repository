@@ -39,7 +39,7 @@ class Synchronizer {
     final atom = Atom(
       action: Action.delete,
       typeModel: T.toString(),
-      data: entities.map((e) => e.id).toList(),
+      data: entities.map((e) => e.id),
     );
     onAtomUpdate(atom);
   }
@@ -52,7 +52,7 @@ class Synchronizer {
     switch (atom.action) {
       case Action.insert:
         final fac = repositoryLocator.factories[atom.typeModel];
-        final res = fac?.call(atom.data as Map<int, dynamic>);
+        final res = fac?.call((atom.data as Map).cast<int, dynamic>());
         print(res);
         print('---');
 
@@ -62,11 +62,16 @@ class Synchronizer {
         final entity = repo.findOne(atom.id);
 
         if (entity != null) {
-          entity.applyUpdates(atom.data as Map<int, dynamic>);
+          entity.applyUpdates((atom.data as Map).cast<int, dynamic>());
         }
 
         break;
       case Action.delete:
+        if (atom.data is List) {
+          for (final id in atom.data) {
+            await repo.deleteById(id as String, fromRemote: true);
+          }
+        }
         await repo.deleteById(atom.id, fromRemote: true);
         break;
     }
