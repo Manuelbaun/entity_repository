@@ -107,7 +107,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('\n@override')
       ..writeln('String toString() => ')
       ..writeln('// ignore: lines_longer_than_80_chars')
-      ..write("'${visitor.entityName}(id: \$id ")
+      ..write("'${visitor.entityName}(id: \$id")
       ..write(visitor.params.isNotEmpty ? ', ' : '')
       ..writeAll(visitor.params.map((e) => e.stringfy), ', ')
       ..write(")'")

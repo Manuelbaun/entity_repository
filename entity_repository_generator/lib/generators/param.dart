@@ -37,7 +37,7 @@ class Param {
       return '$name: \${$name?.id}';
     } else if (type.isDartCoreList || type.isDartCoreSet) {
       if (_isEntityParam(subTypes.first)) {
-        return '$name: \${$name?.map((e) => e.id)})';
+        return '$name: \${$name?.map((e) => e.id)}';
       }
     } else if (type.isDartCoreMap) {
       final ass1 = _isEntityParam(subTypes.first) ? 'key.id' : 'key';

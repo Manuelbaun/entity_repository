@@ -1,5 +1,6 @@
 part of entity_repository;
 
+// ignore: avoid_classes_with_only_static_members
 class Synchronizer {
   static Function(Atom) onAtomUpdate = print;
 
@@ -44,10 +45,10 @@ class Synchronizer {
   }
 
   static Future<void> receivedRemoteAtom(Atom atom) async {
-    // factories[atom.typeModel](atom.data);
     print(atom);
-    // return;
+
     final repo = repositoryLocator.getByName(atom.typeModel);
+
     switch (atom.action) {
       case Action.insert:
         final fac = repositoryLocator.factories[atom.typeModel];

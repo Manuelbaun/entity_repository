@@ -282,7 +282,7 @@ class _Person extends DataModel<Person>
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Person(id: $id , name: $name, age: $age, address: ${address?.id}, friends: ${friends?.map((e) => e.id)}), friends5: ${friends5?.map((e) => e.id)}), a5sf: ${a5sf?.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a?.map((key, value) => MapEntry(key.id, value.id))})';
+      'Person(id: $id, name: $name, age: $age, address: ${address?.id}, friends: ${friends?.map((e) => e.id)}, friends5: ${friends5?.map((e) => e.id)}, a5sf: ${a5sf?.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a?.map((key, value) => MapEntry(key.id, value.id))})';
 }
 
 /// The serialize adapter of type [_Person]

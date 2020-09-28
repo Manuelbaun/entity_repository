@@ -141,7 +141,7 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Car(id: $id , model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})';
+      'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})';
 }
 
 /// The serialize adapter of type [_Car]

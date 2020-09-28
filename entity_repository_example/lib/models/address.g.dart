@@ -89,7 +89,7 @@ class _Address extends DataModel<Address> implements Address {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Address(id: $id , street: $street, houseNumber: $houseNumber)';
+      'Address(id: $id, street: $street, houseNumber: $houseNumber)';
 }
 
 /// The serialize adapter of type [_Address]

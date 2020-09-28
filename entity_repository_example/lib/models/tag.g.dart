@@ -59,7 +59,7 @@ class _Tag extends DataModel<Tag> implements Tag {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Tag(id: $id )';
+      'Tag(id: $id)';
 }
 
 /// The serialize adapter of type [_Tag]

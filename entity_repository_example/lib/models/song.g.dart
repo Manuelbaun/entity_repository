@@ -396,7 +396,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Song(id: $id , title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors?.map((e) => e.id)}), authors2: $authors2, copyright: $copyright, translator: ${translator?.map((e) => e.id)}), tags: ${tags?.map((e) => e.id)}))';
+      'Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors?.map((e) => e.id)}, authors2: $authors2, copyright: $copyright, translator: ${translator?.map((e) => e.id)}, tags: ${tags?.map((e) => e.id)})';
 }
 
 /// The serialize adapter of type [_Song]
