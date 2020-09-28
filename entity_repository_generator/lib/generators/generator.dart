@@ -61,43 +61,55 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateClass(ModelVisitor visitor) {
-    final buff = StringBuffer();
-
-    /// assign parameter to class fields
-
-    final constructorParams = visitor.params.map((e) => e.toParamInit).toList();
-
-    final constructorPrivateParamsInit =
-        visitor.params.map((e) => e.toParamInitPrivate).toList();
-
-    final classFields =
-        visitor.params.map((e) => e.toPrivateFieldGetterSetter).toList();
-
-    buff
+    final buff = StringBuffer()
       ..write('class ${visitor.redirectName} extends ')
       ..write('${(DataModel).$name}<${visitor.entityName}> ')
       ..write(visitor.hasEntityReference
           ? 'with ${visitor.referenceClassName}'
           : '')
       ..write(' implements ${visitor.entityName} {\n')
-      ..write('${visitor.redirectName}({String id,') // constructor
-      ..writeAll(constructorParams, ',')
-      ..write('}) : ') // constructor
-      ..writeAll(constructorPrivateParamsInit, ',')
-      ..write(constructorPrivateParamsInit.isNotEmpty ? ',' : '')
-      ..writeln('super(id);\n')
+
+      /// Constructor
+      ..write(generateClassConstructor(visitor))
+      ..write(generateClassCopyConstructor(visitor))
 
       // class fields
-      ..writeAll(classFields, '\n')
+      ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
 
       /// methods
-      ..write(generateClassCopyConstructor(visitor))
       ..write(generateFactoryFromMap(visitor))
       ..write(generateToMap(visitor))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
       ..writeln('}'); // end
+
+    return buff;
+  }
+
+  StringBuffer generateClassConstructor(ModelVisitor visitor) {
+    final buff = StringBuffer()
+      ..write('${visitor.redirectName}({String id,')
+      ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
+      ..write('}) : ') // constructor
+      ..writeAll(visitor.params.map((e) => e.toParamInitPrivate), ',')
+      ..write(visitor.params.isNotEmpty ? ',' : '')
+      ..writeln('super(id);\n');
+
+    return buff;
+  }
+
+  StringBuffer generateClassCopyConstructor(ModelVisitor visitor) {
+    final buff = StringBuffer()
+      ..write(generateCopyWithMethod(visitor, override: true))
+      ..writeln('{')
+      ..writeln('return ${visitor.redirectName}(')
+      ..writeln('id:id ?? this.id,')
+      ..writeAll(
+          visitor.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'),
+          ',')
+      ..writeln(');')
+      ..writeln('}');
 
     return buff;
   }
@@ -123,21 +135,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('${visitor.entityName} copyWith({String id,')
       ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
       ..writeln('})');
-
-    return buff;
-  }
-
-  StringBuffer generateClassCopyConstructor(ModelVisitor visitor) {
-    final buff = StringBuffer()
-      ..write(generateCopyWithMethod(visitor, override: true))
-      ..writeln('{')
-      ..writeln('return ${visitor.redirectName}(')
-      ..writeln('id:id ?? this.id,')
-      ..writeAll(
-          visitor.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'),
-          ',')
-      ..writeln(');')
-      ..writeln('}');
 
     return buff;
   }

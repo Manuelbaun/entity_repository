@@ -20,6 +20,14 @@ class _Address extends DataModel<Address> implements Address {
         _houseNumber = houseNumber,
         super(id);
 
+  @override
+  Address copyWith({String id, String street, int houseNumber}) {
+    return _Address(
+        id: id ?? this.id,
+        street: street ?? this.street,
+        houseNumber: houseNumber ?? this.houseNumber);
+  }
+
   String _street;
 
   @override
@@ -40,14 +48,6 @@ class _Address extends DataModel<Address> implements Address {
   set houseNumber(int houseNumber) {
     _houseNumber = houseNumber;
     setKeyValue(2, houseNumber);
-  }
-
-  @override
-  Address copyWith({String id, String street, int houseNumber}) {
-    return _Address(
-        id: id ?? this.id,
-        street: street ?? this.street,
-        houseNumber: houseNumber ?? this.houseNumber);
   }
 
   factory _Address.fromMap(Map<int, dynamic> fields) {

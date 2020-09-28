@@ -33,6 +33,17 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
         _owner = owner,
         super(id);
 
+  @override
+  Car copyWith(
+      {String id, String model, String type, int buildYear, Person owner}) {
+    return _Car(
+        id: id ?? this.id,
+        model: model ?? this.model,
+        type: type ?? this.type,
+        buildYear: buildYear ?? this.buildYear,
+        owner: owner ?? this.owner);
+  }
+
   String _model;
 
   @override
@@ -75,17 +86,6 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   set owner(Person owner) {
     _owner = owner;
     setKeyValue(4, owner?.id);
-  }
-
-  @override
-  Car copyWith(
-      {String id, String model, String type, int buildYear, Person owner}) {
-    return _Car(
-        id: id ?? this.id,
-        model: model ?? this.model,
-        type: type ?? this.type,
-        buildYear: buildYear ?? this.buildYear,
-        owner: owner ?? this.owner);
   }
 
   factory _Car.fromMap(Map<int, dynamic> fields) {

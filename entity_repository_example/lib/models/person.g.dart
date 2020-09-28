@@ -104,6 +104,27 @@ class _Person extends DataModel<Person>
         _p2a = p2a,
         super(id);
 
+  @override
+  Person copyWith(
+      {String id,
+      String name,
+      int age,
+      Address address,
+      List<Person> friends,
+      Set<Person> friends5,
+      Map<int, Address> a5sf,
+      Map<Person, Address> p2a}) {
+    return _Person(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        age: age ?? this.age,
+        address: address ?? this.address,
+        friends: friends ?? this.friends,
+        friends5: friends5 ?? this.friends5,
+        a5sf: a5sf ?? this.a5sf,
+        p2a: p2a ?? this.p2a);
+  }
+
   String _name;
 
   @override
@@ -179,27 +200,6 @@ class _Person extends DataModel<Person>
   set p2a(Map<Person, Address> p2a) {
     _p2a = p2a;
     setKeyValue(7, p2a?.map((key, value) => MapEntry(key.id, value.id)));
-  }
-
-  @override
-  Person copyWith(
-      {String id,
-      String name,
-      int age,
-      Address address,
-      List<Person> friends,
-      Set<Person> friends5,
-      Map<int, Address> a5sf,
-      Map<Person, Address> p2a}) {
-    return _Person(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        age: age ?? this.age,
-        address: address ?? this.address,
-        friends: friends ?? this.friends,
-        friends5: friends5 ?? this.friends5,
-        a5sf: a5sf ?? this.a5sf,
-        p2a: p2a ?? this.p2a);
   }
 
   factory _Person.fromMap(Map<int, dynamic> fields) {
