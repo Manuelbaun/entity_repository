@@ -50,6 +50,15 @@ class Database {
 
     // init all daos, will open the boxes
     await repositoryLocator.initAll();
+
+    repositoryLocator
+      ..registerMapFactory<Address>(Address.fromMap)
+      ..registerMapFactory<Person>(Person.fromMap)
+      ..registerMapFactory<Car>(Car.fromMap)
+      ..registerMapFactory<Song>(Song.fromMap)
+      ..registerMapFactory<Tag>(Tag.fromMap);
+
+    print(repositoryLocator.factories);
   }
 
   IAddressRepository get addressRepository =>

@@ -3,7 +3,6 @@ import 'adapterIds.dart';
 
 part 'address.g.dart';
 
-// sdfdsfd
 @EntityModel(AdapterIds.address)
 abstract class Address implements _$Address {
   factory Address({
@@ -12,7 +11,9 @@ abstract class Address implements _$Address {
     @Field(2) int houseNumber,
   }) = _Address;
 
-  factory Address.defaulty2() => Address();
+  static Address fromMap(Map<int, dynamic> fields) => _Address.fromMap(fields);
 }
 
-/// sdsdfvsdf
+void main() {
+  //asdf asd asd asdfasdf asdf asdds asdf asd
+}

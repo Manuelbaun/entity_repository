@@ -26,24 +26,57 @@ mixin _CarReferenceLookUp {
 }
 
 class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
-  _Car({String id, Person owner, this.model, this.type, this.buildYear})
-      : _owner = owner,
+  _Car({String id, String model, String type, int buildYear, Person owner})
+      : _model = model,
+        _type = type,
+        _buildYear = buildYear,
+        _owner = owner,
         super(id);
 
+  String _model;
+
   @override
-  String model;
+  String get model => _model;
+
   @override
-  String type;
+  set model(String model) {
+    _model = model;
+    setKeyValue(1, model);
+  }
+
+  String _type;
+
   @override
-  int buildYear;
+  String get type => _type;
+
+  @override
+  set type(String type) {
+    _type = type;
+    setKeyValue(2, type);
+  }
+
+  int _buildYear;
+
+  @override
+  int get buildYear => _buildYear;
+
+  @override
+  set buildYear(int buildYear) {
+    _buildYear = buildYear;
+    setKeyValue(3, buildYear);
+  }
+
+  Person _owner;
 
   @override
   Person get owner => _owner ??= _lookUpOwner();
 
   @override
-  set owner(Person owner) => _owner = owner;
+  set owner(Person owner) {
+    _owner = owner;
+    setKeyValue(4, owner?.id);
+  }
 
-  Person _owner;
   @override
   Car copyWith(
       {String id, String model, String type, int buildYear, Person owner}) {
@@ -53,6 +86,36 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
         type: type ?? this.type,
         buildYear: buildYear ?? this.buildYear,
         owner: owner ?? this.owner);
+  }
+
+  factory _Car.fromMap(Map<int, dynamic> fields) {
+    return _Car(
+        id: fields[0] as String,
+        model: fields[1] as String,
+        type: fields[2] as String,
+        buildYear: fields[3] as int)
+      ..ownerRefs = (fields[4] as String);
+  }
+
+  @override
+  Map<int, dynamic> toMap() {
+    return {0: id, 1: model, 2: type, 3: buildYear, 4: owner?.id};
+  }
+
+  @override
+  void applyUpdates(Map<int, dynamic> fields) {
+    if (fields.containsKey(1)) {
+      _model = fields[1] as String;
+    }
+    if (fields.containsKey(2)) {
+      _type = fields[2] as String;
+    }
+    if (fields.containsKey(3)) {
+      _buildYear = fields[3] as int;
+    }
+    if (fields.containsKey(4)) {
+      ownerRefs = (fields[4] as String);
+    }
   }
 
   @override
@@ -93,11 +156,7 @@ class $CarAdapter implements Serializer<_Car> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Car(id: fields[0] as String)
-      ..model = fields[1] as String
-      ..type = fields[2] as String
-      ..buildYear = fields[3] as int
-      ..ownerRefs = (fields[4] as String);
+    return _Car.fromMap(fields);
   }
 
   @override

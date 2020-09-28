@@ -69,68 +69,177 @@ mixin _SongReferenceLookUp {
 class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   _Song(
       {String id,
+      String title,
+      int bpm,
+      int transpose,
+      String songKey,
+      int capo,
+      String lyrics,
+      String notes,
+      String ccli,
       List<Person> authors,
+      List<int> authors2,
+      String copyright,
       List<Person> translator,
-      List<Tag> tags,
-      this.title,
-      this.bpm,
-      this.transpose,
-      this.songKey,
-      this.capo,
-      this.lyrics,
-      this.notes,
-      this.ccli,
-      this.authors2,
-      this.copyright})
-      : _authors = authors,
+      List<Tag> tags})
+      : _title = title,
+        _bpm = bpm,
+        _transpose = transpose,
+        _songKey = songKey,
+        _capo = capo,
+        _lyrics = lyrics,
+        _notes = notes,
+        _ccli = ccli,
+        _authors = authors,
+        _authors2 = authors2,
+        _copyright = copyright,
         _translator = translator,
         _tags = tags,
         super(id);
 
-  @override
-  String title;
-  @override
-  int bpm;
-  @override
-  int transpose;
-  @override
-  String songKey;
-  @override
-  int capo;
-  @override
-  String lyrics;
-  @override
-  String notes;
-  @override
-  String ccli;
-  @override
-  List<int> authors2;
-  @override
-  String copyright;
+  String _title;
 
   @override
-  List<Person> get authors => _authors ??= _lookUpAuthors();
+  String get title => _title;
 
   @override
-  set authors(List<Person> authors) => _authors = authors;
+  set title(String title) {
+    _title = title;
+    setKeyValue(1, title);
+  }
+
+  int _bpm;
+
+  @override
+  int get bpm => _bpm;
+
+  @override
+  set bpm(int bpm) {
+    _bpm = bpm;
+    setKeyValue(2, bpm);
+  }
+
+  int _transpose;
+
+  @override
+  int get transpose => _transpose;
+
+  @override
+  set transpose(int transpose) {
+    _transpose = transpose;
+    setKeyValue(3, transpose);
+  }
+
+  String _songKey;
+
+  @override
+  String get songKey => _songKey;
+
+  @override
+  set songKey(String songKey) {
+    _songKey = songKey;
+    setKeyValue(4, songKey);
+  }
+
+  int _capo;
+
+  @override
+  int get capo => _capo;
+
+  @override
+  set capo(int capo) {
+    _capo = capo;
+    setKeyValue(5, capo);
+  }
+
+  String _lyrics;
+
+  @override
+  String get lyrics => _lyrics;
+
+  @override
+  set lyrics(String lyrics) {
+    _lyrics = lyrics;
+    setKeyValue(6, lyrics);
+  }
+
+  String _notes;
+
+  @override
+  String get notes => _notes;
+
+  @override
+  set notes(String notes) {
+    _notes = notes;
+    setKeyValue(7, notes);
+  }
+
+  String _ccli;
+
+  @override
+  String get ccli => _ccli;
+
+  @override
+  set ccli(String ccli) {
+    _ccli = ccli;
+    setKeyValue(8, ccli);
+  }
 
   List<Person> _authors;
 
   @override
-  List<Person> get translator => _translator ??= _lookUpTranslator();
+  List<Person> get authors => _authors;
 
   @override
-  set translator(List<Person> translator) => _translator = translator;
+  set authors(List<Person> authors) {
+    _authors = authors;
+    setKeyValue(9, authors?.map((e) => e.id)?.toList());
+  }
+
+  List<int> _authors2;
+
+  @override
+  List<int> get authors2 => _authors2;
+
+  @override
+  set authors2(List<int> authors2) {
+    _authors2 = authors2;
+    setKeyValue(10, authors2);
+  }
+
+  String _copyright;
+
+  @override
+  String get copyright => _copyright;
+
+  @override
+  set copyright(String copyright) {
+    _copyright = copyright;
+    setKeyValue(11, copyright);
+  }
 
   List<Person> _translator;
 
   @override
-  List<Tag> get tags => _tags ??= _lookUpTags();
+  List<Person> get translator => _translator;
 
   @override
-  set tags(List<Tag> tags) => _tags = tags;
+  set translator(List<Person> translator) {
+    _translator = translator;
+    setKeyValue(12, translator?.map((e) => e.id)?.toList());
+  }
 
   List<Tag> _tags;
+
+  @override
+  List<Tag> get tags => _tags;
+
+  @override
+  set tags(List<Tag> tags) {
+    _tags = tags;
+    setKeyValue(13, tags?.map((e) => e.id)?.toList());
+  }
+
   @override
   Song copyWith(
       {String id,
@@ -162,6 +271,88 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
         copyright: copyright ?? this.copyright,
         translator: translator ?? this.translator,
         tags: tags ?? this.tags);
+  }
+
+  factory _Song.fromMap(Map<int, dynamic> fields) {
+    return _Song(
+        id: fields[0] as String,
+        title: fields[1] as String,
+        bpm: fields[2] as int,
+        transpose: fields[3] as int,
+        songKey: fields[4] as String,
+        capo: fields[5] as int,
+        lyrics: fields[6] as String,
+        notes: fields[7] as String,
+        ccli: fields[8] as String,
+        authors2: (fields[10] as List)?.cast<int>(),
+        copyright: fields[11] as String)
+      ..authorsRefs = (fields[9] as List)?.cast<String>()
+      ..translatorRefs = (fields[12] as List)?.cast<String>()
+      ..tagsRefs = (fields[13] as List)?.cast<String>();
+  }
+
+  @override
+  Map<int, dynamic> toMap() {
+    return {
+      0: id,
+      1: title,
+      2: bpm,
+      3: transpose,
+      4: songKey,
+      5: capo,
+      6: lyrics,
+      7: notes,
+      8: ccli,
+      9: authors?.map((e) => e.id)?.toList(),
+      10: authors2,
+      11: copyright,
+      12: translator?.map((e) => e.id)?.toList(),
+      13: tags?.map((e) => e.id)?.toList()
+    };
+  }
+
+  @override
+  void applyUpdates(Map<int, dynamic> fields) {
+    if (fields.containsKey(1)) {
+      _title = fields[1] as String;
+    }
+    if (fields.containsKey(2)) {
+      _bpm = fields[2] as int;
+    }
+    if (fields.containsKey(3)) {
+      _transpose = fields[3] as int;
+    }
+    if (fields.containsKey(4)) {
+      _songKey = fields[4] as String;
+    }
+    if (fields.containsKey(5)) {
+      _capo = fields[5] as int;
+    }
+    if (fields.containsKey(6)) {
+      _lyrics = fields[6] as String;
+    }
+    if (fields.containsKey(7)) {
+      _notes = fields[7] as String;
+    }
+    if (fields.containsKey(8)) {
+      _ccli = fields[8] as String;
+    }
+    if (fields.containsKey(9)) {
+      authorsRefs = (fields[9] as List)?.cast<String>();
+    }
+    if (fields.containsKey(10)) {
+      _authors2:
+      (fields[10] as List)?.cast<int>();
+    }
+    if (fields.containsKey(11)) {
+      _copyright = fields[11] as String;
+    }
+    if (fields.containsKey(12)) {
+      translatorRefs = (fields[12] as List)?.cast<String>();
+    }
+    if (fields.containsKey(13)) {
+      tagsRefs = (fields[13] as List)?.cast<String>();
+    }
   }
 
   @override
@@ -205,7 +396,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Song(id: $id , title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors.map((e) => e.id)}), authors2: $authors2, copyright: $copyright, translator: ${translator.map((e) => e.id)}), tags: ${tags.map((e) => e.id)}))';
+      'Song(id: $id , title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors?.map((e) => e.id)}), authors2: $authors2, copyright: $copyright, translator: ${translator?.map((e) => e.id)}), tags: ${tags?.map((e) => e.id)}))';
 }
 
 /// The serialize adapter of type [_Song]
@@ -220,20 +411,7 @@ class $SongAdapter implements Serializer<_Song> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Song(id: fields[0] as String)
-      ..title = fields[1] as String
-      ..bpm = fields[2] as int
-      ..transpose = fields[3] as int
-      ..songKey = fields[4] as String
-      ..capo = fields[5] as int
-      ..lyrics = fields[6] as String
-      ..notes = fields[7] as String
-      ..ccli = fields[8] as String
-      ..authorsRefs = (fields[9] as List)?.cast<String>()
-      ..authors2 = (fields[10] as List)?.cast<int>()
-      ..copyright = fields[11] as String
-      ..translatorRefs = (fields[12] as List)?.cast<String>()
-      ..tagsRefs = (fields[13] as List)?.cast<String>();
+    return _Song.fromMap(fields);
   }
 
   @override

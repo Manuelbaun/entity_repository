@@ -12,7 +12,6 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   /// Returns a Stream, which listens to the key.
   /// Returns null, if key does not exist
   Stream<T> watch(dynamic key);
-
   Stream<Iterable<T>> watchAll();
 
   T findOne(dynamic key);
@@ -26,6 +25,7 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   Future<Iterable<T>> updateMany(Iterable<T> entities);
 
   Future<void> delete(T entity);
+  Future<void> deleteById(String id);
   Future<void> deleteMany(Iterable<T> entities);
 
   /// This will remove all entries from the repository

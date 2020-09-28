@@ -34,7 +34,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(visitor.params.map((e) => e.toPublicField), '\n')
 
       // copy with
-      ..write(generateCopyWithSignature(visitor))
+      ..write(generateCopyWithMethod(visitor))
       ..write(';')
       ..writeln('}');
 
@@ -65,21 +65,13 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     /// assign parameter to class fields
 
-    final constructorParams = [
-      ...visitor.paramsEntities.map((e) => e.toParamInit).toList(),
-      ...visitor.paramsNonEntity.map((e) => e.toParamInitThis).toList(),
-    ];
+    final constructorParams = visitor.params.map((e) => e.toParamInit).toList();
 
     final constructorPrivateParamsInit =
-        visitor.paramsEntities.map((e) => e.toParamInitPrivate).toList();
+        visitor.params.map((e) => e.toParamInitPrivate).toList();
 
-    // class fields
-    final classFieldsRegular =
-        visitor.paramsNonEntity.map((e) => e.toPublicFieldOverride).toList();
-
-    /// remove set if only readable???
-    final classFieldsEntityGetterSetter =
-        visitor.paramsEntities.map((e) => e.toGetSetPrivate).toList();
+    final classFields =
+        visitor.params.map((e) => e.toPrivateFieldGetterSetter).toList();
 
     buff
       ..write('class ${visitor.redirectName} extends ')
@@ -94,9 +86,15 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(constructorPrivateParamsInit, ',')
       ..write(constructorPrivateParamsInit.isNotEmpty ? ',' : '')
       ..writeln('super(id);\n')
-      ..writeAll(classFieldsRegular, '\n')
-      ..writeAll(classFieldsEntityGetterSetter, '\n')
+
+      // class fields
+      ..writeAll(classFields, '\n')
+
+      /// methods
       ..write(generateClassCopyConstructor(visitor))
+      ..write(generateFactoryFromMap(visitor))
+      ..write(generateToMap(visitor))
+      ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
       ..writeln('}'); // end
@@ -118,7 +116,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateCopyWithSignature(ModelVisitor visitor,
+  StringBuffer generateCopyWithMethod(ModelVisitor visitor,
       {bool override = false}) {
     final buff = StringBuffer()
       ..writeln(override ? '\n@override' : '')
@@ -131,7 +129,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateClassCopyConstructor(ModelVisitor visitor) {
     final buff = StringBuffer()
-      ..write(generateCopyWithSignature(visitor, override: true))
+      ..write(generateCopyWithMethod(visitor, override: true))
       ..writeln('{')
       ..writeln('return ${visitor.redirectName}(')
       ..writeln('id:id ?? this.id,')
@@ -141,6 +139,48 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln(');')
       ..writeln('}');
 
+    return buff;
+  }
+
+  StringBuffer generateFactoryFromMap(ModelVisitor visitor) {
+    final buff = StringBuffer()
+      ..write('\n\n')
+      ..write('factory ${visitor.redirectName}')
+      ..write('.fromMap(Map<int, dynamic> fields) {')
+      ..writeln('return ${visitor.redirectName}(id: fields[0] as String,')
+      ..writeAll(
+          visitor.paramsNonEntity.map((e) => e.toSerializeReadField), ',\n')
+      ..write(')')
+      ..writeAll(visitor.paramsEntities.map((e) => e.toSerializeRead), '\n')
+      ..write(';}');
+
+    return buff;
+  }
+
+  StringBuffer generateToMap(ModelVisitor visitor) {
+    final buff = StringBuffer()
+
+      ///Write bin
+      ..writeln('\n\n@override')
+      ..writeln('Map<int, dynamic> toMap() {')
+      ..writeln('return {')
+      ..writeln('0: id,')
+      ..writeAll(visitor.params.map((e) => e.toMapEntry), ',\n')
+      ..writeln('};}');
+
+    return buff;
+  }
+
+  StringBuffer generateApplyUpdates(ModelVisitor visitor) {
+    final buff = StringBuffer()
+
+      ///Write bin
+      ..writeln('\n\n@override')
+      ..writeln('void applyUpdates(Map<int, dynamic> fields) {')
+      ..writeAll(visitor.params.map((e) => e.toFieldFromMap), '\n')
+      ..writeln('}');
+
+    final str = buff.toString();
     return buff;
   }
 
@@ -196,8 +236,9 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('@override')
       ..writeln('${visitor.redirectName} read(BinaryReader reader) {')
       ..writeln(readerField)
-      ..writeln('\n\nreturn ${visitor.redirectName}(id: fields[0] as String)')
-      ..writeAll(visitor.params.map((e) => e.toSerializeRead), '\n')
+      ..writeln('\n\nreturn ${visitor.redirectName}.fromMap(fields)')
+      // ..writeln('\n\nreturn ${visitor.redirectName}(id: fields[0] as String)')
+      // ..writeAll(visitor.params.map((e) => e.toSerializeRead), '\n')
       ..writeln(';}')
 
       ///Write bin

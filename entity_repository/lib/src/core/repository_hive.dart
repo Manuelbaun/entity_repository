@@ -2,7 +2,8 @@ part of entity_repository;
 
 class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   // once late final field, remove ignore on class
-  /// protext etc..
+  /// protect etc..
+  ///
 
   Box<T> _box;
 
@@ -29,13 +30,22 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Future<void> delete(T entity) async {
     assert(entity != null);
 
+    Synchronizer.delete<T>(entity);
+
     await _box.delete(entity.id);
+  }
+
+  @override
+  Future<void> deleteById(String id) async {
+    await _box.delete(id);
   }
 
   /// This will delete all provided enities
   @override
   Future<void> deleteMany(Iterable<T> entities) async {
     assert(entities != null);
+
+    Synchronizer.deleteMany<T>(entities);
 
     await _box.deleteAll(entities.map((e) => e.id));
   }
@@ -75,6 +85,8 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entity != null);
 
     if (_box.containsKey(entity.id)) {
+      Synchronizer.update<T>(entity);
+
       await _box.put(entity.id, entity);
       return true;
     }
@@ -93,11 +105,9 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Future<Iterable<T>> updateMany(Iterable<T> entities) async {
     assert(entities != null);
 
-    for (final en in entities) {
-      if (_box.containsKey(en.id)) {
-        await _box.put(en.id, en);
-      }
-      // TODO: errors?
+    for (final entity in entities) {
+      Synchronizer.update<T>(entity);
+      await _box.put(entity.id, entity);
     }
 
     return entities;
@@ -129,16 +139,13 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entity != null);
 
     if (override || (!override && !_box.containsKey(entity.id))) {
+      Synchronizer.insert<T>(entity);
+
       await _box.put(entity.id, entity);
       return true;
     }
 
-    /// TODO: Think again
     return false;
-
-    // throw EntityRepositoryException(
-    //     '''Could insert Type $T, since a $T with id '''
-    //     '''of "${entity.id}" already exist.''');
   }
 
   /// inserts only if the key is *NOT* present!
@@ -149,7 +156,6 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entities != null);
 
     for (final e in entities) {
-      // TODO: implement insertMany map it before!! and use putall
       await insert(e, override: override);
     }
     return entities;

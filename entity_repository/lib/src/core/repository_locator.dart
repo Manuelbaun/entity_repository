@@ -1,9 +1,16 @@
 part of entity_repository;
 
 /// The RepositoryLocater is used to lookup a repository of an entity model
-///
+
+typedef EntityMapFactory<T extends DataModel<T>> = DataModel<T> Function(
+    Map<int, dynamic>);
+
 class _RepositoryLocator {
   final _map = <String, RepositoryBase>{};
+  final _mapInt = <int, RepositoryBase>{};
+
+  final factories = <String, EntityMapFactory>{};
+
   bool _isConfigured = false;
   void configure({String path}) {
     Hive.init(path);
@@ -12,12 +19,15 @@ class _RepositoryLocator {
 
   List<RepositoryBase> get values => _map.values.toList();
 
+  RepositoryBase getByType(int type) => _mapInt[type];
+  RepositoryBase getByName(String type) => _map[type];
+
   /// use this internally, to [Serializer] adapter
   void registerAdapter<T>(Serializer<T> adapter) {
     try {
       Hive.registerAdapter<T>(adapter);
     } catch (e) {
-      // throw HIveError
+      // throw HiveError
       rethrow;
     }
   }
@@ -33,12 +43,20 @@ class _RepositoryLocator {
 
     if (!_map.containsKey(typeString)) {
       _map[typeString] = repository;
+      _mapInt[adapter.typeId] = repository;
 
       registerAdapter<T>(adapter);
     } else {
       throw EntityRepositoryError(
           'Type ${T.runtimeType} is already registered');
     }
+  }
+
+  void registerMapFactory<T extends DataModel<T>>(
+      EntityMapFactory<T> entityFactory) {
+    final typeString = T.toString();
+
+    factories[typeString] = entityFactory;
   }
 
   /// Will Return the [RepositoryBase] of type [T]

@@ -29,6 +29,22 @@ class _Tag extends DataModel<Tag> implements Tag {
     );
   }
 
+  factory _Tag.fromMap(Map<int, dynamic> fields) {
+    return _Tag(
+      id: fields[0] as String,
+    );
+  }
+
+  @override
+  Map<int, dynamic> toMap() {
+    return {
+      0: id,
+    };
+  }
+
+  @override
+  void applyUpdates(Map<int, dynamic> fields) {}
+
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
@@ -58,7 +74,7 @@ class $TagAdapter implements Serializer<_Tag> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Tag(id: fields[0] as String);
+    return _Tag.fromMap(fields);
   }
 
   @override

@@ -88,64 +88,99 @@ class _Person extends DataModel<Person>
     implements Person {
   _Person(
       {String id,
+      String name,
+      int age,
       Address address,
       List<Person> friends,
       Set<Person> friends5,
       Map<int, Address> a5sf,
-      Map<Person, Address> p2a,
-      this.name,
-      this.age})
-      : _address = address,
+      Map<Person, Address> p2a})
+      : _name = name,
+        _age = age,
+        _address = address,
         _friends = friends,
         _friends5 = friends5,
         _a5sf = a5sf,
         _p2a = p2a,
         super(id);
 
+  String _name;
+
   @override
-  String name;
+  String get name => _name;
+
   @override
-  int age;
+  set name(String name) {
+    _name = name;
+    setKeyValue(1, name);
+  }
+
+  int _age;
+
+  @override
+  int get age => _age;
+
+  @override
+  set age(int age) {
+    _age = age;
+    setKeyValue(2, age);
+  }
+
+  Address _address;
 
   @override
   Address get address => _address ??= _lookUpAddress();
 
   @override
-  set address(Address address) => _address = address;
-
-  Address _address;
-
-  @override
-  List<Person> get friends => _friends ??= _lookUpFriends();
-
-  @override
-  set friends(List<Person> friends) => _friends = friends;
+  set address(Address address) {
+    _address = address;
+    setKeyValue(3, address?.id);
+  }
 
   List<Person> _friends;
 
   @override
-  Set<Person> get friends5 => _friends5 ??= _lookUpFriends5();
+  List<Person> get friends => _friends;
 
   @override
-  set friends5(Set<Person> friends5) => _friends5 = friends5;
+  set friends(List<Person> friends) {
+    _friends = friends;
+    setKeyValue(4, friends?.map((e) => e.id)?.toList());
+  }
 
   Set<Person> _friends5;
 
   @override
-  Map<int, Address> get a5sf => _a5sf ??= _lookUpA5sf();
+  Set<Person> get friends5 => _friends5;
 
   @override
-  set a5sf(Map<int, Address> a5sf) => _a5sf = a5sf;
+  set friends5(Set<Person> friends5) {
+    _friends5 = friends5;
+    setKeyValue(5, friends5?.map((e) => e.id)?.toSet());
+  }
 
   Map<int, Address> _a5sf;
 
   @override
-  Map<Person, Address> get p2a => _p2a ??= _lookUpP2a();
+  Map<int, Address> get a5sf => _a5sf;
 
   @override
-  set p2a(Map<Person, Address> p2a) => _p2a = p2a;
+  set a5sf(Map<int, Address> a5sf) {
+    _a5sf = a5sf;
+    setKeyValue(6, a5sf?.map((key, value) => MapEntry(key, value.id)));
+  }
 
   Map<Person, Address> _p2a;
+
+  @override
+  Map<Person, Address> get p2a => _p2a;
+
+  @override
+  set p2a(Map<Person, Address> p2a) {
+    _p2a = p2a;
+    setKeyValue(7, p2a?.map((key, value) => MapEntry(key.id, value.id)));
+  }
+
   @override
   Person copyWith(
       {String id,
@@ -165,6 +200,57 @@ class _Person extends DataModel<Person>
         friends5: friends5 ?? this.friends5,
         a5sf: a5sf ?? this.a5sf,
         p2a: p2a ?? this.p2a);
+  }
+
+  factory _Person.fromMap(Map<int, dynamic> fields) {
+    return _Person(
+        id: fields[0] as String,
+        name: fields[1] as String,
+        age: fields[2] as int)
+      ..addressRefs = (fields[3] as String)
+      ..friendsRefs = (fields[4] as List)?.cast<String>()
+      ..friends5Refs = (fields[5] as Set)?.cast<String>()
+      ..a5sfRefs = (fields[6] as Map)?.cast<int, String>()
+      ..p2aRefs = (fields[7] as Map)?.cast<String, String>();
+  }
+
+  @override
+  Map<int, dynamic> toMap() {
+    return {
+      0: id,
+      1: name,
+      2: age,
+      3: address?.id,
+      4: friends?.map((e) => e.id)?.toList(),
+      5: friends5?.map((e) => e.id)?.toSet(),
+      6: a5sf?.map((key, value) => MapEntry(key, value.id)),
+      7: p2a?.map((key, value) => MapEntry(key.id, value.id))
+    };
+  }
+
+  @override
+  void applyUpdates(Map<int, dynamic> fields) {
+    if (fields.containsKey(1)) {
+      _name = fields[1] as String;
+    }
+    if (fields.containsKey(2)) {
+      _age = fields[2] as int;
+    }
+    if (fields.containsKey(3)) {
+      addressRefs = (fields[3] as String);
+    }
+    if (fields.containsKey(4)) {
+      friendsRefs = (fields[4] as List)?.cast<String>();
+    }
+    if (fields.containsKey(5)) {
+      friends5Refs = (fields[5] as Set)?.cast<String>();
+    }
+    if (fields.containsKey(6)) {
+      a5sfRefs = (fields[6] as Map)?.cast<int, String>();
+    }
+    if (fields.containsKey(7)) {
+      p2aRefs = (fields[7] as Map)?.cast<String, String>();
+    }
   }
 
   @override
@@ -196,7 +282,7 @@ class _Person extends DataModel<Person>
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Person(id: $id , name: $name, age: $age, address: ${address?.id}, friends: ${friends.map((e) => e.id)}), friends5: ${friends5.map((e) => e.id)}), a5sf: ${a5sf.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a.map((key, value) => MapEntry(key.id, value.id))})';
+      'Person(id: $id , name: $name, age: $age, address: ${address?.id}, friends: ${friends?.map((e) => e.id)}), friends5: ${friends5?.map((e) => e.id)}), a5sf: ${a5sf?.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a?.map((key, value) => MapEntry(key.id, value.id))})';
 }
 
 /// The serialize adapter of type [_Person]
@@ -211,14 +297,7 @@ class $PersonAdapter implements Serializer<_Person> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Person(id: fields[0] as String)
-      ..name = fields[1] as String
-      ..age = fields[2] as int
-      ..addressRefs = (fields[3] as String)
-      ..friendsRefs = (fields[4] as List)?.cast<String>()
-      ..friends5Refs = (fields[5] as Set)?.cast<String>()
-      ..a5sfRefs = (fields[6] as Map)?.cast<int, String>()
-      ..p2aRefs = (fields[7] as Map)?.cast<String, String>();
+    return _Person.fromMap(fields);
   }
 
   @override

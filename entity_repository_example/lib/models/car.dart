@@ -20,6 +20,8 @@ abstract class Car extends _$Car {
     @Field(4) Person owner,
   }) = _Car;
 
+  static Car fromMap(Map<int, dynamic> fields) => _Car.fromMap(fields);
+
   @override
   String toString() {
     return 'Hello World';

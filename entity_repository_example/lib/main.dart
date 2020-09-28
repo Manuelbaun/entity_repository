@@ -9,10 +9,12 @@ import 'models/song.dart';
 import 'models/tag.dart';
 
 Future<void> main() async {
+  final list = <Atom>[];
+
+  Synchronizer.onAtomUpdate = list.add;
+
   final db = Database();
   await db.initRepository();
-
-  db.personRepository.findAll().forEach(print);
 
   final f0 = Person(name: 'Friend 0', age: 30);
   final f1 = Person(name: 'Friend 1', age: 30);
@@ -30,8 +32,8 @@ Future<void> main() async {
   f0.friends = [person1];
 
   final person2 = Person(
-    name: 'Hans',
-    age: 30,
+    name: 'Hans2',
+    age: 32,
     address: Address()
       ..street = 'Icker'
       ..houseNumber = 2,
@@ -41,12 +43,11 @@ Future<void> main() async {
   await db.personRepository.insert(person1);
   await db.personRepository.insert(person2);
 
+  person1.age = 9999;
   await person1.update();
   await person2.update();
 
   await person1.update();
-
-  db.personRepository.findAll().forEach(print);
 
   // model is null!!
   final cars = [
@@ -70,10 +71,7 @@ Future<void> main() async {
 
   person1.name = 'Peter';
 
-  print(person1.id);
-
   final res = db.personRepository.findOne(person1.id);
-  print(res);
 
   final song = Song(
     authors: [person1, person1],
@@ -93,10 +91,9 @@ Future<void> main() async {
   await db.songRepository.insert(song);
   await song.update();
 
-  db.songRepository.findAll().forEach(print);
-  db.tagRepository.findAll().forEach(print);
-
-  print(db.personRepository.findAll().length);
+  for (final a in list) {
+    await Synchronizer.receivedRemoteAtom(a);
+  }
 
   await db.dispose();
 }

@@ -1,6 +1,7 @@
 library entity_repository;
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
@@ -25,6 +26,9 @@ part 'src/annotation/field.dart';
 
 part 'src/mixins/indices_access.dart';
 part 'src/mixins/reference_lookup.dart';
+
+part 'src/sync/atom.dart';
+part 'src/sync/synchronizer.dart';
 
 part 'src/utils/data_helper.dart';
 part 'src/utils/equality.dart';

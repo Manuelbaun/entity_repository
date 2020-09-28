@@ -6,7 +6,6 @@ import 'tag.dart';
 
 part 'song.g.dart';
 
-/// the en
 @EntityModel(AdapterIds.song)
 abstract class Song extends _$Song {
   factory Song({
@@ -25,8 +24,13 @@ abstract class Song extends _$Song {
     @Field(12) List<Person> translator,
     @Field(13) List<Tag> tags,
   }) = _Song;
+
+  static Song fromMap(Map<int, dynamic> fields) => _Song.fromMap(fields);
 }
 
+void test() {
+  final s = Song();
+}
 //sdf adsfsdfsd asdf ads ads asdf asdf
 
 // @EntityModel(30)

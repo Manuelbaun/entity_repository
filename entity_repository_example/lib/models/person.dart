@@ -5,6 +5,7 @@ import 'address.dart';
 
 part 'person.g.dart';
 
+/// asdf
 @EntityModel(AdapterIds.person)
 abstract class Person implements _$Person {
   factory Person({
@@ -17,6 +18,6 @@ abstract class Person implements _$Person {
     @Field(6) Map<int, Address> a5sf,
     @Field(7) Map<Person, Address> p2a,
   }) = _Person;
-}
 
-//sd asdasdf
+  static Person fromMap(Map<int, dynamic> fields) => _Person.fromMap(fields);
+}
