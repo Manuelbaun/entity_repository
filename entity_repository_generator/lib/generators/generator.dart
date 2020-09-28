@@ -62,27 +62,32 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateClass(ModelVisitor visitor) {
     final buff = StringBuffer()
-      ..write('class ${visitor.redirectName} extends ')
-      ..write('${(DataModel).$name}<${visitor.entityName}> ')
-      ..write(visitor.hasEntityReference
-          ? 'with ${visitor.referenceClassName}'
-          : '')
-      ..write(' implements ${visitor.entityName} {\n')
-
-      /// Constructor
+      ..write(generateClassName(visitor))
+      ..write('{\n')
+      // Constructor
       ..write(generateClassConstructor(visitor))
       ..write(generateClassCopyConstructor(visitor))
-
       // class fields
       ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
-
-      /// methods
+      // methods
       ..write(generateFactoryFromMap(visitor))
       ..write(generateToMap(visitor))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
       ..writeln('}'); // end
+
+    return buff;
+  }
+
+  StringBuffer generateClassName(ModelVisitor visitor) {
+    final buff = StringBuffer()
+      ..write('class ${visitor.redirectName} extends ')
+      ..write('${(DataModel).$name}<${visitor.entityName}> ')
+      ..write(visitor.hasEntityReference
+          ? 'with ${visitor.referenceClassName}'
+          : '')
+      ..write(' implements ${visitor.entityName}');
 
     return buff;
   }
