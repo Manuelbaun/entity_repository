@@ -221,7 +221,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   List<Person> _authors;
 
   @override
-  List<Person> get authors => _authors;
+  List<Person> get authors => _authors ??= _lookUpAuthors();
 
   @override
   set authors(List<Person> authors) {
@@ -254,7 +254,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   List<Person> _translator;
 
   @override
-  List<Person> get translator => _translator;
+  List<Person> get translator => _translator ??= _lookUpTranslator();
 
   @override
   set translator(List<Person> translator) {
@@ -265,7 +265,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   List<Tag> _tags;
 
   @override
-  List<Tag> get tags => _tags;
+  List<Tag> get tags => _tags ??= _lookUpTags();
 
   @override
   set tags(List<Tag> tags) {

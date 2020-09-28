@@ -63,6 +63,7 @@ class Synchronizer {
 
         if (entity != null) {
           entity.applyUpdates((atom.data as Map).cast<int, dynamic>());
+          await repo.update(entity, fromRemote: true);
         }
 
         break;

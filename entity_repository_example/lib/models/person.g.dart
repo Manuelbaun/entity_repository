@@ -161,7 +161,7 @@ class _Person extends DataModel<Person>
   List<Person> _friends;
 
   @override
-  List<Person> get friends => _friends;
+  List<Person> get friends => _friends ??= _lookUpFriends();
 
   @override
   set friends(List<Person> friends) {
@@ -172,7 +172,7 @@ class _Person extends DataModel<Person>
   Set<Person> _friends5;
 
   @override
-  Set<Person> get friends5 => _friends5;
+  Set<Person> get friends5 => _friends5 ??= _lookUpFriends5();
 
   @override
   set friends5(Set<Person> friends5) {
@@ -183,7 +183,7 @@ class _Person extends DataModel<Person>
   Map<int, Address> _a5sf;
 
   @override
-  Map<int, Address> get a5sf => _a5sf;
+  Map<int, Address> get a5sf => _a5sf ??= _lookUpA5sf();
 
   @override
   set a5sf(Map<int, Address> a5sf) {
@@ -194,7 +194,7 @@ class _Person extends DataModel<Person>
   Map<Person, Address> _p2a;
 
   @override
-  Map<Person, Address> get p2a => _p2a;
+  Map<Person, Address> get p2a => _p2a ??= _lookUpP2a();
 
   @override
   set p2a(Map<Person, Address> p2a) {

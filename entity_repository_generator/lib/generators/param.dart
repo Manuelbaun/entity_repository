@@ -79,10 +79,20 @@ class Param {
   }
 
   String get toGetter {
+    var lookup = isEntity;
+    if (subTypes.isNotEmpty) {
+      var h1 = false, h2 = false;
+      h1 = _isEntityParam(subTypes.first);
+
+      if (subTypes.length > 1) h2 = _isEntityParam(subTypes.last);
+
+      lookup = h1 || h2;
+    }
+
     final buff = StringBuffer()
       ..writeln('@override')
       ..writeln('$type get $name => ')
-      ..writeln(isEntity ? '_$name ??= $toLookUpMethodName;' : '_$name;');
+      ..writeln(lookup ? '_$name ??= $toLookUpMethodName;' : '_$name;');
 
     return buff.toString();
   }
