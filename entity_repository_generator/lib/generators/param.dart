@@ -218,7 +218,8 @@ class Param {
     if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
       return '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
-      return '$name?.map((e) => e.id)?.toSet()';
+      /// [Set to List]
+      return '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreMap) {
       final has1 = _isEntityParam(subTypes.first);
       final has2 = _isEntityParam(subTypes.last);
@@ -259,10 +260,12 @@ class Param {
       final st = subTypes.first;
 
       if (_isEntityParam(st)) {
-        return '..$toReferenceName = (fields[${field.index}] as Set)?.cast<String>()';
+        /// [Set to list]
+        return '..$toReferenceName = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
       } else {
         // .songIds = (fields[0] as List)?.cast<String>()
-        return '..$name = (fields[${field.index}] as Set)?.cast<$st>()';
+        /// [Set to list]
+        return '..$name = (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
       }
     } else if (type.isDartCoreMap) {
       final enType1 = _isEntityParam(subTypes.first);
@@ -286,7 +289,8 @@ class Param {
     if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
       str += '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
-      str += '$name?.map((e) => e.id)?.toSet()';
+      /// [Set to list] need to convert to list!
+      str += '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreMap) {
       final has1 = _isEntityParam(subTypes.first);
       final has2 = _isEntityParam(subTypes.last);
@@ -320,9 +324,11 @@ class Param {
       final st = subTypes.first;
 
       if (_isEntityParam(st)) {
-        return '$toReferenceName: (fields[${field.index}] as Set)?.cast<String>()';
+        /// [Set to list]
+        return '$toReferenceName: (fields[${field.index}] as List)?.toSet()?.cast<String>()';
       } else {
-        return '$name : (fields[${field.index}] as Set)?.cast<$st>()';
+        /// [Set to list]
+        return '$name : (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
       }
     } else if (type.isDartCoreMap) {
       final enType1 = _isEntityParam(subTypes.first);
@@ -357,9 +363,9 @@ class Param {
 
       if (_isEntityParam(st)) {
         str =
-            '$toReferenceName= (fields[${field.index}] as Set)?.cast<String>()';
+            '$toReferenceName= (fields[${field.index}] as List)?.toSet()?.cast<String>()';
       } else {
-        str = '_$name : (fields[${field.index}] as Set)?.cast<$st>()';
+        str = '_$name : (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
       }
     } else if (type.isDartCoreMap) {
       final enType1 = _isEntityParam(subTypes.first);
