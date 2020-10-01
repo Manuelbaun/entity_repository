@@ -31,6 +31,7 @@ part 'src/mixins/reference_lookup.dart';
 
 part 'src/sync/atom.dart';
 part 'src/sync/synchronizer.dart';
+part 'src/sync/nesting_hashing.dart';
 
 part 'src/utils/data_helper.dart';
 part 'src/utils/equality.dart';

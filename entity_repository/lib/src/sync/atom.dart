@@ -4,7 +4,7 @@ enum Action { insert, update, delete }
 
 /// TODO:
 /// Data needs some nested equality check
-///
+/// Note, the equality check will check on value equality
 class Atom {
   final int ms;
   final String id;
@@ -36,7 +36,7 @@ class Atom {
         o.id == id &&
         o.typeModel == typeModel &&
         o.action == action &&
-        o.data == data;
+        nestedHashing(o.data) == nestedHashing(data);
   }
 
   @override
