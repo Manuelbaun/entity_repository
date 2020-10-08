@@ -10,7 +10,8 @@ Future<void> main() async {
   final list = <Atom>[];
 
   /// Setup Sync
-  Synchronizer.onAtomUpdate = (a) async {
+
+  EntitiyRepositoryConfig.synchronizer.onAtomUpdate = (a) async {
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
     list.add(a);

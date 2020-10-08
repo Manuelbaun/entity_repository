@@ -75,8 +75,10 @@ abstract class EntitiyRepositoryConfig {
   static final _RepositoryLocator repositoryLocator = _RepositoryLocator();
 // ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter));
 // ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
-  static bool shouldStoreSubentites = true;
+  static bool shouldSaveWithSubEntities = true;
 
   /// helper class to track the entites, which are already stored
   static ChainTracker chainTracker = ChainTracker();
+
+  static Synchronizer synchronizer = Synchronizer();
 }

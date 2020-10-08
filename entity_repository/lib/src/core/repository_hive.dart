@@ -20,7 +20,6 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// This closese the box
   @override
   Future<void> dispose() async {
-    print('-------- repository_hive.dart: 23: close box ${T.toString()}');
     await _box.close();
   }
 
@@ -64,7 +63,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entity != null);
 
     if (_box.containsKey(entity.id)) {
-      if (!fromRemote) Synchronizer.update<T>(entity);
+      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.update<T>(entity);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -81,7 +80,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     await EntitiyRepositoryConfig.chainTracker.track(entity, () async {
       await _box.put(entity.id, entity);
 
-      if (EntitiyRepositoryConfig.shouldStoreSubentites) {
+      if (EntitiyRepositoryConfig.shouldSaveWithSubEntities) {
         for (final e in entity.getAllRefObjects()) {
           if (EntitiyRepositoryConfig.chainTracker.isNotSavedYet(e)) {
             await e.upsert();
@@ -100,7 +99,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entities != null);
 
     for (final entity in entities) {
-      if (!fromRemote) Synchronizer.update<T>(entity);
+      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.update<T>(entity);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -139,7 +138,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entity != null);
 
     if (override || (!override && !_box.containsKey(entity.id))) {
-      if (!fromRemote) Synchronizer.insert<T>(entity);
+      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.insert<T>(entity);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -177,7 +176,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Future<void> delete(T entity, {bool fromRemote = false}) async {
     assert(entity != null);
 
-    if (!fromRemote) Synchronizer.delete<T>(entity);
+    if (!fromRemote) EntitiyRepositoryConfig.synchronizer.delete<T>(entity);
 
     await _box.delete(entity.id);
   }
@@ -195,7 +194,8 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   }) async {
     assert(entities != null);
 
-    if (!fromRemote) Synchronizer.deleteMany<T>(entities);
+    if (!fromRemote)
+      EntitiyRepositoryConfig.synchronizer.deleteMany<T>(entities);
 
     await _box.deleteAll(entities.map<dynamic>((e) => e.id));
   }
