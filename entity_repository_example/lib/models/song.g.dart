@@ -292,23 +292,69 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   }
 
   @override
+  Set<DataModel> getAllRefObjects() {
+    final obj = <DataModel>{};
+
+    if (authors != null && authors.isNotEmpty) {
+      obj.addAll(authors);
+    }
+
+    if (translator != null && translator.isNotEmpty) {
+      obj.addAll(translator);
+    }
+    if (tags != null && tags.isNotEmpty) {
+      obj.addAll(tags);
+    }
+    return obj;
+  }
+
+  @override
   Map<int, dynamic> toMap() {
-    return {
-      0: id,
-      1: title,
-      2: bpm,
-      3: transpose,
-      4: songKey,
-      5: capo,
-      6: lyrics,
-      7: notes,
-      8: ccli,
-      9: authors?.map((e) => e.id)?.toList(),
-      10: authors2,
-      11: copyright,
-      12: translator?.map((e) => e.id)?.toList(),
-      13: tags?.map((e) => e.id)?.toList()
-    };
+    final obj = <int, dynamic>{};
+
+    /// store the id as field 0
+    obj[0] = id;
+
+    if (title != null) {
+      obj[1] = title;
+    }
+    if (bpm != null) {
+      obj[2] = bpm;
+    }
+    if (transpose != null) {
+      obj[3] = transpose;
+    }
+    if (songKey != null) {
+      obj[4] = songKey;
+    }
+    if (capo != null) {
+      obj[5] = capo;
+    }
+    if (lyrics != null) {
+      obj[6] = lyrics;
+    }
+    if (notes != null) {
+      obj[7] = notes;
+    }
+    if (ccli != null) {
+      obj[8] = ccli;
+    }
+    if (authors != null && authors.isNotEmpty) {
+      obj[9] = authors?.map((e) => e.id)?.toList();
+    }
+    if (authors2 != null) {
+      obj[10] = authors2;
+    }
+    if (copyright != null) {
+      obj[11] = copyright;
+    }
+    if (translator != null && translator.isNotEmpty) {
+      obj[12] = translator?.map((e) => e.id)?.toList();
+    }
+    if (tags != null && tags.isNotEmpty) {
+      obj[13] = tags?.map((e) => e.id)?.toList();
+    }
+    return obj;
   }
 
   @override

@@ -36,10 +36,20 @@ class _Tag extends DataModel<Tag> implements Tag {
   }
 
   @override
+  Set<DataModel> getAllRefObjects() {
+    final obj = <DataModel>{};
+
+    return obj;
+  }
+
+  @override
   Map<int, dynamic> toMap() {
-    return {
-      0: id,
-    };
+    final obj = <int, dynamic>{};
+
+    /// store the id as field 0
+    obj[0] = id;
+
+    return obj;
   }
 
   @override

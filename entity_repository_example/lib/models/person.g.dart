@@ -177,7 +177,7 @@ class _Person extends DataModel<Person>
   @override
   set friends5(Set<Person> friends5) {
     _friends5 = friends5;
-    setKeyValue(5, friends5?.map((e) => e.id)?.toSet());
+    setKeyValue(5, friends5?.map((e) => e.id)?.toList());
   }
 
   Map<int, Address> _a5sf;
@@ -209,23 +209,60 @@ class _Person extends DataModel<Person>
         age: fields[2] as int)
       ..addressRefs = (fields[3] as String)
       ..friendsRefs = (fields[4] as List)?.cast<String>()
-      ..friends5Refs = (fields[5] as Set)?.cast<String>()
+      ..friends5Refs = (fields[5] as List)?.toSet()?.cast<String>()
       ..a5sfRefs = (fields[6] as Map)?.cast<int, String>()
       ..p2aRefs = (fields[7] as Map)?.cast<String, String>();
   }
 
   @override
+  Set<DataModel> getAllRefObjects() {
+    final obj = <DataModel>{};
+
+    if (address != null) obj.add(address);
+    if (friends != null && friends.isNotEmpty) {
+      obj.addAll(friends);
+    }
+    if (friends5 != null && friends5.isNotEmpty) {
+      obj.addAll(friends5);
+    }
+    if (a5sf != null && a5sf.isNotEmpty) {
+      obj.addAll(a5sf.values);
+    }
+    if (p2a != null && p2a.isNotEmpty) {
+      obj..addAll(p2a.keys)..addAll(p2a.values);
+    }
+    return obj;
+  }
+
+  @override
   Map<int, dynamic> toMap() {
-    return {
-      0: id,
-      1: name,
-      2: age,
-      3: address?.id,
-      4: friends?.map((e) => e.id)?.toList(),
-      5: friends5?.map((e) => e.id)?.toSet(),
-      6: a5sf?.map((key, value) => MapEntry(key, value.id)),
-      7: p2a?.map((key, value) => MapEntry(key.id, value.id))
-    };
+    final obj = <int, dynamic>{};
+
+    /// store the id as field 0
+    obj[0] = id;
+
+    if (name != null) {
+      obj[1] = name;
+    }
+    if (age != null) {
+      obj[2] = age;
+    }
+    if (address != null) {
+      obj[3] = address?.id;
+    }
+    if (friends != null && friends.isNotEmpty) {
+      obj[4] = friends?.map((e) => e.id)?.toList();
+    }
+    if (friends5 != null && friends5.isNotEmpty) {
+      obj[5] = friends5?.map((e) => e.id)?.toList();
+    }
+    if (a5sf != null && a5sf.isNotEmpty) {
+      obj[6] = a5sf?.map((key, value) => MapEntry(key, value.id));
+    }
+    if (p2a != null && p2a.isNotEmpty) {
+      obj[7] = p2a?.map((key, value) => MapEntry(key.id, value.id));
+    }
+    return obj;
   }
 
   @override
@@ -243,7 +280,7 @@ class _Person extends DataModel<Person>
       friendsRefs = (fields[4] as List)?.cast<String>();
     }
     if (fields.containsKey(5)) {
-      friends5Refs = (fields[5] as Set)?.cast<String>();
+      friends5Refs = (fields[5] as List)?.toSet()?.cast<String>();
     }
     if (fields.containsKey(6)) {
       a5sfRefs = (fields[6] as Map)?.cast<int, String>();
@@ -315,7 +352,7 @@ class $PersonAdapter implements Serializer<_Person> {
       ..writeByte(4)
       ..write(obj.friends?.map((e) => e.id)?.toList())
       ..writeByte(5)
-      ..write(obj.friends5?.map((e) => e.id)?.toSet())
+      ..write(obj.friends5?.map((e) => e.id)?.toList())
       ..writeByte(6)
       ..write(obj.a5sf?.map((key, value) => MapEntry(key, value.id)))
       ..writeByte(7)

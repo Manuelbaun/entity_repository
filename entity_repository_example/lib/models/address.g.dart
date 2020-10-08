@@ -58,8 +58,26 @@ class _Address extends DataModel<Address> implements Address {
   }
 
   @override
+  Set<DataModel> getAllRefObjects() {
+    final obj = <DataModel>{};
+
+    return obj;
+  }
+
+  @override
   Map<int, dynamic> toMap() {
-    return {0: id, 1: street, 2: houseNumber};
+    final obj = <int, dynamic>{};
+
+    /// store the id as field 0
+    obj[0] = id;
+
+    if (street != null) {
+      obj[1] = street;
+    }
+    if (houseNumber != null) {
+      obj[2] = houseNumber;
+    }
+    return obj;
   }
 
   @override

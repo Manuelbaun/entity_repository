@@ -57,8 +57,6 @@ class Database {
       ..registerMapFactory<Car>(Car.fromMap)
       ..registerMapFactory<Song>(Song.fromMap)
       ..registerMapFactory<Tag>(Tag.fromMap);
-
-    print(repositoryLocator.factories);
   }
 
   IAddressRepository get addressRepository =>

@@ -11,5 +11,3 @@ abstract class Tag extends _$Tag {
 
   static Tag fromMap(Map<int, dynamic> fields) => _Tag.fromMap(fields);
 }
-
-///badfk#

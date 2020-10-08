@@ -8,22 +8,22 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  meta: ^1.1.8
+  meta: ^1.2.3
+  analyzer: ">=0.39.12 <0.40.0"
   build: ^1.3.0
   source_gen: ^0.9.6
-  analyzer: ">=0.39.12 <0.40.0"
   entity_repository: ^0.1.6
-  ansicolor: ^1.0.2
+  ansicolor: ^1.0.5
 
 dev_dependencies:
   pedantic: ^1.9.2
-  test: ^1.15.3
+  test: ^1.15.4
   build_runner: any
   build_test: any
 
 analyzer:
   strong-mode: true
 
-# dependency_overrides:
-#   entity_repository:
-#     path: ..\entity_repository
+dependency_overrides:
+  entity_repository:
+    path: ..\entity_repository

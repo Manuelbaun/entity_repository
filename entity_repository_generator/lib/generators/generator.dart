@@ -71,6 +71,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
       // methods
       ..write(generateFactoryFromMap(visitor))
+      ..write(generateToRefObjectSet(visitor))
       ..write(generateToMap(visitor))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
@@ -159,16 +160,32 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
+  StringBuffer generateToRefObjectSet(ModelVisitor visitor) {
+    final buff = StringBuffer()
+
+      ///Write bin
+      ..writeln('\n\n@override')
+      ..writeln('Set<DataModel> getAllRefObjects() {')
+      ..writeln('final obj = <DataModel>{};\n')
+      ..writeAll(visitor.params.map((e) => e.toRefsObjects), '\n')
+      ..writeln('return obj;')
+      ..writeln('}');
+
+    return buff;
+  }
+
   StringBuffer generateToMap(ModelVisitor visitor) {
     final buff = StringBuffer()
 
       ///Write bin
       ..writeln('\n\n@override')
       ..writeln('Map<int, dynamic> toMap() {')
-      ..writeln('return {')
-      ..writeln('0: id,')
-      ..writeAll(visitor.params.map((e) => e.toMapEntry), ',\n')
-      ..writeln('};}');
+      ..writeln('final obj = <int, dynamic>{};')
+      ..writeln('/// store the id as field 0')
+      ..writeln('obj[0] = id;\n')
+      ..writeAll(visitor.params.map((e) => e.toMapEntry), '\n')
+      ..writeln('return obj;')
+      ..writeln('}');
 
     return buff;
   }

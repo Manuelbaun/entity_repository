@@ -6,6 +6,11 @@ abstract class RepositoryBase<T extends DataModel<T>> {
   @mustCallSuper
   FutureOr<RepositoryBase<T>> initialize();
 
+  /// helper class to track the entites, which are already stored
+  static ChainTracker chainTracker = ChainTracker();
+
+  int get length;
+
   @mustCallSuper
   Future<void> dispose();
 

@@ -2,63 +2,76 @@ part of entity_repository;
 
 // ignore: avoid_classes_with_only_static_members
 class Synchronizer {
-  static Function(Atom) onAtomUpdate = print;
+  static Function(Atom) onAtomUpdate;
 
+  ///
+  /// creates an atom with the entitys data
+  ///
   static void insert<T extends DataModel<T>>(DataModel entity) {
     final atom = Atom(
-      action: Action.insert,
+      action: CrudAction.insert,
       id: entity.id,
       typeModel: T.toString(),
       data: entity.toMap(),
     );
-    onAtomUpdate(atom);
+    if (onAtomUpdate != null) onAtomUpdate(atom);
   }
 
+  ///
+  /// Creates an Atom with the to updated data
+  ///
   static void update<T extends DataModel<T>>(DataModel entity) {
     final atom = Atom(
-      action: Action.update,
+      action: CrudAction.update,
       id: entity.id,
       typeModel: T.toString(),
       data: entity.getUpdates(),
     );
 
     entity.clearUpdates();
-    onAtomUpdate(atom);
+    if (onAtomUpdate != null) onAtomUpdate(atom);
   }
 
+  ///
+  /// Creates one atom, with the entity id, which should be deleted
+  ///
   static void delete<T extends DataModel<T>>(DataModel entity) {
     final atom = Atom(
-      action: Action.delete,
+      action: CrudAction.delete,
       id: entity.id,
       typeModel: T.toString(),
     );
-    onAtomUpdate(atom);
+    if (onAtomUpdate != null) onAtomUpdate(atom);
   }
 
+  ///
+  /// Creates an Atom, with the deleted entities ids
+  ///
   static void deleteMany<T extends DataModel<T>>(Iterable<DataModel> entities) {
     final atom = Atom(
-      action: Action.delete,
+      action: CrudAction.delete,
       typeModel: T.toString(),
       data: entities.map((e) => e.id),
     );
-    onAtomUpdate(atom);
+    if (onAtomUpdate != null) onAtomUpdate(atom);
   }
 
+  ///
+  /// Applys remote received atom to local db
+  ///
   static Future<void> receivedRemoteAtom(Atom atom) async {
-    print(atom);
-
     final repo = repositoryLocator.getByName(atom.typeModel);
 
     switch (atom.action) {
-      case Action.insert:
-        final fac = repositoryLocator.factories[atom.typeModel];
-        final res = fac?.call((atom.data as Map).cast<int, dynamic>());
-        print(res);
-        print('---');
-
-        await repo.insert(res, fromRemote: true);
+      case CrudAction.insert:
+        final factoryMethod = repositoryLocator.factories[atom.typeModel];
+        if (factoryMethod != null) {
+          final res =
+              factoryMethod?.call((atom.data as Map).cast<int, dynamic>());
+          await repo.insert(res, fromRemote: true);
+        }
         break;
-      case Action.update:
+      case CrudAction.update:
         final entity = repo.findOne(atom.id);
 
         if (entity != null) {
@@ -67,13 +80,14 @@ class Synchronizer {
         }
 
         break;
-      case Action.delete:
+      case CrudAction.delete:
         if (atom.data is List) {
           for (final id in atom.data) {
             await repo.deleteById(id as String, fromRemote: true);
           }
+        } else {
+          await repo.deleteById(atom.id, fromRemote: true);
         }
-        await repo.deleteById(atom.id, fromRemote: true);
         break;
     }
   }

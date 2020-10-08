@@ -285,11 +285,14 @@ class Param {
   }
 
   String get toMapEntry {
-    var str = '${field.index}: ';
+    var condition = '$name != null ';
+    var str = 'obj[${field.index}] = ';
     if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
+      condition += '&& $name.isNotEmpty';
       str += '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
       /// [Set to list] need to convert to list!
+      condition += '&& $name.isNotEmpty';
       str += '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreMap) {
       final has1 = _isEntityParam(subTypes.first);
@@ -298,6 +301,7 @@ class Param {
       final t2 = has2 ? 'value.id' : 'value';
 
       if (has1 || has2) {
+        condition += '&& $name.isNotEmpty';
         str += '$name?.map((key, value) => MapEntry($t1, $t2))';
       } else {
         str += '$name';
@@ -308,7 +312,35 @@ class Param {
       str += '$name';
     }
 
-    return str;
+    /// apply condition if null or empty=> should not be in the map
+    return '''if($condition) {$str;}''';
+    // return '''$str;''';
+  }
+
+  String get toRefsObjects {
+    final ifString = 'if($name != null && $name.isNotEmpty)';
+    try {
+      if ((type.isDartCoreList || type.isDartCoreSet) &&
+          _isEntityParam(subTypes.first)) {
+        ///
+        return '$ifString {obj.addAll($name);}';
+      } else if (type.isDartCoreMap) {
+        final has1 = _isEntityParam(subTypes.first);
+        final has2 = _isEntityParam(subTypes.last);
+
+        if (has1 && !has2) return '$ifString {obj.addAll($name.keys);}';
+        if (!has1 && has2) return '$ifString {obj.addAll($name.values);}';
+        if (has1 && has2) {
+          return '$ifString {obj..addAll($name.keys)..addAll($name.values);}';
+        }
+      } else if (isEntity) {
+        return 'if($name != null) obj.add($name);';
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return '';
   }
 
   String get toSerializeReadField {

@@ -27,8 +27,3 @@ abstract class Car extends _$Car {
     return 'Hello World';
   }
 }
-
-void main() {
-  final c = Car();
-  // ''sdfdsfsdf sdfdsfsdfsdf
-}

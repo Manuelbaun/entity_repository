@@ -1,17 +1,25 @@
 part of entity_repository;
 
-enum Action { insert, update, delete }
+/// Curd actions
+enum CrudAction { insert, update, delete }
 
 /// TODO:
 /// Data needs some nested equality check
 /// Note, the equality check will check on value equality
 class Atom {
-  final int ms;
+  /// timestamp in milliseconds since epoch
+  final int timestamp;
+
+  /// The entity's Id
   final String id;
 
   /// TODO: This could be an int
   final String typeModel;
-  final Action action;
+
+  /// The crud operation
+  final CrudAction action;
+
+  /// data, need to serializable
   final dynamic data;
 
   Atom({
@@ -20,11 +28,11 @@ class Atom {
     this.typeModel,
     this.action,
     this.data,
-  }) : ms = ms ?? DateTime.now().millisecondsSinceEpoch;
+  }) : timestamp = ms ?? DateTime.now().millisecondsSinceEpoch;
 
   @override
   String toString() {
-    return 'Atom(ms: $ms, id: $id, typeModel: $typeModel, action: $action, data: $data)';
+    return 'Atom(ts: $timestamp, id: $id, typeModel: $typeModel, CRUD: $action, data: $data)';
   }
 
   @override
@@ -32,7 +40,7 @@ class Atom {
     if (identical(this, o)) return true;
 
     return o is Atom &&
-        o.ms == ms &&
+        o.timestamp == timestamp &&
         o.id == id &&
         o.typeModel == typeModel &&
         o.action == action &&
@@ -41,7 +49,7 @@ class Atom {
 
   @override
   int get hashCode {
-    return ms.hashCode ^
+    return timestamp.hashCode ^
         id.hashCode ^
         typeModel.hashCode ^
         action.hashCode ^

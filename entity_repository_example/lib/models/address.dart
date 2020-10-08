@@ -13,7 +13,3 @@ abstract class Address implements _$Address {
 
   static Address fromMap(Map<int, dynamic> fields) => _Address.fromMap(fields);
 }
-
-void main() {
-  //asdf asd asd asdfasdf asdf asdds asdf asd
-}

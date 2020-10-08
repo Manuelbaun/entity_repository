@@ -98,8 +98,33 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   }
 
   @override
+  Set<DataModel> getAllRefObjects() {
+    final obj = <DataModel>{};
+
+    if (owner != null) obj.add(owner);
+    return obj;
+  }
+
+  @override
   Map<int, dynamic> toMap() {
-    return {0: id, 1: model, 2: type, 3: buildYear, 4: owner?.id};
+    final obj = <int, dynamic>{};
+
+    /// store the id as field 0
+    obj[0] = id;
+
+    if (model != null) {
+      obj[1] = model;
+    }
+    if (type != null) {
+      obj[2] = type;
+    }
+    if (buildYear != null) {
+      obj[3] = buildYear;
+    }
+    if (owner != null) {
+      obj[4] = owner?.id;
+    }
+    return obj;
   }
 
   @override

@@ -2,6 +2,7 @@ library entity_repository;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -31,11 +32,13 @@ part 'src/mixins/reference_lookup.dart';
 
 part 'src/sync/atom.dart';
 part 'src/sync/synchronizer.dart';
-part 'src/sync/nesting_hashing.dart';
+part 'src/sync/syncable.dart';
 
 part 'src/utils/data_helper.dart';
+part 'src/utils/chain_tracker.dart';
 part 'src/utils/equality.dart';
 part 'src/utils/encoding_msg_pack.dart';
+part 'src/utils/nesting_hashing.dart';
 
 // ignore: avoid_classes_with_only_static_members
 class CustomAdapterTypes {
@@ -43,7 +46,7 @@ class CustomAdapterTypes {
   static const int indexAdapter = 1;
 
   static const map = <Type, int>{
-    SetAdapter: 0,
+    // SetAdapter: 0,
     IndexAdapter: 1,
   };
 
@@ -59,9 +62,9 @@ class CustomAdapterTypes {
 }
 
 /// dao locator instance singelton
-final _RepositoryLocator repositoryLocator = _RepositoryLocator()
-  ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter))
-  ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
+final _RepositoryLocator repositoryLocator = _RepositoryLocator();
+// ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter));
+// ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
 
 final _valueEncoder = _ExtendetEncoder();
 final _valueDecoder = _ExtendetDecoder();
