@@ -79,7 +79,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
       await _box.put(entity.id, entity);
 
       for (final e in entity.getAllRefObjects()) {
-        if (RepositoryBase.chainTracker.ifNotSaved(e)) {
+        if (RepositoryBase.chainTracker.isNotSavedYet(e)) {
           await e.upsert();
         }
       }
