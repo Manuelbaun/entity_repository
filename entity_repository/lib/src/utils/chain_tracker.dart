@@ -27,6 +27,9 @@ class ChainTracker {
       await func();
 
       _isTracking = false;
+
+      print(_chainCounter);
+
       _chain.clear();
       _chainCounter.clear();
     }

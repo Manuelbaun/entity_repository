@@ -61,11 +61,6 @@ class CustomAdapterTypes {
   }
 }
 
-/// dao locator instance singelton
-final _RepositoryLocator repositoryLocator = _RepositoryLocator();
-// ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter));
-// ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
-
 final _valueEncoder = _ExtendetEncoder();
 final _valueDecoder = _ExtendetDecoder();
 
@@ -75,3 +70,13 @@ Uint8List msgpackEncode(dynamic v) => serialize(v, extEncoder: _valueEncoder);
 /// decodes bytes into object/types
 T msgpackDecode<T>(Uint8List v) =>
     deserialize(v, extDecoder: _valueDecoder) as T;
+
+abstract class EntitiyRepositoryConfig {
+  static final _RepositoryLocator repositoryLocator = _RepositoryLocator();
+// ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter));
+// ..registerAdapter<Set>(SetAdapter(CustomAdapterTypes.setAdapter));
+  static bool shouldStoreSubentites = true;
+
+  /// helper class to track the entites, which are already stored
+  static ChainTracker chainTracker = ChainTracker();
+}

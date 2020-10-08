@@ -14,7 +14,7 @@ abstract class DataModel<T extends DataModel<T>>
     implements Comparable<T> {
   DataModel(String id)
       : id = DataHelper.checkOrGenerateID(id),
-        _repo = repositoryLocator.get<T>();
+        _repo = EntitiyRepositoryConfig.repositoryLocator.get<T>();
 
   final RepositoryBase<T> _repo;
 

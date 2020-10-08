@@ -40,7 +40,7 @@ class TagRepository extends RepositoryHive<Tag> implements ITagRepository {}
 class Database {
   Future<void> initRepository() async {
     /// First Register all repositories and as adapters
-    repositoryLocator
+    EntitiyRepositoryConfig.repositoryLocator
       ..configure(path: './hive_db')
       ..registerEntity<Address>(AddressRepository(), $AddressAdapter())
       ..registerEntity<Person>(PersonRepository(), $PersonAdapter())
@@ -49,9 +49,9 @@ class Database {
       ..registerEntity<Tag>(TagRepository(), $TagAdapter());
 
     // init all daos, will open the boxes
-    await repositoryLocator.initAll();
+    await EntitiyRepositoryConfig.repositoryLocator.initAll();
 
-    repositoryLocator
+    EntitiyRepositoryConfig.repositoryLocator
       ..registerMapFactory<Address>(Address.fromMap)
       ..registerMapFactory<Person>(Person.fromMap)
       ..registerMapFactory<Car>(Car.fromMap)
@@ -60,21 +60,23 @@ class Database {
   }
 
   IAddressRepository get addressRepository =>
-      repositoryLocator.get<Address>() as IAddressRepository;
+      EntitiyRepositoryConfig.repositoryLocator.get<Address>()
+          as IAddressRepository;
 
   IPersonRepository get personRepository =>
-      repositoryLocator.get<Person>() as IPersonRepository;
+      EntitiyRepositoryConfig.repositoryLocator.get<Person>()
+          as IPersonRepository;
 
   ICarRepository get carRepository =>
-      repositoryLocator.get<Car>() as ICarRepository;
+      EntitiyRepositoryConfig.repositoryLocator.get<Car>() as ICarRepository;
 
   ITagRepository get tagRepository =>
-      repositoryLocator.get<Tag>() as ITagRepository;
+      EntitiyRepositoryConfig.repositoryLocator.get<Tag>() as ITagRepository;
 
   ISongRepository get songRepository =>
-      repositoryLocator.get<Song>() as ISongRepository;
+      EntitiyRepositoryConfig.repositoryLocator.get<Song>() as ISongRepository;
 
   Future<void> dispose() async {
-    await repositoryLocator.disposeAll();
+    await EntitiyRepositoryConfig.repositoryLocator.disposeAll();
   }
 }

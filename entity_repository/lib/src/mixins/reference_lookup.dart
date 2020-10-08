@@ -9,14 +9,14 @@ part of entity_repository;
 mixin ReferenceLookUp {
   static T findOne<T extends DataModel<T>>(String refId) {
     if (refId == null) return null;
-    final dao = repositoryLocator.get<T>();
+    final dao = EntitiyRepositoryConfig.repositoryLocator.get<T>();
     return dao.findOne(refId);
   }
 
   static Iterable<T> findMany<T extends DataModel<T>>(Iterable<String> refIds) {
     if (refIds == null) return null;
 
-    final dao = repositoryLocator.get<T>();
+    final dao = EntitiyRepositoryConfig.repositoryLocator.get<T>();
     return dao.findMany(refIds);
   }
 }

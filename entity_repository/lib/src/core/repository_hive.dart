@@ -74,13 +74,18 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     return false;
   }
 
+  /// This function puts the entity by its id into the box.
+  /// Additionally, if the entity got some sub entities
+  /// those will be stored as well.
   Future<void> _upsertEntitiesWithAllSubEntites(T entity) async {
-    await RepositoryBase.chainTracker.track(entity, () async {
+    await EntitiyRepositoryConfig.chainTracker.track(entity, () async {
       await _box.put(entity.id, entity);
 
-      for (final e in entity.getAllRefObjects()) {
-        if (RepositoryBase.chainTracker.isNotSavedYet(e)) {
-          await e.upsert();
+      if (EntitiyRepositoryConfig.shouldStoreSubentites) {
+        for (final e in entity.getAllRefObjects()) {
+          if (EntitiyRepositoryConfig.chainTracker.isNotSavedYet(e)) {
+            await e.upsert();
+          }
         }
       }
     });

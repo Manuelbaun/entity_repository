@@ -60,11 +60,13 @@ class Synchronizer {
   /// Applys remote received atom to local db
   ///
   static Future<void> receivedRemoteAtom(Atom atom) async {
-    final repo = repositoryLocator.getByName(atom.typeModel);
+    final repo =
+        EntitiyRepositoryConfig.repositoryLocator.getByName(atom.typeModel);
 
     switch (atom.action) {
       case CrudAction.insert:
-        final factoryMethod = repositoryLocator.factories[atom.typeModel];
+        final factoryMethod =
+            EntitiyRepositoryConfig.repositoryLocator.factories[atom.typeModel];
         if (factoryMethod != null) {
           final res =
               factoryMethod?.call((atom.data as Map).cast<int, dynamic>());
