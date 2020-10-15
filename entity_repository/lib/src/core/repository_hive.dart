@@ -2,15 +2,19 @@ part of entity_repository;
 
 class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Box<T> _box;
+  Synchronizer _synchronizer;
 
   /// The [initialize] method is used to open a hive box
   /// to the matching [RepositoryHive] of type [T]
   ///
   // TODO: open box parameter strategy
   @override
-  FutureOr<RepositoryBase<T>> initialize() async {
+  FutureOr<RepositoryBase<T>> initialize({Synchronizer synchronizer}) async {
     final typeString = T.toString().toLowerCase();
+
     _box = await Hive.openBox('$typeString.box');
+    _synchronizer = synchronizer;
+
     return this;
   }
 
@@ -31,7 +35,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// This will iterate through the provided Keys, could be an int or String
   @override
   Iterable<T> findMany(Iterable keys) {
-    assert(keys != null);
+    if (keys == null) return null;
 
     final list = <T>[];
 
@@ -45,7 +49,32 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// This will lookup the key. If it exists, it will return the enitiy,
   /// otherwise null
   @override
-  T findOne(dynamic key) => _box.get(key);
+  T findOne(dynamic key) {
+    if (key == null) return null;
+
+    return _box.get(key);
+  }
+
+  @pragma('vm:prefer-inline')
+  void _syncUpdate(T entity, bool fromRemote) {
+    if (!fromRemote && _synchronizer != null) _synchronizer.update<T>(entity);
+  }
+
+  @pragma('vm:prefer-inline')
+  void _syncInsert(T entity, bool fromRemote) {
+    if (!fromRemote && _synchronizer != null) _synchronizer.insert<T>(entity);
+  }
+
+  @pragma('vm:prefer-inline')
+  void _syncDelete(T entity, bool fromRemote) {
+    if (!fromRemote && _synchronizer != null) _synchronizer.delete<T>(entity);
+  }
+
+  @pragma('vm:prefer-inline')
+  void _syncDeleteMany(Iterable<T> entities, bool fromRemote) {
+    if (!fromRemote && _synchronizer != null)
+      _synchronizer.deleteMany<T>(entities);
+  }
 
   /// This will update the enitiy. If the enitity did not exists prior to that
   /// it will throw an [EntityRepositoryException]
@@ -60,10 +89,11 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     T entity, {
     bool fromRemote = false,
   }) async {
+    /// TODO: return or throw?
     assert(entity != null);
 
     if (_box.containsKey(entity.id)) {
-      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.update<T>(entity);
+      _syncUpdate(entity, fromRemote);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -99,7 +129,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entities != null);
 
     for (final entity in entities) {
-      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.update<T>(entity);
+      _syncUpdate(entity, fromRemote);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -138,7 +168,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
     assert(entity != null);
 
     if (override || (!override && !_box.containsKey(entity.id))) {
-      if (!fromRemote) EntitiyRepositoryConfig.synchronizer.insert<T>(entity);
+      _syncInsert(entity, fromRemote);
 
       /// stores
       await _upsertEntitiesWithAllSubEntites(entity);
@@ -176,7 +206,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Future<void> delete(T entity, {bool fromRemote = false}) async {
     assert(entity != null);
 
-    if (!fromRemote) EntitiyRepositoryConfig.synchronizer.delete<T>(entity);
+    _syncDelete(entity, fromRemote);
 
     await _box.delete(entity.id);
   }
@@ -194,8 +224,7 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   }) async {
     assert(entities != null);
 
-    if (!fromRemote)
-      EntitiyRepositoryConfig.synchronizer.deleteMany<T>(entities);
+    _syncDeleteMany(entities, fromRemote);
 
     await _box.deleteAll(entities.map<dynamic>((e) => e.id));
   }

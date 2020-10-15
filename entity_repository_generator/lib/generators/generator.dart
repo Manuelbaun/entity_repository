@@ -30,7 +30,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('/// Interface to/off the class [${visitor.entityName}]')
       ..write('abstract class _\$${visitor.entityName} ')
       ..write('extends DataModel<${visitor.entityName}> {\n')
-      ..writeln('_\$${visitor.entityName}(String id): super(id);')
+      ..writeln(
+          '_\$${visitor.entityName}(String id): super(id, ${visitor.entityName}.repo);')
       ..writeAll(visitor.params.map((e) => e.toPublicField), '\n')
 
       // copy with
@@ -95,12 +96,12 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateClassConstructor(ModelVisitor visitor) {
     final buff = StringBuffer()
-      ..write('${visitor.redirectName}({String id,')
+      ..write('${visitor.redirectName}({String id, ')
       ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
       ..write('}) : ') // constructor
       ..writeAll(visitor.params.map((e) => e.toParamInitPrivate), ',')
       ..write(visitor.params.isNotEmpty ? ',' : '')
-      ..writeln('super(id);\n');
+      ..writeln('super(id, ${visitor.entityName}.repo);\n');
 
     return buff;
   }

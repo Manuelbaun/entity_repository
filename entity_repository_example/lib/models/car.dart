@@ -21,7 +21,7 @@ abstract class Car extends _$Car {
   }) = _Car;
 
   static Car fromMap(Map<int, dynamic> fields) => _Car.fromMap(fields);
-
+  static RepositoryBase<Car> repo;
   @override
   String toString() {
     return 'Hello World';

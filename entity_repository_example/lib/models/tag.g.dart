@@ -8,7 +8,7 @@ part of 'tag.dart';
 
 /// Interface to/off the class [Tag]
 abstract class _$Tag extends DataModel<Tag> {
-  _$Tag(String id) : super(id);
+  _$Tag(String id) : super(id, Tag.repo);
 
   Tag copyWith({
     String id,
@@ -18,7 +18,7 @@ abstract class _$Tag extends DataModel<Tag> {
 class _Tag extends DataModel<Tag> implements Tag {
   _Tag({
     String id,
-  }) : super(id);
+  }) : super(id, Tag.repo);
 
   @override
   Tag copyWith({

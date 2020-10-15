@@ -6,17 +6,17 @@ part of entity_repository;
 /// TODO:
 /// best would be a mixin, which is only visible here in this class
 ///
-mixin ReferenceLookUp {
-  static T findOne<T extends DataModel<T>>(String refId) {
-    if (refId == null) return null;
-    final dao = EntitiyRepositoryConfig.repositoryLocator.get<T>();
-    return dao.findOne(refId);
-  }
+// mixin ReferenceLookUp {
+//   static T findOne<T extends DataModel<T>>(String refId) {
+//     if (refId == null) return null;
+//     final repo = EntitiyRepositoryConfig.repositoryLocator.get<T>();
+//     return repo.findOne(refId);
+//   }
 
-  static Iterable<T> findMany<T extends DataModel<T>>(Iterable<String> refIds) {
-    if (refIds == null) return null;
+//   static Iterable<T> findMany<T extends DataModel<T>>(Iterable<String> refIds) {
+//     if (refIds == null) return null;
 
-    final dao = EntitiyRepositoryConfig.repositoryLocator.get<T>();
-    return dao.findMany(refIds);
-  }
-}
+//     final repo = EntitiyRepositoryConfig.repositoryLocator.get<T>();
+//     return repo.findMany(refIds);
+//   }
+// }

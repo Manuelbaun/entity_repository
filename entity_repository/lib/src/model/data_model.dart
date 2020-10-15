@@ -12,11 +12,11 @@ part of entity_repository;
 abstract class DataModel<T extends DataModel<T>>
     with Syncable
     implements Comparable<T> {
-  DataModel(String id)
+  DataModel(String id, RepositoryBase<T> repo)
       : id = DataHelper.checkOrGenerateID(id),
-        _repo = EntitiyRepositoryConfig.repositoryLocator.get<T>();
+        _repo = repo; //EntitiyRepositoryConfig.repositoryLocator.get<T>();
 
-  final RepositoryBase<T> _repo;
+  RepositoryBase<T> _repo;
 
   /// Through the constructur checkin,
   /// An Id is either provided by the User or will be generated, when Id is
@@ -42,6 +42,7 @@ abstract class DataModel<T extends DataModel<T>>
     }
   }
 
+  /// optimizes if no updates actually happend => no storing needed
   Future<bool> update() {
     if (!hasUpdates) return Future.value(false);
 

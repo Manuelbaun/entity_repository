@@ -8,7 +8,7 @@ part of 'person.dart';
 
 /// Interface to/off the class [Person]
 abstract class _$Person extends DataModel<Person> {
-  _$Person(String id) : super(id);
+  _$Person(String id) : super(id, Person.repo);
   String name;
   int age;
   Address address;
@@ -35,19 +35,19 @@ mixin _PersonReferenceLookUp {
   Map<int, String> a5sfRefs;
   Map<String, String> p2aRefs;
   Address _lookUpAddress() {
-    return ReferenceLookUp.findOne<Address>(addressRefs);
+    return Address.repo.findOne(addressRefs);
   }
 
   List<Person> _lookUpFriends() {
     if (friendsRefs != null) {
-      return ReferenceLookUp.findMany<Person>(friendsRefs).toList();
+      return Person.repo.findMany(friendsRefs).toList();
     }
     return [];
   }
 
   Set<Person> _lookUpFriends5() {
     if (friends5Refs != null) {
-      return ReferenceLookUp.findMany<Person>(friends5Refs).toSet();
+      return Person.repo.findMany(friends5Refs).toSet();
     }
     return {};
   }
@@ -57,7 +57,7 @@ mixin _PersonReferenceLookUp {
       final map = <int, Address>{};
       for (final entry in a5sfRefs.entries) {
         final v1 = entry.key;
-        final v2 = ReferenceLookUp.findOne<Address>(entry.value);
+        final v2 = Address.repo.findOne(entry.value);
 
         map[v1] = v2;
       }
@@ -71,8 +71,8 @@ mixin _PersonReferenceLookUp {
     if (p2aRefs != null) {
       final map = <Person, Address>{};
       for (final entry in p2aRefs.entries) {
-        final v1 = ReferenceLookUp.findOne<Person>(entry.key);
-        final v2 = ReferenceLookUp.findOne<Address>(entry.value);
+        final v1 = Person.repo.findOne(entry.key);
+        final v2 = Address.repo.findOne(entry.value);
 
         map[v1] = v2;
       }
@@ -102,7 +102,7 @@ class _Person extends DataModel<Person>
         _friends5 = friends5,
         _a5sf = a5sf,
         _p2a = p2a,
-        super(id);
+        super(id, Person.repo);
 
   @override
   Person copyWith(

@@ -24,6 +24,7 @@ abstract class Song extends _$Song {
     @Field(12) List<Person> translator,
     @Field(13) List<Tag> tags,
   }) = _Song;
+  static RepositoryBase<Song> repo;
 
   static Song fromMap(Map<int, dynamic> fields) => _Song.fromMap(fields);
 }

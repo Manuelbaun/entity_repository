@@ -39,17 +39,20 @@ class TagRepository extends RepositoryHive<Tag> implements ITagRepository {}
 ///
 class Database {
   Future<void> initRepository() async {
+    Address.repo = AddressRepository();
+    Person.repo = PersonRepository();
+    Car.repo = CarRepository();
+    Song.repo = SongRepository();
+    Tag.repo = TagRepository();
+
     /// First Register all repositories and as adapters
     EntitiyRepositoryConfig.repositoryLocator
       ..configure(path: './hive_db')
-      ..registerEntity<Address>(AddressRepository(), $AddressAdapter())
-      ..registerEntity<Person>(PersonRepository(), $PersonAdapter())
-      ..registerEntity<Car>(CarRepository(), $CarAdapter())
-      ..registerEntity<Song>(SongRepository(), $SongAdapter())
-      ..registerEntity<Tag>(TagRepository(), $TagAdapter());
-
-    // init all daos, will open the boxes
-    await EntitiyRepositoryConfig.repositoryLocator.initAll();
+      ..registerEntity<Address>(Address.repo, $AddressAdapter())
+      ..registerEntity<Person>(Person.repo, $PersonAdapter())
+      ..registerEntity<Car>(Car.repo, $CarAdapter())
+      ..registerEntity<Song>(Song.repo, $SongAdapter())
+      ..registerEntity<Tag>(Tag.repo, $TagAdapter());
 
     EntitiyRepositoryConfig.repositoryLocator
       ..registerMapFactory<Address>(Address.fromMap)
@@ -57,6 +60,9 @@ class Database {
       ..registerMapFactory<Car>(Car.fromMap)
       ..registerMapFactory<Song>(Song.fromMap)
       ..registerMapFactory<Tag>(Tag.fromMap);
+
+    // init all daos, will open the boxes
+    await EntitiyRepositoryConfig.repositoryLocator.initAll();
   }
 
   IAddressRepository get addressRepository =>

@@ -19,5 +19,7 @@ abstract class Person implements _$Person {
     @Field(7) Map<Person, Address> p2a,
   }) = _Person;
 
+  static RepositoryBase<Person> repo;
+
   static Person fromMap(Map<int, dynamic> fields) => _Person.fromMap(fields);
 }

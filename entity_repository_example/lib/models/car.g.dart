@@ -8,7 +8,7 @@ part of 'car.dart';
 
 /// Interface to/off the class [Car]
 abstract class _$Car extends DataModel<Car> {
-  _$Car(String id) : super(id);
+  _$Car(String id) : super(id, Car.repo);
   String model;
   String type;
   int buildYear;
@@ -21,7 +21,7 @@ abstract class _$Car extends DataModel<Car> {
 mixin _CarReferenceLookUp {
   String ownerRefs;
   Person _lookUpOwner() {
-    return ReferenceLookUp.findOne<Person>(ownerRefs);
+    return Person.repo.findOne(ownerRefs);
   }
 }
 
@@ -31,7 +31,7 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
         _type = type,
         _buildYear = buildYear,
         _owner = owner,
-        super(id);
+        super(id, Car.repo);
 
   @override
   Car copyWith(

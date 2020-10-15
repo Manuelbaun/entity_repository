@@ -8,7 +8,7 @@ part of 'song.dart';
 
 /// Interface to/off the class [Song]
 abstract class _$Song extends DataModel<Song> {
-  _$Song(String id) : super(id);
+  _$Song(String id) : super(id, Song.repo);
   String title;
   int bpm;
   int transpose;
@@ -46,21 +46,21 @@ mixin _SongReferenceLookUp {
   List<String> tagsRefs;
   List<Person> _lookUpAuthors() {
     if (authorsRefs != null) {
-      return ReferenceLookUp.findMany<Person>(authorsRefs).toList();
+      return Person.repo.findMany(authorsRefs).toList();
     }
     return [];
   }
 
   List<Person> _lookUpTranslator() {
     if (translatorRefs != null) {
-      return ReferenceLookUp.findMany<Person>(translatorRefs).toList();
+      return Person.repo.findMany(translatorRefs).toList();
     }
     return [];
   }
 
   List<Tag> _lookUpTags() {
     if (tagsRefs != null) {
-      return ReferenceLookUp.findMany<Tag>(tagsRefs).toList();
+      return Tag.repo.findMany(tagsRefs).toList();
     }
     return [];
   }
@@ -95,7 +95,7 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
         _copyright = copyright,
         _translator = translator,
         _tags = tags,
-        super(id);
+        super(id, Song.repo);
 
   @override
   Song copyWith(

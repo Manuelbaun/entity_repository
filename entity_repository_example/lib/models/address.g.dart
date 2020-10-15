@@ -8,7 +8,7 @@ part of 'address.dart';
 
 /// Interface to/off the class [Address]
 abstract class _$Address extends DataModel<Address> {
-  _$Address(String id) : super(id);
+  _$Address(String id) : super(id, Address.repo);
   String street;
   int houseNumber;
   Address copyWith({String id, String street, int houseNumber});
@@ -18,7 +18,7 @@ class _Address extends DataModel<Address> implements Address {
   _Address({String id, String street, int houseNumber})
       : _street = street,
         _houseNumber = houseNumber,
-        super(id);
+        super(id, Address.repo);
 
   @override
   Address copyWith({String id, String street, int houseNumber}) {

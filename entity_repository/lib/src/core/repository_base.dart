@@ -4,7 +4,7 @@ part of entity_repository;
 /// extends the DataModel
 abstract class RepositoryBase<T extends DataModel<T>> {
   @mustCallSuper
-  FutureOr<RepositoryBase<T>> initialize();
+  FutureOr<RepositoryBase<T>> initialize({Synchronizer synchronizer});
 
   int get length;
 

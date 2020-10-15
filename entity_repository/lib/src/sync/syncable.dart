@@ -13,6 +13,8 @@ abstract class Syncable {
 
   @pragma('vm:prefer-inline')
   bool get hasUpdates => _updateMap.isNotEmpty;
+
+  @pragma('vm:prefer-inline')
   void clearUpdates() => _updateMap.clear();
 
   Map<dynamic, dynamic> getUpdates() =>

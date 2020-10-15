@@ -131,7 +131,7 @@ class Param {
     if (subTypes.isEmpty) {
       if (isEntity) {
         method = '''$type $toLookUpMethodName {
-        return ${(ReferenceLookUp).$name}.findOne<$typeName>($toReferenceName);
+        return $typeName.repo.findOne($toReferenceName);
       }''';
       } else {
         throw Exception(
@@ -142,7 +142,7 @@ class Param {
       method = '''
       $type $toLookUpMethodName {
         if($toReferenceName != null){
-          return ${(ReferenceLookUp).$name}.findMany<$enType>($toReferenceName).toList();
+          return $enType.repo.findMany($toReferenceName).toList();
         }
         return [];
       }''';
@@ -151,7 +151,7 @@ class Param {
       method = '''
       $type $toLookUpMethodName {
         if($toReferenceName != null){
-          return ${(ReferenceLookUp).$name}.findMany<$enType>($toReferenceName).toSet();
+          return $enType.repo.findMany($toReferenceName).toSet();
         }
         return {};
       }''';
@@ -160,11 +160,11 @@ class Param {
       final type2 = subTypes.last;
 
       final ass1 = _isEntityParam(type1)
-          ? '${(ReferenceLookUp).$name}.findOne<$type1>(entry.key)'
+          ? '$type1.repo.findOne(entry.key)'
           : 'entry.key';
 
       final ass2 = _isEntityParam(type2)
-          ? '${(ReferenceLookUp).$name}.findOne<$type2>(entry.value)'
+          ? '$type2.repo.findOne(entry.value)'
           : 'entry.value';
 
       method = '''
