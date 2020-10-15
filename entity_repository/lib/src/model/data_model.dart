@@ -69,5 +69,20 @@ abstract class DataModel<T extends DataModel<T>>
 
   void applyUpdates(Map<int, dynamic> map);
 
+  ///
+  /// This will return all  reference objects of that data model
+  /// even if they are not accessed before.
+  ///
+  /// TODO: Check for Performance reason, if an class is red before.
+  /// if not, do not try to save it.
+  ///
+  /// See Generator:
+  ///
+  /// Example
+  /// ```dart
+  /// class Car {
+  ///   DataModel owner;
+  /// }
+  /// ```
   Set<DataModel> getAllRefObjects();
 }

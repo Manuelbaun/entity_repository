@@ -6,11 +6,19 @@ import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
 
+void measure(Function func) {
+  final s = Stopwatch()..start();
+  const run = 1000;
+  for (int i = 0; i < run; i++) func();
+
+  s.stop();
+  print('${s.elapsedTicks / run} ticks');
+}
+
 Future<void> main() async {
   final list = <Atom>[];
 
   /// Setup Sync
-
   EntitiyRepositoryConfig.synchronizer.onAtomUpdate = (a) async {
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
@@ -42,33 +50,57 @@ Future<void> main() async {
 }
 
 Future<void> addComplexNestedObject(Database db) async {
-  final f0 = Person(id: 'f0', name: 'Friend 0', age: 30);
-  final f1 = Person(id: 'f1', name: 'Friend 1', age: 30);
-  final f2 = Person(id: 'f2', name: 'Friend 2', age: 30);
+  final f0 = Person(
+    // id: 'f0',
+    name: 'Friend 0',
+    age: 30,
+  );
+  final f1 = Person(
+    // id: 'f1',
+    name: 'Friend 1',
+    age: 30,
+  );
+  final f2 = Person(
+    // id: 'f2',
+    name: 'Friend 2',
+    age: 30,
+  );
 
   final p1 = Person(
-    id: 'per1',
+    // id: 'per1',
     name: 'Hans',
     age: 30,
-    address: Address(id: 'add1', street: 'Icker', houseNumber: 2),
+    address: Address(
+      // id: 'add1',
+      street: 'Icker',
+      houseNumber: 2,
+    ),
     friends: [f0, f1, f2],
   );
 
   final p3 = Person(
-    id: 'per3',
+    // id: 'per3',
     name: 'Hans',
     age: 30,
-    address: Address(id: 'add1', street: 'Icker', houseNumber: 2),
+    address: Address(
+      // id: 'add1',
+      street: 'Icker',
+      houseNumber: 2,
+    ),
   );
 
   // what happends next?
   f0.friends = [p1, p3];
 
   final p2 = Person(
-    id: 'per2',
+    // id: 'per2',
     name: 'Hans2',
     age: 32,
-    address: Address(id: 'add2', street: 'Icker', houseNumber: 2),
+    address: Address(
+      // id: 'add2',
+      street: 'Icker',
+      houseNumber: 2,
+    ),
   );
 
   /// change person stuff
@@ -77,7 +109,7 @@ Future<void> addComplexNestedObject(Database db) async {
     ..name = 'Peter';
 
   final song = Song(
-    id: 'song1',
+    // id: 'song1',
     authors: [p1, p1],
     authors2: [99, 99],
     bpm: 120,
@@ -97,18 +129,12 @@ Future<void> addComplexNestedObject(Database db) async {
 }
 
 Future<void> storeCars(Database db) async {
-  // // model is null!!
   final cars = [
-    Car(id: '1', buildYear: 2020, type: 'BMW', model: 'Van'),
-    Car(id: '2', buildYear: 2019, type: 'AUDI', model: 'LIMO'),
-    Car(id: '3', buildYear: 2017, type: 'MERCEDES', model: 'LIMO'),
-    Car(id: '4', buildYear: 2012, type: 'VW', model: 'GOLF'),
-    Car(id: '5', buildYear: 2013, type: 'MAN', model: 'LKW'),
+    Car(buildYear: 2020, type: 'BMW', model: 'Van'), //id: '1',
+    Car(buildYear: 2019, type: 'AUDI', model: 'LIMO'), //id: '2',
+    Car(buildYear: 2017, type: 'MERCEDES', model: 'LIMO'), //id: '3',
+    Car(buildYear: 2012, type: 'VW', model: 'GOLF'), //id: '4',
+    Car(buildYear: 2013, type: 'MAN', model: 'LKW'), //id: '5',
   ];
-
   await db.carRepository.insertMany(cars, override: true);
-
-  // for (final car in cars) {
-  //   await car.update();
-  // }
 }
