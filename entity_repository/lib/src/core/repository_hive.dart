@@ -1,20 +1,43 @@
 part of entity_repository;
 
 class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
+  RepositoryHive(this.hiveInstance, this._entityMapFactory)
+      : _type = T.toString().toLowerCase(),
+        assert(hiveInstance != null, 'Please provide a HiveInstance'),
+        assert(_entityMapFactory != null, 'Please provide a EnitiyMapFactory');
+
   Box<T> _box;
   String _type;
 
-  Synchronizer _synchronizer = EntitiyRepositoryConfig.synchronizer;
-  ChainTracker _chainTracker = EntitiyRepositoryConfig.chainTracker;
+  @override
+  String get type => _type;
+
+  final EntityMapFactory<EntityBase> _entityMapFactory;
+  @override
+  // TODO: implement factoryFunction
+  EntityMapFactory<EntityBase> get factoryFunction => _entityMapFactory;
+
+  final HiveInterface hiveInstance;
+
+  Synchronizer _synchronizer;
+  ChainTracker _chainTracker;
+  bool _shoudSaveSubEntities;
 
   /// The [initialize] method is used to open a hive box
   /// to the matching [RepositoryHive] of type [T]
   ///
   // TODO: open box parameter strategy
   @override
-  FutureOr<RepositoryBase<T>> initialize() async {
-    _type = T.toString().toLowerCase();
-    _box = await Hive.openBox('$_type.box');
+  FutureOr<RepositoryBase<T>> initialize({
+    @required Synchronizer synchronizer,
+    @required ChainTracker chainTracker,
+    @required bool shoudSaveSubEntities,
+  }) async {
+    _box = await hiveInstance.openBox('$_type.box');
+
+    _synchronizer = synchronizer;
+    _chainTracker = chainTracker;
+    _shoudSaveSubEntities = shoudSaveSubEntities;
     return this;
   }
 
@@ -110,11 +133,10 @@ class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
     await _chainTracker.track(entity, () async {
       await _box.put(entity.id, entity);
 
-      if (EntitiyRepositoryConfig.shouldSaveWithSubEntities) {
+      if (_shoudSaveSubEntities) {
         for (final e in entity.getAllRefObjects()) {
-          if (_chainTracker.isNotSavedYet(e)) {
-            await e.upsert();
-          }
+          /// save, if not already saved
+          if (_chainTracker.isNotSavedYet(e)) await e.upsert();
         }
       }
     });

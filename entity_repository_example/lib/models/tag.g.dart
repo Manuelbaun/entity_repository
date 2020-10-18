@@ -105,6 +105,3 @@ class $TagAdapter implements Serializer<_Tag> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-/// The [$TagRepo] class of type [Tag]
-class $TagRepo extends RepositoryHive<Tag> {}

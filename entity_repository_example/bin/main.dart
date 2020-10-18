@@ -17,9 +17,10 @@ void measure(Function func) {
 
 Future<void> main() async {
   final list = <Atom>[];
+  final db = Database();
 
   /// Setup Sync
-  EntitiyRepositoryConfig.synchronizer.onAtomUpdate = (a) async {
+  db.synchronizer.onAtomUpdate = (a) async {
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
     list.add(a);
@@ -28,7 +29,6 @@ Future<void> main() async {
     // await Synchronizer.receivedRemoteAtom(aa);
   };
 
-  final db = Database();
   await db.initRepository();
   final s = Stopwatch()..start();
 
@@ -40,9 +40,6 @@ Future<void> main() async {
   db.personRepository.findAll().forEach(print);
   db.songRepository.findAll().forEach(print);
   db.tagRepository.findAll().forEach(print);
-
-  // await db.dispose();
-  // return;
 
   s.stop();
   print('Open DB: ${s.elapsedMilliseconds} ms');

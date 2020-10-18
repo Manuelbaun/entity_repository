@@ -1,4 +1,5 @@
 import 'package:entity_repository/entity_repository.dart';
+import 'package:hive/hive.dart';
 
 import 'models/address.dart';
 import 'models/car.dart';
@@ -23,66 +24,90 @@ abstract class ITagRepository implements RepositoryBase<Tag> {}
 /// The implementation
 ///
 class AddressRepository extends RepositoryHive<Address>
-    implements IAddressRepository {}
+    implements IAddressRepository {
+  AddressRepository(
+      HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
+      : super(hiveInstance, fac);
+}
 
 class PersonRepository extends RepositoryHive<Person>
-    implements IPersonRepository {}
+    implements IPersonRepository {
+  PersonRepository(HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
+      : super(hiveInstance, fac);
+}
 
-class CarRepository extends RepositoryHive<Car> implements ICarRepository {}
+class CarRepository extends RepositoryHive<Car> implements ICarRepository {
+  CarRepository(HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
+      : super(hiveInstance, fac);
+}
 
-class SongRepository extends RepositoryHive<Song> implements ISongRepository {}
+class SongRepository extends RepositoryHive<Song> implements ISongRepository {
+  SongRepository(HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
+      : super(hiveInstance, fac);
+}
 
-class TagRepository extends RepositoryHive<Tag> implements ITagRepository {}
+class TagRepository extends RepositoryHive<Tag> implements ITagRepository {
+  TagRepository(HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
+      : super(hiveInstance, fac);
+}
 
 ///
 /// The database
 ///
-class Database {
+class Database extends EntityConfiguration {
+  Database([String path = './hive_db']) : super(path);
+
   Future<void> initRepository() async {
-    Address.repo = AddressRepository();
-    Person.repo = PersonRepository();
-    Car.repo = CarRepository();
-    Song.repo = SongRepository();
-    Tag.repo = TagRepository();
+    final addressAdapter = $AddressAdapter();
+    final personAdapter = $PersonAdapter();
+    final carAdapter = $CarAdapter();
+    final songAdapter = $SongAdapter();
+    final tagAdapter = $TagAdapter();
 
     /// First Register all repositories and as adapters
-    EntitiyRepositoryConfig.repositoryLocator
-      ..configure(path: './hive_db')
-      ..registerEntity<Address>(Address.repo, $AddressAdapter())
-      ..registerEntity<Person>(Person.repo, $PersonAdapter())
-      ..registerEntity<Car>(Car.repo, $CarAdapter())
-      ..registerEntity<Song>(Song.repo, $SongAdapter())
-      ..registerEntity<Tag>(Tag.repo, $TagAdapter());
+    localHive
+      ..registerAdapter(addressAdapter)
+      ..registerAdapter(personAdapter)
+      ..registerAdapter(carAdapter)
+      ..registerAdapter(songAdapter)
+      ..registerAdapter(tagAdapter);
 
-    EntitiyRepositoryConfig.repositoryLocator
-      ..registerFromMapFactory<Address>(Address.fromMap)
-      ..registerFromMapFactory<Person>(Person.fromMap)
-      ..registerFromMapFactory<Car>(Car.fromMap)
-      ..registerFromMapFactory<Song>(Song.fromMap)
-      ..registerFromMapFactory<Tag>(Tag.fromMap);
+    Address.repo = AddressRepository(localHive, Address.fromMap);
+    Person.repo = PersonRepository(localHive, Person.fromMap);
+    Car.repo = CarRepository(localHive, Car.fromMap);
+    Song.repo = SongRepository(localHive, Song.fromMap);
+    Tag.repo = TagRepository(localHive, Tag.fromMap);
 
-    // init all daos, will open the boxes
-    await EntitiyRepositoryConfig.repositoryLocator.initAll();
+    repositoryLocator
+      ..register<Address>(Address.repo)
+      ..register<Person>(Person.repo)
+      ..register<Car>(Car.repo)
+      ..register<Song>(Song.repo)
+      ..register<Tag>(Tag.repo);
+
+    await repositoryLocator.initAll(
+      chainTracker: chainTracker,
+      shoudSaveSubEntities: true,
+      synchronizer: synchronizer,
+    );
   }
 
   IAddressRepository get addressRepository =>
-      EntitiyRepositoryConfig.repositoryLocator.get<Address>()
-          as IAddressRepository;
+      repositoryLocator.get<Address>() as IAddressRepository;
 
   IPersonRepository get personRepository =>
-      EntitiyRepositoryConfig.repositoryLocator.get<Person>()
-          as IPersonRepository;
+      repositoryLocator.get<Person>() as IPersonRepository;
 
   ICarRepository get carRepository =>
-      EntitiyRepositoryConfig.repositoryLocator.get<Car>() as ICarRepository;
+      repositoryLocator.get<Car>() as ICarRepository;
 
   ITagRepository get tagRepository =>
-      EntitiyRepositoryConfig.repositoryLocator.get<Tag>() as ITagRepository;
+      repositoryLocator.get<Tag>() as ITagRepository;
 
   ISongRepository get songRepository =>
-      EntitiyRepositoryConfig.repositoryLocator.get<Song>() as ISongRepository;
+      repositoryLocator.get<Song>() as ISongRepository;
 
   Future<void> dispose() async {
-    await EntitiyRepositoryConfig.repositoryLocator.disposeAll();
+    await repositoryLocator.disposeAll();
   }
 }

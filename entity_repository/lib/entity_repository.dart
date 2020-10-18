@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:msgpack_dart/msgpack_dart.dart';
+import 'package:hive/src/hive_impl.dart';
 
 export 'package:hive/hive.dart' show BinaryReader, BinaryWriter;
 
@@ -40,7 +41,6 @@ part 'src/utils/equality.dart';
 part 'src/utils/nesting_hashing.dart';
 part 'src/utils/id_generator.dart';
 
-// shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 // ignore: avoid_classes_with_only_static_members
 class CustomAdapterTypes {
   static const int setAdapter = 0;
@@ -72,14 +72,27 @@ Uint8List msgpackEncode(dynamic v) => serialize(v, extEncoder: _valueEncoder);
 T msgpackDecode<T>(Uint8List v) =>
     deserialize(v, extDecoder: _valueDecoder) as T;
 
-abstract class EntitiyRepositoryConfig {
-  static final _RepositoryLocator repositoryLocator = _RepositoryLocator();
-// ..registerAdapter<IndexImpl>(IndexAdapter(CustomAdapterTypes.indexAdapter));
+/// ********
+/// The Databse configure class
+///
+/// must be extended
+///
+abstract class EntityConfiguration {
+  EntityConfiguration(String path) {
+    localHive = HiveImpl()..init(path);
 
-  static bool shouldSaveWithSubEntities = true;
+    repositoryLocator = _RepositoryLocator();
+    chainTracker = ChainTracker();
+    synchronizer = Synchronizer(repositoryLocator);
+  }
 
-  /// helper class to track the entites, which are already stored
-  static ChainTracker chainTracker = ChainTracker();
+  bool shouldSaveWithSubEntities = true;
 
-  static Synchronizer synchronizer = Synchronizer();
+  _RepositoryLocator repositoryLocator;
+
+  ChainTracker chainTracker;
+
+  Synchronizer synchronizer;
+
+  HiveInterface localHive;
 }

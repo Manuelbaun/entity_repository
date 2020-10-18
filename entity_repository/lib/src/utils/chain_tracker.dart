@@ -5,8 +5,12 @@ class ChainTracker {
   final _chainCounter = <String, int>{};
   var _isTracking = false;
 
+  /// returns true, if the entity was not yet saved
+  /// hence, it was not added to the chain tracken => therefor must be saved
   bool isNotSavedYet(EntityBase entity) => !_chain.contains(entity);
 
+  /// returns true, if the Entity was successfull added, otherwise false,
+  /// if it was already present.
   bool _add(EntityBase entity) {
     _chainCounter[entity.id] ??= 0;
     _chainCounter[entity.id] += 1;

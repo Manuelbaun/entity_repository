@@ -292,24 +292,27 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
+  /// TODO: needs different approach
   StringBuffer generateRepositoryClass(ModelVisitor visitor) {
-    final buff = StringBuffer();
+    return StringBuffer();
 
-    if (!visitor.model.repository) return buff;
+    // final buff = StringBuffer();
 
-    buff
-      ..write('/// The [\$${visitor.entityName}Repo] class ')
-      ..write('of type [${visitor.entityName}]\n')
-      ..write('class \$${visitor.entityName}Repo ')
-      ..write('extends ${(RepositoryHive).$name}<${visitor.entityName}> ')
-      ..write(visitor.generateIndicies
-          ? 'with ${(IndicesAccess).$name}<${visitor.entityName}>'
-          : '')
-      ..write('{')
-      ..write(generateRepositoryClassIndices(visitor))
-      ..write('}');
+    // if (!visitor.model.repository) return buff;
 
-    return buff;
+    // buff
+    //   ..write('/// The [\$${visitor.entityName}Repo] class ')
+    //   ..write('of type [${visitor.entityName}]\n')
+    //   ..write('class \$${visitor.entityName}Repo ')
+    //   ..write('extends ${(RepositoryHive).$name}<${visitor.entityName}> ')
+    //   ..write(visitor.generateIndicies
+    //       ? 'with ${(IndicesAccess).$name}<${visitor.entityName}>'
+    //       : '')
+    //   ..write('{')
+    //   ..write(generateRepositoryClassIndices(visitor))
+    //   ..write('}');
+
+    // return buff;
   }
 }
 

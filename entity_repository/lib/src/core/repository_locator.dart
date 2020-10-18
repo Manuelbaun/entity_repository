@@ -1,62 +1,27 @@
 part of entity_repository;
 
 /// The RepositoryLocater is used to lookup a repository of an entity model
-
 typedef EntityMapFactory<T extends EntityBase<T>> = EntityBase<T> Function(
     Map<int, dynamic>);
 
 class _RepositoryLocator {
   final _mapStringRepo = <String, RepositoryBase>{};
-  final _mapIntRepo = <int, RepositoryBase>{};
-  final _factories = <String, EntityMapFactory>{};
-
-  bool _isConfigured = false;
-  void configure({String path}) {
-    Hive.init(path);
-    _isConfigured = true;
-  }
 
   List<RepositoryBase> get values => _mapStringRepo.values.toList();
 
-  RepositoryBase getByName(String type) => _mapStringRepo[type];
-  RepositoryBase getByType(int type) => _mapIntRepo[type];
-
-  /// use this internally, to [Serializer] adapter
-  void registerAdapter<T>(Serializer<T> adapter) =>
-      Hive.registerAdapter<T>(adapter);
+  RepositoryBase getRepoByName(String type) => _mapStringRepo[type];
 
   /// Register a [repository] of type [T] and its [Serializer] adapter
-  void registerEntity<T extends EntityBase<T>>(
-    RepositoryBase<T> repository,
-    Serializer<T> adapter,
-  ) {
-    if (!_isConfigured) {
-      throw EntityRepositoryError(
-          'Please configure the $_RepositoryLocator first.');
-    }
-    final typeName = T.toString().toLowerCase();
+  void register<T extends EntityBase<T>>(RepositoryBase<T> repository) {
+    final type = repository.type;
 
-    if (!_mapStringRepo.containsKey(typeName)) {
-      _mapStringRepo[typeName] = repository;
-      _mapIntRepo[adapter.typeId] = repository;
-
-      registerAdapter<T>(adapter);
+    if (!_mapStringRepo.containsKey(type)) {
+      _mapStringRepo[type] = repository;
     } else {
       throw EntityRepositoryError(
           'Type ${T.runtimeType} is already registered');
     }
   }
-
-  void registerFromMapFactory<T extends EntityBase<T>>(
-      EntityMapFactory<T> entityFactory) {
-    final typeString = T.toString();
-
-    _factories[typeString] = entityFactory;
-  }
-
-  /// returns the Factory of a entity class if registered via [registerFromMapFactory]
-  EntityMapFactory getFromMapFactory(String typeString) =>
-      _factories[typeString];
 
   /// Will Return the [RepositoryBase] of type [T]
   ///
@@ -68,24 +33,33 @@ class _RepositoryLocator {
   // https://github.com/dart-lang/sdk/issues/42954
   //
   RepositoryBase<T> get<T extends EntityBase<T>>() {
-    final typeString = T.toString().toLowerCase();
-    if (_mapStringRepo.containsKey(typeString)) {
-      return _mapStringRepo[typeString] as RepositoryBase<T>;
+    final type = T.toString().toLowerCase();
+
+    if (_mapStringRepo.containsKey(type)) {
+      return _mapStringRepo[type] as RepositoryBase<T>;
     }
 
     throw EntityRepositoryError(
-        'Type $typeString does not exist. Did you register the type?');
+        'Type $type does not exist. Did you register the type?');
   }
 
   /// This will initialize all repositories, which are registered.
-  Future<void> initAll() async {
-    for (final repo in _mapStringRepo.values) {
-      await repo.initialize();
+  Future<void> initAll({
+    @required Synchronizer synchronizer,
+    @required ChainTracker chainTracker,
+    @required bool shoudSaveSubEntities,
+  }) async {
+    for (final repo in values) {
+      await repo.initialize(
+        chainTracker: chainTracker,
+        shoudSaveSubEntities: true,
+        synchronizer: synchronizer,
+      );
     }
   }
 
   Future<void> disposeAll() async {
-    for (final repo in _mapStringRepo.values) {
+    for (final repo in values) {
       await repo.dispose();
     }
   }

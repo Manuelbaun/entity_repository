@@ -11,6 +11,8 @@ abstract class EntityBase<T extends EntityBase<T>>
 
   RepositoryBase<T> _repo;
 
+  String get entityType => _repo.type;
+
   /// Through the constructur checkin,
   /// An Id is either provided by the User or will be generated, when Id is
   /// either null or an empty string. Therefore Id is guaranteed to be present
@@ -71,3 +73,10 @@ abstract class EntityBase<T extends EntityBase<T>>
   @override
   int compareTo(T other) => id.compareTo(other.id);
 }
+
+// /// This extention specifies
+// extension EntityBaseX on EntityBase {
+//   String get $nameLowerCase {
+//     return runtimeType.toString().toLowerCase();
+//   }
+// }
