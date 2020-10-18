@@ -29,7 +29,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final buff = StringBuffer()
       ..writeln('/// Interface to/off the class [${visitor.entityName}]')
       ..write('abstract class _\$${visitor.entityName} ')
-      ..write('extends DataModel<${visitor.entityName}> {\n')
+      ..write('extends ${(EntityBase).$name}<${visitor.entityName}> {\n')
       ..writeln(
           '_\$${visitor.entityName}(String id): super(id, ${visitor.entityName}.repo);')
       ..writeAll(visitor.params.map((e) => e.toPublicField), '\n')
@@ -85,7 +85,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   StringBuffer generateClassName(ModelVisitor visitor) {
     final buff = StringBuffer()
       ..write('class ${visitor.redirectName} extends ')
-      ..write('${(DataModel).$name}<${visitor.entityName}> ')
+      ..write('${(EntityBase).$name}<${visitor.entityName}> ')
       ..write(visitor.hasEntityReference
           ? 'with ${visitor.referenceClassName}'
           : '')
@@ -166,8 +166,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
       ///Write bin
       ..writeln('\n\n@override')
-      ..writeln('Set<DataModel> getAllRefObjects() {')
-      ..writeln('final obj = <DataModel>{};\n')
+      ..writeln('Set<${(EntityBase).$name}> getAllRefObjects() {')
+      ..writeln('final obj = <${(EntityBase).$name}>{};\n')
       ..writeAll(visitor.params.map((e) => e.toRefsObjects), '\n')
       ..writeln('return obj;')
       ..writeln('}');

@@ -1,6 +1,6 @@
 part of entity_repository;
 
-class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
+class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
   Box<T> _box;
   String _type;
 

@@ -35,11 +35,11 @@ Future<void> main() async {
   await addComplexNestedObject(db);
   // await storeCars(db);
 
-  // db.addressRepository.findAll().forEach(print);
-  // db.carRepository.findAll().forEach(print);
-  // db.personRepository.findAll().forEach(print);
-  // db.songRepository.findAll().forEach(print);
-  // db.tagRepository.findAll().forEach(print);
+  db.addressRepository.findAll().forEach(print);
+  db.carRepository.findAll().forEach(print);
+  db.personRepository.findAll().forEach(print);
+  db.songRepository.findAll().forEach(print);
+  db.tagRepository.findAll().forEach(print);
 
   // await db.dispose();
   // return;

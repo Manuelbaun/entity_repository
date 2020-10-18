@@ -12,7 +12,7 @@ import 'package:msgpack_dart/msgpack_dart.dart';
 
 export 'package:hive/hive.dart' show BinaryReader, BinaryWriter;
 
-part 'src/model/data_model.dart';
+part 'src/model/entity_base.dart';
 
 part 'src/core/repository_base.dart';
 part 'src/core/repository_locator.dart';
@@ -28,7 +28,6 @@ part 'src/annotation/entity_model.dart';
 part 'src/annotation/field.dart';
 
 part 'src/mixins/indices_access.dart';
-part 'src/mixins/reference_lookup.dart';
 
 part 'src/sync/atom.dart';
 part 'src/sync/synchronizer.dart';

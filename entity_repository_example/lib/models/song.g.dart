@@ -7,7 +7,7 @@ part of 'song.dart';
 // **************************************************************************
 
 /// Interface to/off the class [Song]
-abstract class _$Song extends DataModel<Song> {
+abstract class _$Song extends EntityBase<Song> {
   _$Song(String id) : super(id, Song.repo);
   String title;
   int bpm;
@@ -66,7 +66,7 @@ mixin _SongReferenceLookUp {
   }
 }
 
-class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
+class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
   _Song(
       {String id,
       String title,
@@ -292,8 +292,8 @@ class _Song extends DataModel<Song> with _SongReferenceLookUp implements Song {
   }
 
   @override
-  Set<DataModel> getAllRefObjects() {
-    final obj = <DataModel>{};
+  Set<EntityBase> getAllRefObjects() {
+    final obj = <EntityBase>{};
 
     if (authors != null && authors.isNotEmpty) {
       obj.addAll(authors);

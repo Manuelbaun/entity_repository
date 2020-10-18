@@ -8,7 +8,7 @@ class Synchronizer {
   ///
   /// creates an atom with the entitys data
   ///
-  void insert<T extends DataModel<T>>(DataModel entity) {
+  void insert<T extends EntityBase<T>>(EntityBase entity) {
     final atom = Atom(
       action: CrudAction.insert,
       id: entity.id,
@@ -21,7 +21,7 @@ class Synchronizer {
   ///
   /// Creates an Atom with the to updated data
   ///
-  void update<T extends DataModel<T>>(DataModel entity) {
+  void update<T extends EntityBase<T>>(EntityBase entity) {
     final atom = Atom(
       action: CrudAction.update,
       id: entity.id,
@@ -36,7 +36,7 @@ class Synchronizer {
   ///
   /// Creates one atom, with the entity id, which should be deleted
   ///
-  void delete<T extends DataModel<T>>(DataModel entity) {
+  void delete<T extends EntityBase<T>>(EntityBase entity) {
     final atom = Atom(
       action: CrudAction.delete,
       id: entity.id,
@@ -48,7 +48,7 @@ class Synchronizer {
   ///
   /// Creates an Atom, with the deleted entities ids
   ///
-  void deleteMany<T extends DataModel<T>>(Iterable<DataModel> entities) {
+  void deleteMany<T extends EntityBase<T>>(Iterable<EntityBase> entities) {
     final atom = Atom(
       action: CrudAction.delete,
       typeModel: T.toString(),

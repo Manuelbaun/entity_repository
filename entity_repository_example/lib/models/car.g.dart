@@ -7,7 +7,7 @@ part of 'car.dart';
 // **************************************************************************
 
 /// Interface to/off the class [Car]
-abstract class _$Car extends DataModel<Car> {
+abstract class _$Car extends EntityBase<Car> {
   _$Car(String id) : super(id, Car.repo);
   String model;
   String type;
@@ -25,7 +25,7 @@ mixin _CarReferenceLookUp {
   }
 }
 
-class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
+class _Car extends EntityBase<Car> with _CarReferenceLookUp implements Car {
   _Car({String id, String model, String type, int buildYear, Person owner})
       : _model = model,
         _type = type,
@@ -98,8 +98,8 @@ class _Car extends DataModel<Car> with _CarReferenceLookUp implements Car {
   }
 
   @override
-  Set<DataModel> getAllRefObjects() {
-    final obj = <DataModel>{};
+  Set<EntityBase> getAllRefObjects() {
+    final obj = <EntityBase>{};
 
     if (owner != null) obj.add(owner);
     return obj;

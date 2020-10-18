@@ -103,9 +103,9 @@ part of 'person.dart';
 // EntityRepositoryGenerator
 // **************************************************************************
 
-/// class [Person] Interface  extends the DataModel<Person>
-/// The DataModel provides the upsert, update, delete and watch api
-abstract class _$Person extends DataModel<Person> {
+/// class [Person] Interface  extends the [EntityBase]<Person>
+/// The [EntityBase] provides the upsert, update, delete and watch api
+abstract class _$Person extends EntityBase<Person> {
   _$Person(String id) : super(id);
   String name;
   int age;
@@ -178,7 +178,7 @@ mixin _PersonReferenceLookUp {
 /// the redirected constructor, choosen before. It can be seen here, when class attribute
 /// which referenes other entities is accessed, the lookup will be performed.
 ///
-class _Person extends DataModel<Person>
+class _Person extends EntityBase<Person>
     with _PersonReferenceLookUp
     implements Person {
   _Person({

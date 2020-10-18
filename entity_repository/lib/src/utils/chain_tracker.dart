@@ -1,13 +1,13 @@
 part of entity_repository;
 
 class ChainTracker {
-  final _chain = <DataModel>{};
+  final _chain = <EntityBase>{};
   final _chainCounter = <String, int>{};
   var _isTracking = false;
 
-  bool isNotSavedYet(DataModel entity) => !_chain.contains(entity);
+  bool isNotSavedYet(EntityBase entity) => !_chain.contains(entity);
 
-  bool _add(DataModel entity) {
+  bool _add(EntityBase entity) {
     _chainCounter[entity.id] ??= 0;
     _chainCounter[entity.id] += 1;
 
@@ -15,7 +15,7 @@ class ChainTracker {
   }
 
   /// this function might be called recursivly. Therefore check must happen
-  Future<void> track(DataModel entity, Future<void> Function() func) async {
+  Future<void> track(EntityBase entity, Future<void> Function() func) async {
     if (_isTracking) {
       if (_add(entity)) {
         await func();

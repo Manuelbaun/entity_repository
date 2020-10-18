@@ -1,8 +1,8 @@
 part of entity_repository;
 
-/// Baseclass of a Dao [T extends DataModel<T>] which takes only a Class that
-/// extends the DataModel
-abstract class RepositoryBase<T extends DataModel<T>> {
+/// Baseclass of a Dao T extends [EntityBase]<T> which takes only a Class that
+/// extends the [EntityBase]
+abstract class RepositoryBase<T extends EntityBase<T>> {
   @mustCallSuper
   FutureOr<RepositoryBase<T>> initialize();
 

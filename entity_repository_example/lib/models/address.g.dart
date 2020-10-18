@@ -7,14 +7,14 @@ part of 'address.dart';
 // **************************************************************************
 
 /// Interface to/off the class [Address]
-abstract class _$Address extends DataModel<Address> {
+abstract class _$Address extends EntityBase<Address> {
   _$Address(String id) : super(id, Address.repo);
   String street;
   int houseNumber;
   Address copyWith({String id, String street, int houseNumber});
 }
 
-class _Address extends DataModel<Address> implements Address {
+class _Address extends EntityBase<Address> implements Address {
   _Address({String id, String street, int houseNumber})
       : _street = street,
         _houseNumber = houseNumber,
@@ -58,8 +58,8 @@ class _Address extends DataModel<Address> implements Address {
   }
 
   @override
-  Set<DataModel> getAllRefObjects() {
-    final obj = <DataModel>{};
+  Set<EntityBase> getAllRefObjects() {
+    final obj = <EntityBase>{};
 
     return obj;
   }

@@ -4,7 +4,7 @@ part of entity_repository;
 /// At the moment the indices mixin is only using strings and no ints
 ///
 
-mixin IndicesAccess<T extends DataModel<T>> {
+mixin IndicesAccess<T extends EntityBase<T>> {
   // remove box indices
   static LazyBox<IndexBase<String>> _boxindices;
 

@@ -2,7 +2,7 @@ part of entity_repository;
 
 /// The RepositoryLocater is used to lookup a repository of an entity model
 
-typedef EntityMapFactory<T extends DataModel<T>> = DataModel<T> Function(
+typedef EntityMapFactory<T extends EntityBase<T>> = EntityBase<T> Function(
     Map<int, dynamic>);
 
 class _RepositoryLocator {
@@ -26,7 +26,7 @@ class _RepositoryLocator {
       Hive.registerAdapter<T>(adapter);
 
   /// Register a [repository] of type [T] and its [Serializer] adapter
-  void registerEntity<T extends DataModel<T>>(
+  void registerEntity<T extends EntityBase<T>>(
     RepositoryBase<T> repository,
     Serializer<T> adapter,
   ) {
@@ -47,7 +47,7 @@ class _RepositoryLocator {
     }
   }
 
-  void registerFromMapFactory<T extends DataModel<T>>(
+  void registerFromMapFactory<T extends EntityBase<T>>(
       EntityMapFactory<T> entityFactory) {
     final typeString = T.toString();
 
@@ -67,8 +67,8 @@ class _RepositoryLocator {
   // TODO: wait, till the dart type VM issue is fixed:
   // https://github.com/dart-lang/sdk/issues/42954
   //
-  RepositoryBase<T> get<T extends DataModel<T>>() {
-    final typeString = T.toString();
+  RepositoryBase<T> get<T extends EntityBase<T>>() {
+    final typeString = T.toString().toLowerCase();
     if (_mapStringRepo.containsKey(typeString)) {
       return _mapStringRepo[typeString] as RepositoryBase<T>;
     }

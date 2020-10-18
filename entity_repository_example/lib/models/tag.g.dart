@@ -7,7 +7,7 @@ part of 'tag.dart';
 // **************************************************************************
 
 /// Interface to/off the class [Tag]
-abstract class _$Tag extends DataModel<Tag> {
+abstract class _$Tag extends EntityBase<Tag> {
   _$Tag(String id) : super(id, Tag.repo);
 
   Tag copyWith({
@@ -15,7 +15,7 @@ abstract class _$Tag extends DataModel<Tag> {
   });
 }
 
-class _Tag extends DataModel<Tag> implements Tag {
+class _Tag extends EntityBase<Tag> implements Tag {
   _Tag({
     String id,
   }) : super(id, Tag.repo);
@@ -36,8 +36,8 @@ class _Tag extends DataModel<Tag> implements Tag {
   }
 
   @override
-  Set<DataModel> getAllRefObjects() {
-    final obj = <DataModel>{};
+  Set<EntityBase> getAllRefObjects() {
+    final obj = <EntityBase>{};
 
     return obj;
   }

@@ -7,7 +7,7 @@ part of 'person.dart';
 // **************************************************************************
 
 /// Interface to/off the class [Person]
-abstract class _$Person extends DataModel<Person> {
+abstract class _$Person extends EntityBase<Person> {
   _$Person(String id) : super(id, Person.repo);
   String name;
   int age;
@@ -83,7 +83,7 @@ mixin _PersonReferenceLookUp {
   }
 }
 
-class _Person extends DataModel<Person>
+class _Person extends EntityBase<Person>
     with _PersonReferenceLookUp
     implements Person {
   _Person(
@@ -215,8 +215,8 @@ class _Person extends DataModel<Person>
   }
 
   @override
-  Set<DataModel> getAllRefObjects() {
-    final obj = <DataModel>{};
+  Set<EntityBase> getAllRefObjects() {
+    final obj = <EntityBase>{};
 
     if (address != null) obj.add(address);
     if (friends != null && friends.isNotEmpty) {

@@ -1,7 +1,7 @@
 part of entity_repository_generator;
 
 const _fieldChecker = TypeChecker.fromRuntime(Field);
-// const _dataModelChecker = TypeChecker.fromRuntime(DataModel);
+
 const entityModelChecker = TypeChecker.fromRuntime(EntityModel);
 
 Field getFieldAnn(Element element) {
