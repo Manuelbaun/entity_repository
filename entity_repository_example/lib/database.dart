@@ -55,11 +55,11 @@ class Database {
       ..registerEntity<Tag>(Tag.repo, $TagAdapter());
 
     EntitiyRepositoryConfig.repositoryLocator
-      ..registerMapFactory<Address>(Address.fromMap)
-      ..registerMapFactory<Person>(Person.fromMap)
-      ..registerMapFactory<Car>(Car.fromMap)
-      ..registerMapFactory<Song>(Song.fromMap)
-      ..registerMapFactory<Tag>(Tag.fromMap);
+      ..registerFromMapFactory<Address>(Address.fromMap)
+      ..registerFromMapFactory<Person>(Person.fromMap)
+      ..registerFromMapFactory<Car>(Car.fromMap)
+      ..registerFromMapFactory<Song>(Song.fromMap)
+      ..registerFromMapFactory<Tag>(Tag.fromMap);
 
     // init all daos, will open the boxes
     await EntitiyRepositoryConfig.repositoryLocator.initAll();

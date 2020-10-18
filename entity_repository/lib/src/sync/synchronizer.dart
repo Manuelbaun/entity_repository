@@ -3,6 +3,7 @@ part of entity_repository;
 // ignore: avoid_classes_with_only_static_members
 class Synchronizer {
   Function(Atom) onAtomUpdate;
+  final _repoLocator = EntitiyRepositoryConfig.repositoryLocator;
 
   ///
   /// creates an atom with the entitys data
@@ -60,24 +61,24 @@ class Synchronizer {
   /// Applys remote received atom to local db
   ///
   Future<void> receivedRemoteAtom(Atom atom) async {
-    final repo =
-        EntitiyRepositoryConfig.repositoryLocator.getByName(atom.typeModel);
+    final repo = _repoLocator.getByName(atom.typeModel);
 
     switch (atom.action) {
       case CrudAction.insert:
-        final factoryMethod =
-            EntitiyRepositoryConfig.repositoryLocator.factories[atom.typeModel];
+        final factoryMethod = _repoLocator.getFromMapFactory(atom.typeModel);
+
         if (factoryMethod != null) {
-          final res =
-              factoryMethod?.call((atom.data as Map).cast<int, dynamic>());
-          await repo.insert(res, fromRemote: true);
+          final atomData = (atom.data as Map).cast<int, dynamic>();
+          final entity = factoryMethod.call(atomData);
+          await repo.insert(entity, fromRemote: true);
         }
         break;
       case CrudAction.update:
         final entity = repo.findOne(atom.id);
 
         if (entity != null) {
-          entity.applyUpdates((atom.data as Map).cast<int, dynamic>());
+          final atomData = (atom.data as Map).cast<int, dynamic>();
+          entity.applyUpdates(atomData);
           await repo.update(entity, fromRemote: true);
         }
 

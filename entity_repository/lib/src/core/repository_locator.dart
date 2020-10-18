@@ -6,10 +6,9 @@ typedef EntityMapFactory<T extends DataModel<T>> = DataModel<T> Function(
     Map<int, dynamic>);
 
 class _RepositoryLocator {
-  final _map = <String, RepositoryBase>{};
-  final _mapInt = <int, RepositoryBase>{};
-
-  final factories = <String, EntityMapFactory>{};
+  final _mapStringRepo = <String, RepositoryBase>{};
+  final _mapIntRepo = <int, RepositoryBase>{};
+  final _factories = <String, EntityMapFactory>{};
 
   bool _isConfigured = false;
   void configure({String path}) {
@@ -17,33 +16,29 @@ class _RepositoryLocator {
     _isConfigured = true;
   }
 
-  List<RepositoryBase> get values => _map.values.toList();
+  List<RepositoryBase> get values => _mapStringRepo.values.toList();
 
-  RepositoryBase getByType(int type) => _mapInt[type];
-  RepositoryBase getByName(String type) => _map[type];
+  RepositoryBase getByName(String type) => _mapStringRepo[type];
+  RepositoryBase getByType(int type) => _mapIntRepo[type];
 
   /// use this internally, to [Serializer] adapter
-  void registerAdapter<T>(Serializer<T> adapter) {
-    try {
+  void registerAdapter<T>(Serializer<T> adapter) =>
       Hive.registerAdapter<T>(adapter);
-    } catch (e) {
-      // throw HiveError
-      rethrow;
-    }
-  }
 
   /// Register a [repository] of type [T] and its [Serializer] adapter
   void registerEntity<T extends DataModel<T>>(
-      RepositoryBase<T> repository, Serializer<T> adapter) {
+    RepositoryBase<T> repository,
+    Serializer<T> adapter,
+  ) {
     if (!_isConfigured) {
       throw EntityRepositoryError(
           'Please configure the $_RepositoryLocator first.');
     }
-    final typeString = T.toString();
+    final typeName = T.toString().toLowerCase();
 
-    if (!_map.containsKey(typeString)) {
-      _map[typeString] = repository;
-      _mapInt[adapter.typeId] = repository;
+    if (!_mapStringRepo.containsKey(typeName)) {
+      _mapStringRepo[typeName] = repository;
+      _mapIntRepo[adapter.typeId] = repository;
 
       registerAdapter<T>(adapter);
     } else {
@@ -52,12 +47,16 @@ class _RepositoryLocator {
     }
   }
 
-  void registerMapFactory<T extends DataModel<T>>(
+  void registerFromMapFactory<T extends DataModel<T>>(
       EntityMapFactory<T> entityFactory) {
     final typeString = T.toString();
 
-    factories[typeString] = entityFactory;
+    _factories[typeString] = entityFactory;
   }
+
+  /// returns the Factory of a entity class if registered via [registerFromMapFactory]
+  EntityMapFactory getFromMapFactory(String typeString) =>
+      _factories[typeString];
 
   /// Will Return the [RepositoryBase] of type [T]
   ///
@@ -70,8 +69,8 @@ class _RepositoryLocator {
   //
   RepositoryBase<T> get<T extends DataModel<T>>() {
     final typeString = T.toString();
-    if (_map.containsKey(typeString)) {
-      return _map[typeString] as RepositoryBase<T>;
+    if (_mapStringRepo.containsKey(typeString)) {
+      return _mapStringRepo[typeString] as RepositoryBase<T>;
     }
 
     throw EntityRepositoryError(
@@ -80,13 +79,13 @@ class _RepositoryLocator {
 
   /// This will initialize all repositories, which are registered.
   Future<void> initAll() async {
-    for (final repo in _map.values) {
+    for (final repo in _mapStringRepo.values) {
       await repo.initialize();
     }
   }
 
   Future<void> disposeAll() async {
-    for (final repo in _map.values) {
+    for (final repo in _mapStringRepo.values) {
       await repo.dispose();
     }
   }

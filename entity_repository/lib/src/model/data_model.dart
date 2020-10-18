@@ -1,5 +1,6 @@
 part of entity_repository;
 
+// TODO: It probably needs an Abstract class
 // abstract class DataModelBase<T extends DataModelBase<T>>
 //     implements Comparable<T> {
 //   Future<bool> upsert({bool override = true});
@@ -14,7 +15,8 @@ abstract class DataModel<T extends DataModel<T>>
     implements Comparable<T> {
   DataModel(String id, RepositoryBase<T> repo)
       : id = DataHelper.checkOrGenerateID(id),
-        _repo = repo; //EntitiyRepositoryConfig.repositoryLocator.get<T>();
+        _repo = repo,
+        assert(repo != null);
 
   RepositoryBase<T> _repo;
 
@@ -23,18 +25,8 @@ abstract class DataModel<T extends DataModel<T>>
   /// either null or an empty string. Therefore Id is guaranteed to be present
   final String id;
 
-  void _checkBase() {
-    if (_repo == null) {
-      throw EntityRepositoryException(
-        'Could not find "$T" in the locator. Did you register it before use?',
-      );
-    }
-  }
-
   // TODO: Remove this. or make a nice API!
   Future<bool> upsert({bool override = true}) {
-    _checkBase();
-
     if (override || _repo.findOne(id) == null) {
       return _repo.insert(this as T, override: override);
     } else {
@@ -42,37 +34,24 @@ abstract class DataModel<T extends DataModel<T>>
     }
   }
 
-  /// optimizes if no updates actually happend => no storing needed
+  /// This will trigger an update and stores the current entity as is
+  /// in the box. If no updates were made, there is no need to store
+  /// the entity.
   Future<bool> update() {
     if (!hasUpdates) return Future.value(false);
-
-    _checkBase();
     return _repo.update(this as T);
   }
 
-  Future<void> delete() {
-    _checkBase();
-    return _repo.delete(this as T);
-  }
+  /// This will delete the entity.
+  Future<void> delete() => _repo.delete(this as T);
 
-  // will return null, if key is not stored
-  Stream<T> watch() {
-    _checkBase();
-    return _repo.watch(id);
-  }
-
-  /// The default compare to compares the Ids
-  /// Therefor, only String Ids are supported for now.
-  @override
-  int compareTo(T other) => id.compareTo(other.id);
-
-  Map<int, dynamic> toMap();
-
-  void applyUpdates(Map<int, dynamic> map);
+  /// Returns a stream of type [T]. If id does not exists, it will return null
+  Stream<T> watch() => _repo.watch(id);
 
   ///
-  /// This will return all  reference objects of that data model
-  /// even if they are not accessed before.
+  /// If an data model contains also references to other data model
+  /// in terms of (1 To N) or (Many To N), this will get all References.
+  ///
   ///
   /// TODO: Check for Performance reason, if an class is red before.
   /// if not, do not try to save it.
@@ -86,4 +65,16 @@ abstract class DataModel<T extends DataModel<T>>
   /// }
   /// ```
   Set<DataModel> getAllRefObjects();
+
+  /// Returns a map of with ints as keys and data. It is not a json map!
+  Map<int, dynamic> toMap();
+
+  /// This function takes a map (not JSON MAP) and applies the updates
+  /// to the entity. Keys are int.
+  void applyUpdates(Map<int, dynamic> map);
+
+  /// The default compare to compares the Ids
+  /// Therefor, only String Ids are supported for now.
+  @override
+  int compareTo(T other) => id.compareTo(other.id);
 }

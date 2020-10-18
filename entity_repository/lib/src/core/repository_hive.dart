@@ -2,19 +2,19 @@ part of entity_repository;
 
 class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   Box<T> _box;
-  Synchronizer _synchronizer;
+  String _type;
+
+  Synchronizer _synchronizer = EntitiyRepositoryConfig.synchronizer;
+  ChainTracker _chainTracker = EntitiyRepositoryConfig.chainTracker;
 
   /// The [initialize] method is used to open a hive box
   /// to the matching [RepositoryHive] of type [T]
   ///
   // TODO: open box parameter strategy
   @override
-  FutureOr<RepositoryBase<T>> initialize({Synchronizer synchronizer}) async {
-    final typeString = T.toString().toLowerCase();
-
-    _box = await Hive.openBox('$typeString.box');
-    _synchronizer = synchronizer;
-
+  FutureOr<RepositoryBase<T>> initialize() async {
+    _type = T.toString().toLowerCase();
+    _box = await Hive.openBox('$_type.box');
     return this;
   }
 
@@ -107,12 +107,12 @@ class RepositoryHive<T extends DataModel<T>> implements RepositoryBase<T> {
   /// Additionally, if the entity got some sub entities
   /// those will be stored as well.
   Future<void> _upsertEntitiesWithAllSubEntites(T entity) async {
-    await EntitiyRepositoryConfig.chainTracker.track(entity, () async {
+    await _chainTracker.track(entity, () async {
       await _box.put(entity.id, entity);
 
       if (EntitiyRepositoryConfig.shouldSaveWithSubEntities) {
         for (final e in entity.getAllRefObjects()) {
-          if (EntitiyRepositoryConfig.chainTracker.isNotSavedYet(e)) {
+          if (_chainTracker.isNotSavedYet(e)) {
             await e.upsert();
           }
         }
