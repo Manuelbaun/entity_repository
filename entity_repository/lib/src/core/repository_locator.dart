@@ -4,12 +4,18 @@ part of entity_repository;
 typedef EntityMapFactory<T extends EntityBase<T>> = EntityBase<T> Function(
     Map<int, dynamic>);
 
-class _RepositoryLocator {
+///
+/// Repository Locator
+///
+///
+class RepositoryLocator {
   final _mapStringRepo = <String, RepositoryBase>{};
 
   List<RepositoryBase> get values => _mapStringRepo.values.toList();
 
   RepositoryBase getRepoByName(String type) => _mapStringRepo[type];
+  RepositoryBase getRepoByTypeId(int type) =>
+      throw UnimplementedError('This is not implemented yet');
 
   /// Register a [repository] of type [T] and its [Serializer] adapter
   void register<T extends EntityBase<T>>(RepositoryBase<T> repository) {

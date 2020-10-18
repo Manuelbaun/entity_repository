@@ -81,14 +81,14 @@ abstract class EntityConfiguration {
   EntityConfiguration(String path) {
     localHive = HiveImpl()..init(path);
 
-    repositoryLocator = _RepositoryLocator();
+    repositoryLocator = RepositoryLocator();
     chainTracker = ChainTracker();
     synchronizer = Synchronizer(repositoryLocator);
   }
 
   bool shouldSaveWithSubEntities = true;
 
-  _RepositoryLocator repositoryLocator;
+  RepositoryLocator repositoryLocator;
 
   ChainTracker chainTracker;
 
