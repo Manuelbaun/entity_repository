@@ -58,20 +58,15 @@ class Database extends EntityConfiguration {
   Database([String path = './hive_db']) : super(path);
 
   Future<void> initRepository() async {
-    final addressAdapter = $AddressAdapter();
-    final personAdapter = $PersonAdapter();
-    final carAdapter = $CarAdapter();
-    final songAdapter = $SongAdapter();
-    final tagAdapter = $TagAdapter();
-
-    /// First Register all repositories and as adapters
+    /// Register the Hive Adapters
     localHive
-      ..registerAdapter(addressAdapter)
-      ..registerAdapter(personAdapter)
-      ..registerAdapter(carAdapter)
-      ..registerAdapter(songAdapter)
-      ..registerAdapter(tagAdapter);
+      ..registerAdapter($AddressAdapter())
+      ..registerAdapter($PersonAdapter())
+      ..registerAdapter($CarAdapter())
+      ..registerAdapter($SongAdapter())
+      ..registerAdapter($TagAdapter());
 
+    /// Register all repositories
     Address.repo = AddressRepository(localHive, Address.fromMap);
     Person.repo = PersonRepository(localHive, Person.fromMap);
     Car.repo = CarRepository(localHive, Car.fromMap);
@@ -85,9 +80,10 @@ class Database extends EntityConfiguration {
       ..register<Song>(Song.repo)
       ..register<Tag>(Tag.repo);
 
+    // init all repos
     await repositoryLocator.initAll(
-      chainTracker: chainTracker,
       shoudSaveSubEntities: true,
+      chainTracker: chainTracker,
       synchronizer: synchronizer,
     );
   }
