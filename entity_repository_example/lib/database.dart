@@ -67,11 +67,14 @@ class Database extends EntityConfiguration {
       ..registerAdapter($TagAdapter());
 
     /// Register all repositories
-    Address.repo = AddressRepository(localHive, Address.fromMap);
-    Person.repo = PersonRepository(localHive, Person.fromMap);
-    Car.repo = CarRepository(localHive, Car.fromMap);
-    Song.repo = SongRepository(localHive, Song.fromMap);
-    Tag.repo = TagRepository(localHive, Tag.fromMap);
+    Address.repo =
+        _addressRepository = AddressRepository(localHive, Address.fromMap);
+
+    Person.repo =
+        _personRepository = PersonRepository(localHive, Person.fromMap);
+    Car.repo = _carRepository = CarRepository(localHive, Car.fromMap);
+    Song.repo = _songRepository = SongRepository(localHive, Song.fromMap);
+    Tag.repo = _tagRepository = TagRepository(localHive, Tag.fromMap);
 
     repositoryLocator
       ..register<Address>(Address.repo)
@@ -88,20 +91,20 @@ class Database extends EntityConfiguration {
     );
   }
 
-  IAddressRepository get addressRepository =>
-      repositoryLocator.get<Address>() as IAddressRepository;
+  IAddressRepository _addressRepository;
+  IAddressRepository get addressRepository => _addressRepository;
 
-  IPersonRepository get personRepository =>
-      repositoryLocator.get<Person>() as IPersonRepository;
+  IPersonRepository _personRepository;
+  IPersonRepository get personRepository => _personRepository;
 
-  ICarRepository get carRepository =>
-      repositoryLocator.get<Car>() as ICarRepository;
+  ICarRepository _carRepository;
+  ICarRepository get carRepository => _carRepository;
 
-  ITagRepository get tagRepository =>
-      repositoryLocator.get<Tag>() as ITagRepository;
+  ITagRepository _tagRepository;
+  ITagRepository get tagRepository => _tagRepository;
 
-  ISongRepository get songRepository =>
-      repositoryLocator.get<Song>() as ISongRepository;
+  ISongRepository _songRepository;
+  ISongRepository get songRepository => _songRepository;
 
   Future<void> dispose() async {
     await repositoryLocator.disposeAll();
