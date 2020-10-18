@@ -5,7 +5,7 @@ class Synchronizer {
   Synchronizer(this._repoLocator)
       : assert(_repoLocator != null, 'The repositoryLocator cannot be null');
 
-  final _RepositoryLocator _repoLocator;
+  final RepositoryLocator _repoLocator;
   Function(Atom) onAtomUpdate;
 
   ///
