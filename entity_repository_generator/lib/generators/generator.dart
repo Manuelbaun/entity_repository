@@ -67,7 +67,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
       // methods
       ..write(generateFactoryFromMap(visitor))
-      ..write(generateToRefObjectSet(visitor))
+      ..write(generateGetAllReferenceObjects(visitor))
       ..write(generateToMap(visitor))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
@@ -154,7 +154,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateToRefObjectSet(ModelVisitor visitor) {
+  StringBuffer generateGetAllReferenceObjects(ModelVisitor visitor) {
     final buff = StringBuffer()
 
       ///Write bin

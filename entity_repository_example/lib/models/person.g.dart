@@ -268,9 +268,9 @@ class _Person extends EntityBase<Person> implements Person {
 // ignore: lines_longer_than_80_chars
       'Person(id: $id, name: $name, age: $age, address: ${addressRefs}, friends: ${friendsRefs}, friends5: ${friends5Refs}, a5sf: ${a5sfRefs}, p2a: ${p2aRefs})';
 
+  ///
   /// Generate the reference look up
-  /// Generate the reference look up
-  /// Generate the reference look up
+  ///
   String addressRefs;
   List<String> friendsRefs;
   Set<String> friends5Refs;

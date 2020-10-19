@@ -419,9 +419,9 @@ class _Song extends EntityBase<Song> implements Song {
 // ignore: lines_longer_than_80_chars
       'Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authorsRefs}, authors2: $authors2, copyright: $copyright, translator: ${translatorRefs}, tags: ${tagsRefs})';
 
+  ///
   /// Generate the reference look up
-  /// Generate the reference look up
-  /// Generate the reference look up
+  ///
   List<String> authorsRefs;
   List<String> translatorRefs;
   List<String> tagsRefs;

@@ -161,9 +161,9 @@ class _Car extends EntityBase<Car> implements Car {
 // ignore: lines_longer_than_80_chars
       'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${ownerRefs})';
 
+  ///
   /// Generate the reference look up
-  /// Generate the reference look up
-  /// Generate the reference look up
+  ///
   String ownerRefs;
   Person _lookUpOwner() {
     return locator.get<Person>().findOne(ownerRefs);

@@ -350,12 +350,12 @@ class Param {
         condition += '&& $name.isNotEmpty';
         str += toReferenceName;
       } else {
-        str += '$name';
+        str += name;
       }
     } else if (isEntity) {
       str += toReferenceName;
     } else {
-      str += '$name';
+      str += name;
     }
 
     /// apply condition if null or empty=> should not be in the map
