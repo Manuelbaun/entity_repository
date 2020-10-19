@@ -6,44 +6,60 @@ import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
 
-void measure(Function func) {
+void measure(Function func) async {
   final s = Stopwatch()..start();
   const run = 1000;
-  for (int i = 0; i < run; i++) func();
+  for (int i = 0; i < run; i++) await func();
 
   s.stop();
   print('${s.elapsedTicks / run} ticks');
 }
 
+void printall(Database db) {
+  for (final repo in db.repositoryLocator.values) {
+    repo.findAll().forEach(print);
+  }
+}
+
+void clearDB(Database db) async {
+  for (final repo in db.repositoryLocator.values) {
+    await repo.clearRepository();
+  }
+}
+
+///
+/// MAIN
+///
 Future<void> main() async {
-  final list = <Atom>[];
   final db = Database();
+  final db2 = Database('hive_db2');
 
   /// Setup Sync
   db.synchronizer.onAtomUpdate = (a) async {
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
-    list.add(a);
-    // print(a);
-    // print(aa == a);
-    // await Synchronizer.receivedRemoteAtom(aa);
+    await db2.synchronizer.receivedRemoteAtom(aa);
   };
 
   await db.initRepository();
+  await db2.initRepository();
+
+  printall(db);
+
+  await clearDB(db);
+  await clearDB(db2);
+
   final s = Stopwatch()..start();
 
   await addComplexNestedObject(db);
-  // await storeCars(db);
-
-  db.addressRepository.findAll().forEach(print);
-  db.carRepository.findAll().forEach(print);
-  db.personRepository.findAll().forEach(print);
-  db.songRepository.findAll().forEach(print);
-  db.tagRepository.findAll().forEach(print);
 
   s.stop();
+
+  // printall(db2);
+
   print('Open DB: ${s.elapsedMilliseconds} ms');
-  await db.dispose();
+  await db.close();
+  await db2.close();
 }
 
 Future<void> addComplexNestedObject(Database db) async {
@@ -51,17 +67,19 @@ Future<void> addComplexNestedObject(Database db) async {
     id: 'f0',
     name: 'Friend 0',
     age: 30,
-  );
+  )..repo = db.personRepository;
+
   final f1 = Person(
     id: 'f1',
     name: 'Friend 1',
     age: 30,
-  );
+  )..repo = db.personRepository;
+
   final f2 = Person(
     id: 'f2',
     name: 'Friend 2',
     age: 30,
-  );
+  )..repo = db.personRepository;
 
   final p1 = Person(
     id: 'per1',
@@ -71,9 +89,9 @@ Future<void> addComplexNestedObject(Database db) async {
       id: 'add1',
       street: 'Icker',
       houseNumber: 2,
-    ),
+    )..repo = db.addressRepository,
     friends: [f0, f1, f2],
-  );
+  )..repo = db.personRepository;
 
   final p3 = Person(
     id: 'per3',
@@ -83,8 +101,8 @@ Future<void> addComplexNestedObject(Database db) async {
       id: 'add1',
       street: 'Icker',
       houseNumber: 2,
-    ),
-  );
+    )..repo = db.addressRepository,
+  )..repo = db.personRepository;
 
   // what happends next?
   f0.friends = [p1, p3];
@@ -97,8 +115,8 @@ Future<void> addComplexNestedObject(Database db) async {
       id: 'add2',
       street: 'Icker',
       houseNumber: 2,
-    ),
-  );
+    )..repo = db.addressRepository,
+  )..repo = db.personRepository;
 
   /// change person stuff
   p1
@@ -108,7 +126,7 @@ Future<void> addComplexNestedObject(Database db) async {
   final song = Song(
     id: 'song1',
     authors: [p1, p1],
-    authors2: [99, 99],
+    authors2: [99, 88],
     bpm: 120,
     capo: 0,
     ccli: '1234',
@@ -116,11 +134,15 @@ Future<void> addComplexNestedObject(Database db) async {
     lyrics: 'My first lyrics',
     notes: 'Some notes',
     songKey: 'A',
-    tags: [Tag(id: 'love'), Tag(id: 'peace'), Tag(id: 'joy')],
+    tags: [
+      Tag(id: 'love')..repo = db.tagRepository,
+      Tag(id: 'peace')..repo = db.tagRepository,
+      Tag(id: 'joy')..repo = db.tagRepository,
+    ],
     title: 'My First Song 2',
     translator: [p2],
     transpose: 0,
-  );
+  )..repo = db.songRepository;
 
   await song.upsert();
 }

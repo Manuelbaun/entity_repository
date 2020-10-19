@@ -34,16 +34,17 @@ class Param {
 
   String get stringfy {
     if (isEntity) {
-      return '$name: \${$name?.id}';
+      return '$name: \${$toReferenceName}';
     } else if (type.isDartCoreList || type.isDartCoreSet) {
       if (_isEntityParam(subTypes.first)) {
-        return '$name: \${$name?.map((e) => e.id)}';
+        return '$name: \${$toReferenceName}';
       }
     } else if (type.isDartCoreMap) {
-      final ass1 = _isEntityParam(subTypes.first) ? 'key.id' : 'key';
-      final ass2 = _isEntityParam(subTypes.last) ? 'value.id' : 'value';
-
-      return '$name: \${$name?.map((key, value) => MapEntry($ass1, $ass2))}';
+      if (_isEntityParam(subTypes.first) || _isEntityParam(subTypes.last)) {
+        return '$name: \${$toReferenceName}';
+      } else {
+        return '$name: \${$name?.map((key, value) => MapEntry(key, value))}';
+      }
     }
 
     return '$name: \$$name';
@@ -101,9 +102,17 @@ class Param {
     final buff = StringBuffer()
       ..writeln('@override')
       ..writeln('set $name($type $name) {')
-      ..writeln('_$name = $name;')
-      ..writeln('setKeyValue(${field.index}, $toSerializedField);')
-      ..writeln('}');
+      ..writeln('_$name = $name;');
+
+    if (containsEntities) {
+      buff
+        ..writeln('$toReferenceName = $mapEntityToIdsRefs;')
+        ..writeln('setKeyValue(${field.index}, $toReferenceName);');
+    } else {
+      buff.writeln('setKeyValue(${field.index}, $name);');
+    }
+
+    buff.writeln('}');
 
     return buff.toString();
   }
@@ -131,7 +140,7 @@ class Param {
     if (subTypes.isEmpty) {
       if (isEntity) {
         method = '''$type $toLookUpMethodName {
-        return $typeName.repo.findOne($toReferenceName);
+        return locator.get<$typeName>().findOne($toReferenceName);
       }''';
       } else {
         throw Exception(
@@ -142,7 +151,8 @@ class Param {
       method = '''
       $type $toLookUpMethodName {
         if($toReferenceName != null){
-          return $enType.repo.findMany($toReferenceName).toList();
+
+          return locator.get<$enType>().findMany($toReferenceName).toList();
         }
         return [];
       }''';
@@ -151,7 +161,7 @@ class Param {
       method = '''
       $type $toLookUpMethodName {
         if($toReferenceName != null){
-          return $enType.repo.findMany($toReferenceName).toSet();
+          return locator.get<$enType>().findMany($toReferenceName).toSet();
         }
         return {};
       }''';
@@ -160,11 +170,11 @@ class Param {
       final type2 = subTypes.last;
 
       final ass1 = _isEntityParam(type1)
-          ? '$type1.repo.findOne(entry.key)'
+          ? 'locator.get<$type1>().findOne(entry.key)'
           : 'entry.key';
 
       final ass2 = _isEntityParam(type2)
-          ? '$type2.repo.findOne(entry.value)'
+          ? 'locator.get<$type2>().findOne(entry.value)'
           : 'entry.value';
 
       method = '''
@@ -214,12 +224,30 @@ class Param {
     return '$tt $toReferenceName;';
   }
 
-  String get toSerializedField {
+  bool get containsEntities {
+    if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
+      return true;
+    } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
+      /// [Set to List]
+      return true;
+    } else if (type.isDartCoreMap) {
+      if (_isEntityParam(subTypes.first) || _isEntityParam(subTypes.last)) {
+        return true;
+      }
+    } else if (isEntity) {
+      return true;
+    }
+    // else
+    return false;
+  }
+
+  // general, if set field
+  String get mapEntityToIdsRefs {
     if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
       return '$name?.map((e) => e.id)?.toList()';
     } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
       /// [Set to List]
-      return '$name?.map((e) => e.id)?.toList()';
+      return '$name?.map((e) => e.id)'; //?.toList()';
     } else if (type.isDartCoreMap) {
       final has1 = _isEntityParam(subTypes.first);
       final has2 = _isEntityParam(subTypes.last);
@@ -242,9 +270,32 @@ class Param {
   ///
   /// ..writeByte(...)
   /// ..write(...)
-  String get toSerializeWrite {
+  String toSerializeWrite([String prefix = 'obj.']) {
+    String fieldString;
+
+    if ((type.isDartCoreSet || type.isDartCoreList) &&
+        _isEntityParam(subTypes.first)) {
+      fieldString = toReferenceName;
+
+      if (type.isDartCoreSet) {
+        fieldString += '?.toList()';
+      }
+    } else if (type.isDartCoreMap) {
+      final has1 = _isEntityParam(subTypes.first);
+      final has2 = _isEntityParam(subTypes.last);
+
+      if (has1 || has2) {
+        fieldString = toReferenceName;
+      } else {
+        fieldString = name;
+      }
+    } else if (isEntity) {
+      fieldString = toReferenceName;
+    } else
+      fieldString = name;
+
     return '''..writeByte(${field.index})\n'''
-        '''..write(obj.$toSerializedField)\n''';
+        '''..write($prefix$fieldString)\n''';
   }
 
   String get toSerializeRead {
@@ -263,7 +314,6 @@ class Param {
         /// [Set to list]
         return '..$toReferenceName = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
       } else {
-        // .songIds = (fields[0] as List)?.cast<String>()
         /// [Set to list]
         return '..$name = (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
       }
@@ -287,34 +337,29 @@ class Param {
   String get toMapEntry {
     var condition = '$name != null ';
     var str = 'obj[${field.index}] = ';
-    if (type.isDartCoreList && _isEntityParam(subTypes.first)) {
-      condition += '&& $name.isNotEmpty';
-      str += '$name?.map((e) => e.id)?.toList()';
-    } else if (type.isDartCoreSet && _isEntityParam(subTypes.first)) {
+    if ((type.isDartCoreList || type.isDartCoreSet) &&
+        _isEntityParam(subTypes.first)) {
       /// [Set to list] need to convert to list!
       condition += '&& $name.isNotEmpty';
-      str += '$name?.map((e) => e.id)?.toList()';
+      str += toReferenceName;
     } else if (type.isDartCoreMap) {
       final has1 = _isEntityParam(subTypes.first);
       final has2 = _isEntityParam(subTypes.last);
-      final t1 = has1 ? 'key.id' : 'key';
-      final t2 = has2 ? 'value.id' : 'value';
 
       if (has1 || has2) {
         condition += '&& $name.isNotEmpty';
-        str += '$name?.map((key, value) => MapEntry($t1, $t2))';
+        str += toReferenceName;
       } else {
         str += '$name';
       }
     } else if (isEntity) {
-      str += '$name?.id';
+      str += toReferenceName;
     } else {
       str += '$name';
     }
 
     /// apply condition if null or empty=> should not be in the map
     return '''if($condition) {$str;}''';
-    // return '''$str;''';
   }
 
   String get toRefsObjects {
@@ -386,18 +431,18 @@ class Param {
 
       if (_isEntityParam(st)) {
         str =
-            '$toReferenceName= (fields[${field.index}] as List)?.cast<String>()';
+            '$toReferenceName = (fields[${field.index}] as List)?.cast<String>()';
       } else {
-        str = '_$name : (fields[${field.index}] as List)?.cast<$st>()';
+        str = '_$name = (fields[${field.index}] as List)?.cast<$st>()';
       }
     } else if (type.isDartCoreSet) {
       final st = subTypes.first;
 
       if (_isEntityParam(st)) {
         str =
-            '$toReferenceName= (fields[${field.index}] as List)?.toSet()?.cast<String>()';
+            '$toReferenceName = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
       } else {
-        str = '_$name : (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
+        str = '_$name = (fields[${field.index}] as List)?.toSet()?.cast<$st>()';
       }
     } else if (type.isDartCoreMap) {
       final enType1 = _isEntityParam(subTypes.first);

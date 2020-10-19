@@ -8,7 +8,7 @@ part of 'car.dart';
 
 /// Interface to/off the class [Car]
 abstract class _$Car extends EntityBase<Car> {
-  _$Car(String id) : super(id, Car.repo);
+  _$Car(String id) : super(id);
   String model;
   String type;
   int buildYear;
@@ -17,21 +17,13 @@ abstract class _$Car extends EntityBase<Car> {
       {String id, String model, String type, int buildYear, Person owner});
 }
 
-/// Generate the reference look up mixin
-mixin _CarReferenceLookUp {
-  String ownerRefs;
-  Person _lookUpOwner() {
-    return Person.repo.findOne(ownerRefs);
-  }
-}
-
-class _Car extends EntityBase<Car> with _CarReferenceLookUp implements Car {
+class _Car extends EntityBase<Car> implements Car {
   _Car({String id, String model, String type, int buildYear, Person owner})
       : _model = model,
         _type = type,
         _buildYear = buildYear,
         _owner = owner,
-        super(id, Car.repo);
+        super(id);
 
   @override
   Car copyWith(
@@ -85,7 +77,8 @@ class _Car extends EntityBase<Car> with _CarReferenceLookUp implements Car {
   @override
   set owner(Person owner) {
     _owner = owner;
-    setKeyValue(4, owner?.id);
+    ownerRefs = owner?.id;
+    setKeyValue(4, ownerRefs);
   }
 
   factory _Car.fromMap(Map<int, dynamic> fields) {
@@ -122,7 +115,7 @@ class _Car extends EntityBase<Car> with _CarReferenceLookUp implements Car {
       obj[3] = buildYear;
     }
     if (owner != null) {
-      obj[4] = owner?.id;
+      obj[4] = ownerRefs;
     }
     return obj;
   }
@@ -166,11 +159,21 @@ class _Car extends EntityBase<Car> with _CarReferenceLookUp implements Car {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${owner?.id})';
+      'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${ownerRefs})';
+
+  /// Generate the reference look up
+  /// Generate the reference look up
+  /// Generate the reference look up
+  String ownerRefs;
+  Person _lookUpOwner() {
+    return locator.get<Person>().findOne(ownerRefs);
+  }
 }
 
 /// The serialize adapter of type [_Car]
 class $CarAdapter implements Serializer<_Car> {
+  $CarAdapter(this.repo);
+  final RepositoryBase<Car> repo;
   @override
   final int typeId = 11;
 
@@ -181,7 +184,7 @@ class $CarAdapter implements Serializer<_Car> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Car.fromMap(fields);
+    return _Car.fromMap(fields)..repo = repo;
   }
 
   @override
@@ -197,7 +200,7 @@ class $CarAdapter implements Serializer<_Car> {
       ..writeByte(3)
       ..write(obj.buildYear)
       ..writeByte(4)
-      ..write(obj.owner?.id);
+      ..write(obj.ownerRefs);
   }
 
   @override

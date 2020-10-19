@@ -8,7 +8,7 @@ part of 'person.dart';
 
 /// Interface to/off the class [Person]
 abstract class _$Person extends EntityBase<Person> {
-  _$Person(String id) : super(id, Person.repo);
+  _$Person(String id) : super(id);
   String name;
   int age;
   Address address;
@@ -27,65 +27,7 @@ abstract class _$Person extends EntityBase<Person> {
       Map<Person, Address> p2a});
 }
 
-/// Generate the reference look up mixin
-mixin _PersonReferenceLookUp {
-  String addressRefs;
-  List<String> friendsRefs;
-  Set<String> friends5Refs;
-  Map<int, String> a5sfRefs;
-  Map<String, String> p2aRefs;
-  Address _lookUpAddress() {
-    return Address.repo.findOne(addressRefs);
-  }
-
-  List<Person> _lookUpFriends() {
-    if (friendsRefs != null) {
-      return Person.repo.findMany(friendsRefs).toList();
-    }
-    return [];
-  }
-
-  Set<Person> _lookUpFriends5() {
-    if (friends5Refs != null) {
-      return Person.repo.findMany(friends5Refs).toSet();
-    }
-    return {};
-  }
-
-  Map<int, Address> _lookUpA5sf() {
-    if (a5sfRefs != null) {
-      final map = <int, Address>{};
-      for (final entry in a5sfRefs.entries) {
-        final v1 = entry.key;
-        final v2 = Address.repo.findOne(entry.value);
-
-        map[v1] = v2;
-      }
-
-      return map;
-    }
-    return {};
-  }
-
-  Map<Person, Address> _lookUpP2a() {
-    if (p2aRefs != null) {
-      final map = <Person, Address>{};
-      for (final entry in p2aRefs.entries) {
-        final v1 = Person.repo.findOne(entry.key);
-        final v2 = Address.repo.findOne(entry.value);
-
-        map[v1] = v2;
-      }
-
-      return map;
-    }
-    return {};
-  }
-}
-
-class _Person extends EntityBase<Person>
-    with _PersonReferenceLookUp
-    implements Person {
+class _Person extends EntityBase<Person> implements Person {
   _Person(
       {String id,
       String name,
@@ -102,7 +44,7 @@ class _Person extends EntityBase<Person>
         _friends5 = friends5,
         _a5sf = a5sf,
         _p2a = p2a,
-        super(id, Person.repo);
+        super(id);
 
   @override
   Person copyWith(
@@ -155,7 +97,8 @@ class _Person extends EntityBase<Person>
   @override
   set address(Address address) {
     _address = address;
-    setKeyValue(3, address?.id);
+    addressRefs = address?.id;
+    setKeyValue(3, addressRefs);
   }
 
   List<Person> _friends;
@@ -166,7 +109,8 @@ class _Person extends EntityBase<Person>
   @override
   set friends(List<Person> friends) {
     _friends = friends;
-    setKeyValue(4, friends?.map((e) => e.id)?.toList());
+    friendsRefs = friends?.map((e) => e.id)?.toList();
+    setKeyValue(4, friendsRefs);
   }
 
   Set<Person> _friends5;
@@ -177,7 +121,8 @@ class _Person extends EntityBase<Person>
   @override
   set friends5(Set<Person> friends5) {
     _friends5 = friends5;
-    setKeyValue(5, friends5?.map((e) => e.id)?.toList());
+    friends5Refs = friends5?.map((e) => e.id);
+    setKeyValue(5, friends5Refs);
   }
 
   Map<int, Address> _a5sf;
@@ -188,7 +133,8 @@ class _Person extends EntityBase<Person>
   @override
   set a5sf(Map<int, Address> a5sf) {
     _a5sf = a5sf;
-    setKeyValue(6, a5sf?.map((key, value) => MapEntry(key, value.id)));
+    a5sfRefs = a5sf?.map((key, value) => MapEntry(key, value.id));
+    setKeyValue(6, a5sfRefs);
   }
 
   Map<Person, Address> _p2a;
@@ -199,7 +145,8 @@ class _Person extends EntityBase<Person>
   @override
   set p2a(Map<Person, Address> p2a) {
     _p2a = p2a;
-    setKeyValue(7, p2a?.map((key, value) => MapEntry(key.id, value.id)));
+    p2aRefs = p2a?.map((key, value) => MapEntry(key.id, value.id));
+    setKeyValue(7, p2aRefs);
   }
 
   factory _Person.fromMap(Map<int, dynamic> fields) {
@@ -248,19 +195,19 @@ class _Person extends EntityBase<Person>
       obj[2] = age;
     }
     if (address != null) {
-      obj[3] = address?.id;
+      obj[3] = addressRefs;
     }
     if (friends != null && friends.isNotEmpty) {
-      obj[4] = friends?.map((e) => e.id)?.toList();
+      obj[4] = friendsRefs;
     }
     if (friends5 != null && friends5.isNotEmpty) {
-      obj[5] = friends5?.map((e) => e.id)?.toList();
+      obj[5] = friends5Refs;
     }
     if (a5sf != null && a5sf.isNotEmpty) {
-      obj[6] = a5sf?.map((key, value) => MapEntry(key, value.id));
+      obj[6] = a5sfRefs;
     }
     if (p2a != null && p2a.isNotEmpty) {
-      obj[7] = p2a?.map((key, value) => MapEntry(key.id, value.id));
+      obj[7] = p2aRefs;
     }
     return obj;
   }
@@ -319,11 +266,69 @@ class _Person extends EntityBase<Person>
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Person(id: $id, name: $name, age: $age, address: ${address?.id}, friends: ${friends?.map((e) => e.id)}, friends5: ${friends5?.map((e) => e.id)}, a5sf: ${a5sf?.map((key, value) => MapEntry(key, value.id))}, p2a: ${p2a?.map((key, value) => MapEntry(key.id, value.id))})';
+      'Person(id: $id, name: $name, age: $age, address: ${addressRefs}, friends: ${friendsRefs}, friends5: ${friends5Refs}, a5sf: ${a5sfRefs}, p2a: ${p2aRefs})';
+
+  /// Generate the reference look up
+  /// Generate the reference look up
+  /// Generate the reference look up
+  String addressRefs;
+  List<String> friendsRefs;
+  Set<String> friends5Refs;
+  Map<int, String> a5sfRefs;
+  Map<String, String> p2aRefs;
+  Address _lookUpAddress() {
+    return locator.get<Address>().findOne(addressRefs);
+  }
+
+  List<Person> _lookUpFriends() {
+    if (friendsRefs != null) {
+      return locator.get<Person>().findMany(friendsRefs).toList();
+    }
+    return [];
+  }
+
+  Set<Person> _lookUpFriends5() {
+    if (friends5Refs != null) {
+      return locator.get<Person>().findMany(friends5Refs).toSet();
+    }
+    return {};
+  }
+
+  Map<int, Address> _lookUpA5sf() {
+    if (a5sfRefs != null) {
+      final map = <int, Address>{};
+      for (final entry in a5sfRefs.entries) {
+        final v1 = entry.key;
+        final v2 = locator.get<Address>().findOne(entry.value);
+
+        map[v1] = v2;
+      }
+
+      return map;
+    }
+    return {};
+  }
+
+  Map<Person, Address> _lookUpP2a() {
+    if (p2aRefs != null) {
+      final map = <Person, Address>{};
+      for (final entry in p2aRefs.entries) {
+        final v1 = locator.get<Person>().findOne(entry.key);
+        final v2 = locator.get<Address>().findOne(entry.value);
+
+        map[v1] = v2;
+      }
+
+      return map;
+    }
+    return {};
+  }
 }
 
 /// The serialize adapter of type [_Person]
 class $PersonAdapter implements Serializer<_Person> {
+  $PersonAdapter(this.repo);
+  final RepositoryBase<Person> repo;
   @override
   final int typeId = 10;
 
@@ -334,7 +339,7 @@ class $PersonAdapter implements Serializer<_Person> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Person.fromMap(fields);
+    return _Person.fromMap(fields)..repo = repo;
   }
 
   @override
@@ -348,15 +353,15 @@ class $PersonAdapter implements Serializer<_Person> {
       ..writeByte(2)
       ..write(obj.age)
       ..writeByte(3)
-      ..write(obj.address?.id)
+      ..write(obj.addressRefs)
       ..writeByte(4)
-      ..write(obj.friends?.map((e) => e.id)?.toList())
+      ..write(obj.friendsRefs)
       ..writeByte(5)
-      ..write(obj.friends5?.map((e) => e.id)?.toList())
+      ..write(obj.friends5Refs?.toList())
       ..writeByte(6)
-      ..write(obj.a5sf?.map((key, value) => MapEntry(key, value.id)))
+      ..write(obj.a5sfRefs)
       ..writeByte(7)
-      ..write(obj.p2a?.map((key, value) => MapEntry(key.id, value.id)));
+      ..write(obj.p2aRefs);
   }
 
   @override

@@ -12,5 +12,4 @@ abstract class Address implements _$Address {
   }) = _Address;
 
   static Address fromMap(Map<int, dynamic> fields) => _Address.fromMap(fields);
-  static RepositoryBase<Address> repo;
 }

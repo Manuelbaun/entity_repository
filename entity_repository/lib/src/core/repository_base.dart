@@ -1,12 +1,15 @@
 part of entity_repository;
 
-/// Baseclass of a Dao T extends [EntityBase]<T> which takes only a Class that
+/// Baseclass of a Dao T extends [EntityBase]<EntityBase> which takes only a Class that
 /// extends the [EntityBase]
 abstract class RepositoryBase<T extends EntityBase<T>> {
   /// The Type Id
-  // int get typeId;
+  int get typeId;
   int get length;
   String get type;
+
+  /// can only be set once
+  RepositoryLocator locator;
 
   @mustCallSuper
   FutureOr<RepositoryBase<T>> initialize({

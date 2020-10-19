@@ -68,19 +68,22 @@ class Synchronizer {
   Future<void> receivedRemoteAtom(Atom atom) async {
     final repo = _repoLocator.getRepoByName(atom.typeModel);
 
+    if (repo == null) {
+      throw EntityRepositoryError('Could not find repository for atom $atom');
+    }
+
     switch (atom.action) {
       case CrudAction.insert:
-        final factoryMethod =
-            _repoLocator.getRepoByName(atom.typeModel).factoryFunction;
+        final factoryMethod = repo.factoryFunction;
 
         if (factoryMethod != null) {
           final atomData = (atom.data as Map).cast<int, dynamic>();
-          final entity = factoryMethod.call(atomData);
+          final entity = factoryMethod.call(atomData)..repo = repo;
           await repo.insert(entity, fromRemote: true);
         }
         break;
       case CrudAction.update:
-        final entity = repo.findOne(atom.id);
+        final entity = repo.findOne(atom.id)..repo = repo;
 
         if (entity != null) {
           final atomData = (atom.data as Map).cast<int, dynamic>();

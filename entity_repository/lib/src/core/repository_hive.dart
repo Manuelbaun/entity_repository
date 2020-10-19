@@ -1,7 +1,7 @@
 part of entity_repository;
 
 class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
-  RepositoryHive(this.hiveInstance, this._entityMapFactory)
+  RepositoryHive(this.hiveInstance, this._entityMapFactory, this.typeId)
       : _type = T.toString().toLowerCase(),
         assert(hiveInstance != null, 'Please provide a HiveInstance'),
         assert(_entityMapFactory != null, 'Please provide a EnitiyMapFactory');
@@ -10,14 +10,26 @@ class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
   String _type;
 
   @override
+  final int typeId;
+
+  @override
   String get type => _type;
 
-  final EntityMapFactory<EntityBase> _entityMapFactory;
+  final EntityMapFactory<T> _entityMapFactory;
   @override
   // TODO: implement factoryFunction
-  EntityMapFactory<EntityBase> get factoryFunction => _entityMapFactory;
+  EntityMapFactory<T> get factoryFunction => _entityMapFactory;
 
   final HiveInterface hiveInstance;
+
+  RepositoryLocator _locator;
+
+  RepositoryLocator get locator => _locator;
+  // can only be set once
+  set locator(RepositoryLocator locator) {
+    assert(_locator == null);
+    _locator = locator;
+  }
 
   Synchronizer _synchronizer;
   ChainTracker _chainTracker;
@@ -132,6 +144,7 @@ class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
   Future<void> _upsertEntitiesWithAllSubEntites(T entity) async {
     await _chainTracker.track(entity, () async {
       await _box.put(entity.id, entity);
+      entity.repo = this;
 
       if (_shoudSaveSubEntities) {
         for (final e in entity.getAllRefObjects()) {

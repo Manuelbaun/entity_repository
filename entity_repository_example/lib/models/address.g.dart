@@ -8,7 +8,7 @@ part of 'address.dart';
 
 /// Interface to/off the class [Address]
 abstract class _$Address extends EntityBase<Address> {
-  _$Address(String id) : super(id, Address.repo);
+  _$Address(String id) : super(id);
   String street;
   int houseNumber;
   Address copyWith({String id, String street, int houseNumber});
@@ -18,7 +18,7 @@ class _Address extends EntityBase<Address> implements Address {
   _Address({String id, String street, int houseNumber})
       : _street = street,
         _houseNumber = houseNumber,
-        super(id, Address.repo);
+        super(id);
 
   @override
   Address copyWith({String id, String street, int houseNumber}) {
@@ -112,6 +112,8 @@ class _Address extends EntityBase<Address> implements Address {
 
 /// The serialize adapter of type [_Address]
 class $AddressAdapter implements Serializer<_Address> {
+  $AddressAdapter(this.repo);
+  final RepositoryBase<Address> repo;
   @override
   final int typeId = 12;
 
@@ -122,7 +124,7 @@ class $AddressAdapter implements Serializer<_Address> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Address.fromMap(fields);
+    return _Address.fromMap(fields)..repo = repo;
   }
 
   @override

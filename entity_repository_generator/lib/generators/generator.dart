@@ -16,7 +16,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     final res = StringBuffer()
       ..write(generateAbstractClassInterface(visitor))
-      ..write(generateReferenceLookup(visitor))
       ..write(generateClass(visitor))
       ..write(generateSerializerAdapter(visitor))
       ..write(generateRepositoryClass(visitor));
@@ -30,8 +29,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('/// Interface to/off the class [${visitor.entityName}]')
       ..write('abstract class _\$${visitor.entityName} ')
       ..write('extends ${(EntityBase).$name}<${visitor.entityName}> {\n')
-      ..writeln(
-          '_\$${visitor.entityName}(String id): super(id, ${visitor.entityName}.repo);')
+      ..writeln('_\$${visitor.entityName}(String id): super(id);')
       ..writeAll(visitor.params.map((e) => e.toPublicField), '\n')
 
       // copy with
@@ -48,15 +46,11 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     if (!visitor.hasEntityReference) return buff;
 
     buff
-      ..writeln('/// Generate the reference look up mixin')
-      ..writeln('mixin ${visitor.referenceClassName} {')
+      ..writeln('/// ')
+      ..writeln('/// Generate the reference look up ')
+      ..writeln('/// ')
       ..writeAll(visitor.paramsEntities.map((e) => e.toReferenceField), '\n')
-      ..writeAll(
-          visitor.paramsEntities.map(
-            (e) => e.toLookupMethod(),
-          ),
-          '\n')
-      ..writeln('}');
+      ..writeAll(visitor.paramsEntities.map((e) => e.toLookupMethod()), '\n');
 
     return buff;
   }
@@ -70,6 +64,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateClassCopyConstructor(visitor))
       // class fields
       ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
+
       // methods
       ..write(generateFactoryFromMap(visitor))
       ..write(generateToRefObjectSet(visitor))
@@ -77,6 +72,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
+      ..write(generateReferenceLookup(visitor))
       ..writeln('}'); // end
 
     return buff;
@@ -86,9 +82,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final buff = StringBuffer()
       ..write('class ${visitor.redirectName} extends ')
       ..write('${(EntityBase).$name}<${visitor.entityName}> ')
-      ..write(visitor.hasEntityReference
-          ? 'with ${visitor.referenceClassName}'
-          : '')
       ..write(' implements ${visitor.entityName}');
 
     return buff;
@@ -101,7 +94,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write('}) : ') // constructor
       ..writeAll(visitor.params.map((e) => e.toParamInitPrivate), ',')
       ..write(visitor.params.isNotEmpty ? ',' : '')
-      ..writeln('super(id, ${visitor.entityName}.repo);\n');
+      ..writeln('super(id);\n');
 
     return buff;
   }
@@ -250,15 +243,16 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('/// The serialize adapter of type [${visitor.redirectName}]')
       ..write('class ${visitor.adapterName} implements ')
       ..write('${(Serializer).$name}<${visitor.redirectName}> {')
+      ..write('${visitor.adapterName}(this.repo);')
+      ..writeln('final RepositoryBase<${visitor.entityName}> repo;')
       ..writeln('@override\n final int typeId = ${visitor.model.typeId};\n')
 
       /// read bin
       ..writeln('@override')
       ..writeln('${visitor.redirectName} read(BinaryReader reader) {')
       ..writeln(readerField)
-      ..writeln('\n\nreturn ${visitor.redirectName}.fromMap(fields)')
-      // ..writeln('\n\nreturn ${visitor.redirectName}(id: fields[0] as String)')
-      // ..writeAll(visitor.params.map((e) => e.toSerializeRead), '\n')
+      ..write('\n\n')
+      ..writeln('return ${visitor.redirectName}.fromMap(fields)..repo = repo')
       ..writeln(';}')
 
       ///Write bin
@@ -269,7 +263,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('..writeByte(${visitor.params.length + 1})')
       ..writeln('..writeByte(0)')
       ..writeln('..write(obj.id)')
-      ..writeAll(visitor.params.map((e) => e.toSerializeWrite), '\n')
+      ..writeAll(visitor.params.map((e) => e.toSerializeWrite()), '\n')
       ..writeln(';}')
       ..write(generateSerializerAdapterEquality(visitor))
       ..write('}');

@@ -4,14 +4,25 @@ part of entity_repository;
 abstract class EntityBase<T extends EntityBase<T>>
     with Syncable
     implements Comparable<T> {
-  EntityBase(String id, RepositoryBase<T> repo)
-      : id = DataHelper.checkOrGenerateID(id),
-        _repo = repo,
-        assert(repo != null);
+  EntityBase(String id) : id = DataHelper.checkOrGenerateID(id);
 
   RepositoryBase<T> _repo;
+  RepositoryBase<T> get repo => _repo;
 
-  String get entityType => _repo.type;
+  set repo(RepositoryBase<T> repo) {
+    /// debug me...
+    _repo = repo;
+  }
+
+  RepositoryLocator get locator => repo.locator;
+
+  String get entityType => repo.type;
+
+  void checkRepo() {
+    if (repo == null) {
+      throw EntityRepositoryError('Repository needs to be supplied');
+    }
+  }
 
   /// Through the constructur checkin,
   /// An Id is either provided by the User or will be generated, when Id is
@@ -20,8 +31,10 @@ abstract class EntityBase<T extends EntityBase<T>>
 
   // TODO: Remove this. or make a nice API!
   Future<bool> upsert({bool override = true}) {
-    if (override || _repo.findOne(id) == null) {
-      return _repo.insert(this as T, override: override);
+    checkRepo();
+
+    if (override || repo.findOne(id) == null) {
+      return repo.insert(this as T, override: override);
     } else {
       return update();
     }
@@ -31,15 +44,25 @@ abstract class EntityBase<T extends EntityBase<T>>
   /// in the box. If no updates were made, there is no need to store
   /// the entity.
   Future<bool> update() {
+    checkRepo();
+
     if (!hasUpdates) return Future.value(false);
-    return _repo.update(this as T);
+    return repo.update(this as T);
   }
 
   /// This will delete the entity.
-  Future<void> delete() => _repo.delete(this as T);
+  Future<void> delete() {
+    checkRepo();
+
+    return repo.delete(this as T);
+  }
 
   /// Returns a stream of type [T]. If id does not exists, it will return null
-  Stream<T> watch() => _repo.watch(id);
+  Stream<T> watch() {
+    checkRepo();
+
+    return repo.watch(id);
+  }
 
   /**
    *

@@ -10,12 +10,13 @@ typedef EntityMapFactory<T extends EntityBase<T>> = EntityBase<T> Function(
 ///
 class RepositoryLocator {
   final _mapStringRepo = <String, RepositoryBase>{};
+  final _mapIntRepo = <int, RepositoryBase>{};
 
   List<RepositoryBase> get values => _mapStringRepo.values.toList();
 
   RepositoryBase getRepoByName(String type) => _mapStringRepo[type];
-  RepositoryBase getRepoByTypeId(int type) =>
-      throw UnimplementedError('This is not implemented yet');
+  RepositoryBase getRepoByTypeId(int type) => _mapIntRepo[type];
+  // throw UnimplementedError('This is not implemented yet');
 
   /// Register a [repository] of type [T] and its [Serializer] adapter
   void register<T extends EntityBase<T>>(RepositoryBase<T> repository) {
@@ -23,6 +24,7 @@ class RepositoryLocator {
 
     if (!_mapStringRepo.containsKey(type)) {
       _mapStringRepo[type] = repository;
+      _mapIntRepo[repository.typeId] = repository;
     } else {
       throw EntityRepositoryError(
           'Type ${T.runtimeType} is already registered');
@@ -61,6 +63,8 @@ class RepositoryLocator {
         shoudSaveSubEntities: true,
         synchronizer: synchronizer,
       );
+
+      repo.locator = this;
     }
   }
 

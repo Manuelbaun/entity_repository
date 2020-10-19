@@ -8,7 +8,7 @@ part of 'tag.dart';
 
 /// Interface to/off the class [Tag]
 abstract class _$Tag extends EntityBase<Tag> {
-  _$Tag(String id) : super(id, Tag.repo);
+  _$Tag(String id) : super(id);
 
   Tag copyWith({
     String id,
@@ -18,7 +18,7 @@ abstract class _$Tag extends EntityBase<Tag> {
 class _Tag extends EntityBase<Tag> implements Tag {
   _Tag({
     String id,
-  }) : super(id, Tag.repo);
+  }) : super(id);
 
   @override
   Tag copyWith({
@@ -74,6 +74,8 @@ class _Tag extends EntityBase<Tag> implements Tag {
 
 /// The serialize adapter of type [_Tag]
 class $TagAdapter implements Serializer<_Tag> {
+  $TagAdapter(this.repo);
+  final RepositoryBase<Tag> repo;
   @override
   final int typeId = 13;
 
@@ -84,7 +86,7 @@ class $TagAdapter implements Serializer<_Tag> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Tag.fromMap(fields);
+    return _Tag.fromMap(fields)..repo = repo;
   }
 
   @override

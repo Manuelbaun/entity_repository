@@ -8,7 +8,7 @@ part of 'song.dart';
 
 /// Interface to/off the class [Song]
 abstract class _$Song extends EntityBase<Song> {
-  _$Song(String id) : super(id, Song.repo);
+  _$Song(String id) : super(id);
   String title;
   int bpm;
   int transpose;
@@ -39,34 +39,7 @@ abstract class _$Song extends EntityBase<Song> {
       List<Tag> tags});
 }
 
-/// Generate the reference look up mixin
-mixin _SongReferenceLookUp {
-  List<String> authorsRefs;
-  List<String> translatorRefs;
-  List<String> tagsRefs;
-  List<Person> _lookUpAuthors() {
-    if (authorsRefs != null) {
-      return Person.repo.findMany(authorsRefs).toList();
-    }
-    return [];
-  }
-
-  List<Person> _lookUpTranslator() {
-    if (translatorRefs != null) {
-      return Person.repo.findMany(translatorRefs).toList();
-    }
-    return [];
-  }
-
-  List<Tag> _lookUpTags() {
-    if (tagsRefs != null) {
-      return Tag.repo.findMany(tagsRefs).toList();
-    }
-    return [];
-  }
-}
-
-class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
+class _Song extends EntityBase<Song> implements Song {
   _Song(
       {String id,
       String title,
@@ -95,7 +68,7 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
         _copyright = copyright,
         _translator = translator,
         _tags = tags,
-        super(id, Song.repo);
+        super(id);
 
   @override
   Song copyWith(
@@ -226,7 +199,8 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
   @override
   set authors(List<Person> authors) {
     _authors = authors;
-    setKeyValue(9, authors?.map((e) => e.id)?.toList());
+    authorsRefs = authors?.map((e) => e.id)?.toList();
+    setKeyValue(9, authorsRefs);
   }
 
   List<int> _authors2;
@@ -259,7 +233,8 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
   @override
   set translator(List<Person> translator) {
     _translator = translator;
-    setKeyValue(12, translator?.map((e) => e.id)?.toList());
+    translatorRefs = translator?.map((e) => e.id)?.toList();
+    setKeyValue(12, translatorRefs);
   }
 
   List<Tag> _tags;
@@ -270,7 +245,8 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
   @override
   set tags(List<Tag> tags) {
     _tags = tags;
-    setKeyValue(13, tags?.map((e) => e.id)?.toList());
+    tagsRefs = tags?.map((e) => e.id)?.toList();
+    setKeyValue(13, tagsRefs);
   }
 
   factory _Song.fromMap(Map<int, dynamic> fields) {
@@ -340,7 +316,7 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
       obj[8] = ccli;
     }
     if (authors != null && authors.isNotEmpty) {
-      obj[9] = authors?.map((e) => e.id)?.toList();
+      obj[9] = authorsRefs;
     }
     if (authors2 != null) {
       obj[10] = authors2;
@@ -349,10 +325,10 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
       obj[11] = copyright;
     }
     if (translator != null && translator.isNotEmpty) {
-      obj[12] = translator?.map((e) => e.id)?.toList();
+      obj[12] = translatorRefs;
     }
     if (tags != null && tags.isNotEmpty) {
-      obj[13] = tags?.map((e) => e.id)?.toList();
+      obj[13] = tagsRefs;
     }
     return obj;
   }
@@ -387,8 +363,7 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
       authorsRefs = (fields[9] as List)?.cast<String>();
     }
     if (fields.containsKey(10)) {
-      _authors2:
-      (fields[10] as List)?.cast<int>();
+      _authors2 = (fields[10] as List)?.cast<int>();
     }
     if (fields.containsKey(11)) {
       _copyright = fields[11] as String;
@@ -442,11 +417,40 @@ class _Song extends EntityBase<Song> with _SongReferenceLookUp implements Song {
   @override
   String toString() =>
 // ignore: lines_longer_than_80_chars
-      'Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authors?.map((e) => e.id)}, authors2: $authors2, copyright: $copyright, translator: ${translator?.map((e) => e.id)}, tags: ${tags?.map((e) => e.id)})';
+      'Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authorsRefs}, authors2: $authors2, copyright: $copyright, translator: ${translatorRefs}, tags: ${tagsRefs})';
+
+  /// Generate the reference look up
+  /// Generate the reference look up
+  /// Generate the reference look up
+  List<String> authorsRefs;
+  List<String> translatorRefs;
+  List<String> tagsRefs;
+  List<Person> _lookUpAuthors() {
+    if (authorsRefs != null) {
+      return locator.get<Person>().findMany(authorsRefs).toList();
+    }
+    return [];
+  }
+
+  List<Person> _lookUpTranslator() {
+    if (translatorRefs != null) {
+      return locator.get<Person>().findMany(translatorRefs).toList();
+    }
+    return [];
+  }
+
+  List<Tag> _lookUpTags() {
+    if (tagsRefs != null) {
+      return locator.get<Tag>().findMany(tagsRefs).toList();
+    }
+    return [];
+  }
 }
 
 /// The serialize adapter of type [_Song]
 class $SongAdapter implements Serializer<_Song> {
+  $SongAdapter(this.repo);
+  final RepositoryBase<Song> repo;
   @override
   final int typeId = 14;
 
@@ -457,7 +461,7 @@ class $SongAdapter implements Serializer<_Song> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return _Song.fromMap(fields);
+    return _Song.fromMap(fields)..repo = repo;
   }
 
   @override
@@ -483,15 +487,15 @@ class $SongAdapter implements Serializer<_Song> {
       ..writeByte(8)
       ..write(obj.ccli)
       ..writeByte(9)
-      ..write(obj.authors?.map((e) => e.id)?.toList())
+      ..write(obj.authorsRefs)
       ..writeByte(10)
       ..write(obj.authors2)
       ..writeByte(11)
       ..write(obj.copyright)
       ..writeByte(12)
-      ..write(obj.translator?.map((e) => e.id)?.toList())
+      ..write(obj.translatorRefs)
       ..writeByte(13)
-      ..write(obj.tags?.map((e) => e.id)?.toList());
+      ..write(obj.tagsRefs);
   }
 
   @override
