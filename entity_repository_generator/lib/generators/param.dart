@@ -337,6 +337,36 @@ class Param {
   String get toMapEntry {
     var condition = '$name != null ';
     var str = 'obj[${field.index}] = ';
+
+    if ((type.isDartCoreList || type.isDartCoreSet) &&
+        _isEntityParam(subTypes.first)) {
+      /// [Set to list] need to convert to list!
+      condition += '&& $name.isNotEmpty';
+      str += toReferenceName;
+    } else if (type.isDartCoreMap) {
+      final has1 = _isEntityParam(subTypes.first);
+      final has2 = _isEntityParam(subTypes.last);
+
+      if (has1 || has2) {
+        condition += '&& $name.isNotEmpty';
+        str += toReferenceName;
+      } else {
+        str += name;
+      }
+    } else if (isEntity) {
+      str += toReferenceName;
+    } else {
+      str += name;
+    }
+
+    /// apply condition if null or empty=> should not be in the map
+    return '''if($condition) {$str;}''';
+  }
+
+  String get toMapEntryJson {
+    var condition = '$name != null ';
+    var str = "obj['$name'] = ";
+
     if ((type.isDartCoreList || type.isDartCoreSet) &&
         _isEntityParam(subTypes.first)) {
       /// [Set to list] need to convert to list!

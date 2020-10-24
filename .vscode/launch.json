@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Dart Example",
-            "program": "${file}",
+            "program": "entity_repository_example/bin/main.dart",
             "request": "launch",
             "type": "dart"
         },

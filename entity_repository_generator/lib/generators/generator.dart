@@ -10,6 +10,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final visitor = ModelVisitor(
       model: getEntityModel(element),
       entityTypes: getAllEntityModelReferences(element),
+      classElement: element,
     );
 
     element.visitChildren(visitor);
@@ -21,6 +22,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateRepositoryClass(visitor));
 
     final str = res.toString();
+
     return str;
   }
 
@@ -69,6 +71,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateFactoryFromMap(visitor))
       ..write(generateGetAllReferenceObjects(visitor))
       ..write(generateToMap(visitor))
+      ..write(generateToJson(visitor))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
@@ -184,6 +187,22 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
+  StringBuffer generateToJson(ModelVisitor visitor) {
+    final buff = StringBuffer()
+
+      ///Write bin
+      ..writeln('\n\n@override')
+      ..writeln('Map<String, dynamic> toJson() {')
+      ..writeln('final obj = <String, dynamic>{};')
+      ..writeln('/// store the id as field 0')
+      ..writeln("obj['id'] = id;\n")
+      ..writeAll(visitor.params.map((e) => e.toMapEntryJson), '\n')
+      ..writeln('return obj;')
+      ..writeln('}');
+
+    return buff;
+  }
+
   StringBuffer generateApplyUpdates(ModelVisitor visitor) {
     final buff = StringBuffer()
 
@@ -193,7 +212,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(visitor.params.map((e) => e.toFieldFromMap), '\n')
       ..writeln('}');
 
-    final str = buff.toString();
+    // final str = buff.toString();
     return buff;
   }
 

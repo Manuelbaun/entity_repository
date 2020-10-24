@@ -3,11 +3,16 @@ part of entity_repository_generator;
 /// Only default factory constructor is supported and
 /// it will be stored in the [ClassParams]
 class ModelVisitor extends SimpleElementVisitor {
-  ModelVisitor({@required this.entityTypes, @required this.model})
-      : assert(entityTypes != null),
+  ModelVisitor({
+    @required this.entityTypes,
+    @required this.model,
+    @required this.classElement,
+  })  : assert(entityTypes != null),
         assert(model != null);
 
   EntityModel model;
+
+  final ClassElement classElement;
 
   Map<InterfaceType, AnnotatedClazz> entityTypes = {};
 

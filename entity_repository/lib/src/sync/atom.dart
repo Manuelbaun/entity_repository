@@ -35,6 +35,16 @@ class Atom {
     return 'Atom(ts: $timestamp, id: $id, typeModel: $typeModel, CRUD: $action, data: $data)';
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'ts': timestamp,
+      'id': id,
+      'typemodel': typeModel,
+      'action': action.index,
+      'data': data
+    };
+  }
+
   @override
   bool operator ==(Object o) {
     if (identical(this, o)) return true;

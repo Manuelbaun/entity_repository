@@ -6,3 +6,5 @@ class AdapterIds {
   static const tag = 13;
   static const song = 14;
 }
+
+///

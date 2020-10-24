@@ -81,6 +81,22 @@ class _Address extends EntityBase<Address> implements Address {
   }
 
   @override
+  Map<String, dynamic> toJson() {
+    final obj = <String, dynamic>{};
+
+    /// store the id as field 0
+    obj['id'] = id;
+
+    if (street != null) {
+      obj['street'] = street;
+    }
+    if (houseNumber != null) {
+      obj['houseNumber'] = houseNumber;
+    }
+    return obj;
+  }
+
+  @override
   void applyUpdates(Map<int, dynamic> fields) {
     if (fields.containsKey(1)) {
       _street = fields[1] as String;

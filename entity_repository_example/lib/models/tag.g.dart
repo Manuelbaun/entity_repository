@@ -53,6 +53,16 @@ class _Tag extends EntityBase<Tag> implements Tag {
   }
 
   @override
+  Map<String, dynamic> toJson() {
+    final obj = <String, dynamic>{};
+
+    /// store the id as field 0
+    obj['id'] = id;
+
+    return obj;
+  }
+
+  @override
   void applyUpdates(Map<int, dynamic> fields) {}
 
   @override

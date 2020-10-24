@@ -213,6 +213,37 @@ class _Person extends EntityBase<Person> implements Person {
   }
 
   @override
+  Map<String, dynamic> toJson() {
+    final obj = <String, dynamic>{};
+
+    /// store the id as field 0
+    obj['id'] = id;
+
+    if (name != null) {
+      obj['name'] = name;
+    }
+    if (age != null) {
+      obj['age'] = age;
+    }
+    if (address != null) {
+      obj['address'] = addressRefs;
+    }
+    if (friends != null && friends.isNotEmpty) {
+      obj['friends'] = friendsRefs;
+    }
+    if (friends5 != null && friends5.isNotEmpty) {
+      obj['friends5'] = friends5Refs;
+    }
+    if (a5sf != null && a5sf.isNotEmpty) {
+      obj['a5sf'] = a5sfRefs;
+    }
+    if (p2a != null && p2a.isNotEmpty) {
+      obj['p2a'] = p2aRefs;
+    }
+    return obj;
+  }
+
+  @override
   void applyUpdates(Map<int, dynamic> fields) {
     if (fields.containsKey(1)) {
       _name = fields[1] as String;

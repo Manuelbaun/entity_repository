@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 import 'package:msgpack_dart/msgpack_dart.dart';
 import 'package:hive/src/hive_impl.dart';
 
-export 'package:hive/hive.dart' show BinaryReader, BinaryWriter;
+export 'package:hive/hive.dart' show BinaryReader, BinaryWriter, HiveInterface;
 
 part 'src/model/entity_base.dart';
 

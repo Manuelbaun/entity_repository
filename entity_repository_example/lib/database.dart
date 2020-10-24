@@ -1,6 +1,5 @@
 import 'package:entity_repository/entity_repository.dart';
 import 'package:entity_repository_example/models/adapterIds.dart';
-import 'package:hive/hive.dart';
 
 import 'models/address.dart';
 import 'models/car.dart';
@@ -29,6 +28,10 @@ class AddressRepository extends RepositoryHive<Address>
   AddressRepository(
       HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac)
       : super(hiveInstance, fac, AdapterIds.address);
+
+  @override
+  Address createAddress({String id, String street, int houseNumber}) =>
+      Address(id: id, street: street, houseNumber: houseNumber)..repo = this;
 }
 
 class PersonRepository extends RepositoryHive<Person>
@@ -89,6 +92,10 @@ class Database extends EntityConfiguration {
     );
   }
 
+  Address createAddress({String id, String street, int houseNumber}) =>
+      new Address(id: id, street: street, houseNumber: houseNumber)
+        ..repo = _addressRepository;
+
   IAddressRepository _addressRepository;
   IAddressRepository get addressRepository => _addressRepository;
 
@@ -107,4 +114,7 @@ class Database extends EntityConfiguration {
   Future<void> close() async {
     await repositoryLocator.disposeAll();
   }
+
+  /// Create utility classes
+  // AddressFactory get createAddress => _addressRepository.createAddress;
 }

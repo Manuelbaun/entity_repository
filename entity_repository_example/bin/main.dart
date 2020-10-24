@@ -5,6 +5,7 @@ import 'package:entity_repository_example/models/car.dart';
 import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
+import 'package:entity_repository_example/test_db.dart';
 
 void measure(Function func) async {
   final s = Stopwatch()..start();
@@ -15,13 +16,13 @@ void measure(Function func) async {
   print('${s.elapsedTicks / run} ticks');
 }
 
-void printall(Database db) {
+void printAll(EntityConfiguration db) {
   for (final repo in db.repositoryLocator.values) {
     repo.findAll().forEach(print);
   }
 }
 
-void clearDB(Database db) async {
+void clearDB(EntityConfiguration db) async {
   for (final repo in db.repositoryLocator.values) {
     await repo.clearRepository();
   }
@@ -31,11 +32,13 @@ void clearDB(Database db) async {
 /// MAIN
 ///
 Future<void> main() async {
-  final db = Database();
-  final db2 = Database('hive_db2');
+  final db = EntityDatabase();
+  final db2 = EntityDatabase('hive_db2');
 
   /// Setup Sync
   db.synchronizer.onAtomUpdate = (a) async {
+    final aJson = a.toJson();
+    print(aJson);
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
     await db2.synchronizer.receivedRemoteAtom(aa);
@@ -44,7 +47,7 @@ Future<void> main() async {
   await db.initRepository();
   await db2.initRepository();
 
-  printall(db);
+  printAll(db);
 
   await clearDB(db);
   await clearDB(db2);
@@ -55,14 +58,16 @@ Future<void> main() async {
 
   s.stop();
 
-  // printall(db2);
+  printAll(db);
+  print('---------------------------------');
+  printAll(db2);
 
   print('Open DB: ${s.elapsedMilliseconds} ms');
   await db.close();
   await db2.close();
 }
 
-Future<void> addComplexNestedObject(Database db) async {
+Future<void> addComplexNestedObject(EntityDatabase db) async {
   final f0 = Person(
     id: 'f0',
     name: 'Friend 0',
@@ -122,6 +127,21 @@ Future<void> addComplexNestedObject(Database db) async {
   p1
     ..age = 50
     ..name = 'Peter';
+
+  db
+      .createTag(
+        id: "myNewTag",
+      )
+      .upsert();
+
+  db.createPerson(
+    friends: [db.createPerson(name: 'Hans')],
+    address: db.createAddress(
+      street: "no thats not me",
+      houseNumber: 5,
+      id: 'ok',
+    ),
+  ).upsert();
 
   final song = Song(
     id: 'song1',

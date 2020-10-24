@@ -334,6 +334,55 @@ class _Song extends EntityBase<Song> implements Song {
   }
 
   @override
+  Map<String, dynamic> toJson() {
+    final obj = <String, dynamic>{};
+
+    /// store the id as field 0
+    obj['id'] = id;
+
+    if (title != null) {
+      obj['title'] = title;
+    }
+    if (bpm != null) {
+      obj['bpm'] = bpm;
+    }
+    if (transpose != null) {
+      obj['transpose'] = transpose;
+    }
+    if (songKey != null) {
+      obj['songKey'] = songKey;
+    }
+    if (capo != null) {
+      obj['capo'] = capo;
+    }
+    if (lyrics != null) {
+      obj['lyrics'] = lyrics;
+    }
+    if (notes != null) {
+      obj['notes'] = notes;
+    }
+    if (ccli != null) {
+      obj['ccli'] = ccli;
+    }
+    if (authors != null && authors.isNotEmpty) {
+      obj['authors'] = authorsRefs;
+    }
+    if (authors2 != null) {
+      obj['authors2'] = authors2;
+    }
+    if (copyright != null) {
+      obj['copyright'] = copyright;
+    }
+    if (translator != null && translator.isNotEmpty) {
+      obj['translator'] = translatorRefs;
+    }
+    if (tags != null && tags.isNotEmpty) {
+      obj['tags'] = tagsRefs;
+    }
+    return obj;
+  }
+
+  @override
   void applyUpdates(Map<int, dynamic> fields) {
     if (fields.containsKey(1)) {
       _title = fields[1] as String;

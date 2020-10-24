@@ -121,6 +121,28 @@ class _Car extends EntityBase<Car> implements Car {
   }
 
   @override
+  Map<String, dynamic> toJson() {
+    final obj = <String, dynamic>{};
+
+    /// store the id as field 0
+    obj['id'] = id;
+
+    if (model != null) {
+      obj['model'] = model;
+    }
+    if (type != null) {
+      obj['type'] = type;
+    }
+    if (buildYear != null) {
+      obj['buildYear'] = buildYear;
+    }
+    if (owner != null) {
+      obj['owner'] = ownerRefs;
+    }
+    return obj;
+  }
+
+  @override
   void applyUpdates(Map<int, dynamic> fields) {
     if (fields.containsKey(1)) {
       _model = fields[1] as String;

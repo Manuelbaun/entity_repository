@@ -46,6 +46,9 @@ abstract class RepositoryBase<T extends EntityBase<T>> {
   Future<Iterable<T>> updateMany(Iterable<T> entities,
       {bool fromRemote = false});
 
+  /// TODO: Chould there be a create method=
+  /// T create(T entity) { return entity.repo = this}
+
   /// deletes the provided entity
   Future<void> delete(T entity, {bool fromRemote = false});
 
