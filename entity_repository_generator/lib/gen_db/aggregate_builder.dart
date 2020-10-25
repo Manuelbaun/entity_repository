@@ -9,6 +9,9 @@ import 'package:path/path.dart' as p;
 import 'package:source_gen/source_gen.dart';
 
 // https://github.com/dart-lang/build/blob/master/docs/writing_an_aggregate_builder.md
+
+/// TODO: Fix the repo generator, when issue fixed
+/// https://github.com/dart-lang/language/issues/1268
 class ListAllFilesBuilder implements Builder {
   ListAllFilesBuilder(this.generators) {}
 
