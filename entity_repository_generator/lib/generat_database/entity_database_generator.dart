@@ -8,7 +8,7 @@ import 'package:source_gen/source_gen.dart';
 
 import '../builder.dart';
 
-class EntityDatabaseGenerator extends Generator {
+class EntityDatabaseGenerator3 extends Generator {
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
     final topLevelVarCount = topLevelNumVariables(library).length;
@@ -26,16 +26,15 @@ const topLevelNumVarCount = $topLevelVarCount;
   }
 }
 
-class GenerateDataBase {
-  final Set<ModelVisitor> models;
-  GenerateDataBase(this.models);
+class EntityDatabaseGenerator {
+  EntityDatabaseGenerator() : super();
 
   String pathImport(ModelVisitor v) {
     final ll = v.classElement.location.components.first ?? '';
     return "import '$ll';";
   }
 
-  String generate() {
+  String generate(Set<ModelVisitor> models) {
     final str = StringBuffer();
 
     str
@@ -52,26 +51,30 @@ class GenerateDataBase {
       ..writeln('/// ')
       ..writeAll(models.map(writeRepositorHive), '\n')
       ..write('\n\n')
-      ..write(writeDB());
+      ..write(writeDB(models));
 
     return str.toString();
   }
 
   String writeInterfaceRepository(ModelVisitor v) {
-    return 'abstract class I${v.entityName}Repository implements RepositoryBase<${v.entityName}> {}';
+    return 'abstract class I${v.repoName} implements RepositoryBase<${v.entityName}> {}';
   }
 
-  String writeRepositorHive(ModelVisitor v) {
-    final typeID =
-        '${v.model.typeId}'; // 'AdapterIds.${v.entityName.toLowerCase()}';
+  StringBuffer writeRepositorHive(ModelVisitor v) {
+    final str = StringBuffer();
 
-    return '''class ${v.entityName}Repository extends RepositoryHive<${v.entityName}>
-    implements I${v.entityName}Repository {
-      ${v.entityName}Repository( HiveInterface hiveInstance, EntityMapFactory<EntityBase> fac,)
-      : super(hiveInstance, fac, $typeID);}''';
+    str
+      ..write('class ${v.repoName} ')
+      ..write('extends RepositoryHive<${v.entityName}>')
+      ..write('implements I${v.repoName} {')
+      ..write('${v.repoName}(HiveInterface hiveInstance,')
+      ..writeln('EntityMapFactory<EntityBase> fac,)')
+      ..writeln(': super(hiveInstance, fac, ${v.model.typeId});}');
+
+    return str;
   }
 
-  StringBuffer writeDB() {
+  StringBuffer writeDB(Set<ModelVisitor> models) {
     final str = StringBuffer();
 
     str
@@ -110,9 +113,8 @@ class GenerateDataBase {
       ..write('\n\n')
 
       /// generete close
-      ///
-      ..write('''Future<void> close() async {
-    await repositoryLocator.disposeAll(); }''')
+      ..writeln('Future<void> close() async ')
+      ..writeln('{ await repositoryLocator.disposeAll(); }')
 
       /// close db
       ..writeln('}');
@@ -121,32 +123,21 @@ class GenerateDataBase {
   }
 
   String createRepo(ModelVisitor v) {
-    final low = v.entityName.toLowerCase();
-    final normal = v.entityName;
-
-    return '_${low}Repository = ${normal}Repository(localHive, ${normal}.fromMap);';
+    return '_${v.repoNameLowerCase} = ${v.repoName}(localHive, ${v.entityName}.fromMap);';
   }
 
   String registerAdapter(ModelVisitor v) {
-    final low = v.entityName.toLowerCase();
-    final normal = v.entityName;
-    final createAdapter = '\$${normal}Adapter(_${low}Repository)';
-
-    return '..registerAdapter($createAdapter)';
+    return '..registerAdapter(${v.adapterName}(_${v.repoNameLowerCase}))';
   }
 
   String registerLocator(ModelVisitor v) {
-    final low = v.entityName.toLowerCase();
-    final normal = v.entityName;
-    return '..register<${normal}>(_${low}Repository)';
+    return '..register<${v.entityName}>(_${v.entityNameLowerCase}Repository)';
   }
 
   String createRepoGetters(ModelVisitor v) {
-    final low = v.entityName.toLowerCase();
-    final normal = v.entityName;
     return '''
-    I${normal}Repository _${low}Repository;
-    I${normal}Repository get ${low}Repository => _${low}Repository;
+    I${v.repoName} _${v.repoNameLowerCase};
+    I${v.repoName} get ${v.repoNameLowerCase} => _${v.repoNameLowerCase};
     ''';
   }
 
@@ -161,7 +152,7 @@ class GenerateDataBase {
       ..write('}) => ')
       ..write('new ${normal}(id:id,')
       ..writeAll(v.params.map((e) => '${e.name}:${e.name}'), ',')
-      ..writeln(')..repo = _${low}Repository;');
+      ..writeln(')..repo = _${v.repoNameLowerCase};');
 
     return str.toString();
   }

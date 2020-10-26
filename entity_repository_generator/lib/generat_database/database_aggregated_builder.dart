@@ -20,20 +20,19 @@ final _formatter = DartFormatter();
 /// https://github.com/dart-lang/language/issues/1268
 class DatabaseBuilderAggregated implements Builder {
   DatabaseBuilderAggregated(
-    this.generators, {
+    this.generator, {
     String Function(String code) formatOutput,
     String generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     String header,
-  })  : _generatedExtension = generatedExtension,
-        formatOutput = formatOutput ?? _formatter.format;
+  }) : formatOutput = formatOutput ?? _formatter.format;
 
   /// The [buildExtensions] configuration for `.dart`
-  final String _generatedExtension;
+  // final String _generatedExtension;
 
   /// Function that determines how the generated code is formatted.
   final String Function(String) formatOutput;
-  final Generator generators;
+  final EntityDatabaseGenerator generator;
 
   // specify the folder  for performance reason?!!
   static final _allFilesInLib = new Glob('lib/**/*dart');
@@ -81,15 +80,11 @@ class DatabaseBuilderAggregated implements Builder {
 
         allElements.addAll(annotated);
       } catch (e) {
-        print(EntityRepositoryError('$e'));
+        log.severe(EntityRepositoryError('$e'));
       }
     }
 
-    /// TODO: run the database class generator here!!
-    // final library = await buildStep.inputLibrary;
-
-    final dbGen = GenerateDataBase(allElements);
-    final res = dbGen.generate();
+    final res = generator.generate(allElements);
     final outputId = _fileOutputLocaiton(buildStep);
     var formattedOutput;
     try {
@@ -106,7 +101,7 @@ An error `${e.runtimeType}` occurred while formatting the generated source for
 
     try {
       unawaited(buildStep.writeAsString(outputId, formattedOutput));
-    } catch (e, stack) {
+    } catch (e) {
       log.shout(e);
     }
   }

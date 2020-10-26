@@ -14,12 +14,17 @@ class ModelVisitor extends SimpleElementVisitor {
 
   final ClassElement classElement;
 
+  String get repoName => '${entityName}Repository';
+
+  String get repoNameLowerCase => '${entityName.toLowerCase()}Repository';
+
   Map<InterfaceType, AnnotatedClazz> entityTypes = {};
 
   DartType _className;
   String redirectName;
 
   String get entityName => _className.getDisplayString();
+  String get entityNameLowerCase => _className.getDisplayString().toLowerCase();
   String get adapterName => '\$${entityName}Adapter';
   String get referenceClassName => '${redirectName}ReferenceLookUp';
 
