@@ -10,8 +10,8 @@ import 'package:analyzer/dart/element/element.dart';
 
 import 'package:entity_repository/entity_repository.dart';
 
-import 'gen_db/aggregate_builder.dart';
-import 'gen_db/member_count.dart';
+import 'generat_database/database_aggregated_builder.dart';
+import 'generat_database/entity_database_generator.dart';
 
 part 'generators/annotated_clazz.dart';
 part 'generators/helper.dart';
@@ -24,6 +24,5 @@ part 'utils/color_print.dart';
 Builder entityRepositoryGenerator(BuilderOptions options) =>
     SharedPartBuilder([EntityRepositoryGenerator()], 'property_entity_repo');
 
-Builder metadataLibraryBuilder(BuilderOptions options) => ListAllFilesBuilder(
-      MemberCountLibraryGenerator(),
-    );
+Builder entityDatabaseGenerator(BuilderOptions options) =>
+    DatabaseBuilderAggregated(EntityDatabaseGenerator());

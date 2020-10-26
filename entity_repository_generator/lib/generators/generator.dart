@@ -18,8 +18,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final res = StringBuffer()
       ..write(generateAbstractClassInterface(visitor))
       ..write(generateClass(visitor))
-      ..write(generateSerializerAdapter(visitor))
-      ..write(generateRepositoryClass(visitor));
+      ..write(generateSerializerAdapter(visitor));
 
     final str = res.toString();
 
@@ -304,69 +303,4 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     return buff;
   }
-
-  /// TODO: needs different approach
-  StringBuffer generateRepositoryClass(ModelVisitor visitor) {
-    return StringBuffer();
-
-    // final buff = StringBuffer();
-
-    // if (!visitor.model.repository) return buff;
-
-    // buff
-    //   ..write('/// The [\$${visitor.entityName}Repo] class ')
-    //   ..write('of type [${visitor.entityName}]\n')
-    //   ..write('class \$${visitor.entityName}Repo ')
-    //   ..write('extends ${(RepositoryHive).$name}<${visitor.entityName}> ')
-    //   ..write(visitor.generateIndicies
-    //       ? 'with ${(IndicesAccess).$name}<${visitor.entityName}>'
-    //       : '')
-    //   ..write('{')
-    //   ..write(generateRepositoryClassIndices(visitor))
-    //   ..write('}');
-
-    // return buff;
-  }
-}
-
-StringBuffer generateRepositoryClassIndices(ModelVisitor visitor) {
-  final buff = StringBuffer();
-
-  if (visitor.generateIndicies) {
-    /// TODO: create index, when clear, what todo with index
-// if (false) {
-//   final indices = visitor.model.index;
-//   final indexLength = indices.length + 1;
-
-//   // generate index names
-//   for (var i = 1; i < indexLength; i++) {
-//     final e = indices.elementAt(i - 1);
-//     buff.writeln("static const String _index$i = '${e.join('-')}';");
-//   }
-
-//   // generate getter for index
-//   buff.writeln('\n\n');
-//   for (var i = 1; i < indexLength; i++) {
-//     buff.writeln(
-//         '${(IndexBase).$name}<String> get index$i => indexGet(_index$i);');
-//   }
-//   buff.writeln('\n\n');
-
-//   // generate register
-//   final indexNames =
-//       List.generate(indices.length, (i) => '_index${i + 1}').join(',');
-//   buff
-//     ..write('Future<void> _ensureRegisterdindices() ')
-//     ..write('=> registerindices([$indexNames]);')
-//     ..writeln('\n');
-
-//   // get index keys
-//   // for (var i = 1; i < indexLength; i++) {
-//   //   final e = indices.elementAt(i - 1);
-//   //   buff.writeln("static const String _index$i = '${e.join('-')}';");
-//   // }
-// }
-  }
-
-  return buff;
 }

@@ -1,11 +1,10 @@
 import 'package:entity_repository/entity_repository.dart';
-import 'package:entity_repository_example/database.dart';
+import 'package:entity_repository_example/database.db.dart';
 import 'package:entity_repository_example/models/address.dart';
 import 'package:entity_repository_example/models/car.dart';
 import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
-import 'package:entity_repository_example/test_db.dart';
 
 void measure(Function func) async {
   final s = Stopwatch()..start();
@@ -134,6 +133,7 @@ Future<void> addComplexNestedObject(EntityDatabase db) async {
       )
       .upsert();
 
+  //
   db.createPerson(
     friends: [db.createPerson(name: 'Hans')],
     address: db.createAddress(
@@ -167,7 +167,7 @@ Future<void> addComplexNestedObject(EntityDatabase db) async {
   await song.upsert();
 }
 
-Future<void> storeCars(Database db) async {
+Future<void> storeCars(EntityDatabase db) async {
   final cars = [
     Car(id: '1', buildYear: 2020, type: 'BMW', model: 'Van'),
     Car(id: '2', buildYear: 2019, type: 'AUDI', model: 'LIMO'),

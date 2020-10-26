@@ -1,78 +1,28 @@
-import 'dart:async';
+// Copyright (c) 2018, the Dart project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:entity_repository/entity_repository.dart';
-import 'package:entity_repository_generator/builder.dart';
-import 'package:glob/glob.dart';
-import 'package:path/path.dart' as p;
+import 'package:entity_repository_generator/utils/top_level.dart';
 import 'package:source_gen/source_gen.dart';
 
-// https://github.com/dart-lang/build/blob/master/docs/writing_an_aggregate_builder.md
+import '../builder.dart';
 
-/// TODO: Fix the repo generator, when issue fixed
-/// https://github.com/dart-lang/language/issues/1268
-class ListAllFilesBuilder implements Builder {
-  ListAllFilesBuilder(this.generators) {}
-
-  final Generator generators;
-
-  // specify the folder  for performance reason?!!
-  static final _allFilesInLib = new Glob('lib/**');
-
-  static AssetId _allFileOutput(BuildStep buildStep) {
-    return AssetId(
-      buildStep.inputId.package,
-      p.join('lib', 'test_db.dart'),
-    );
-  }
-
-  Map<String, List<String>> get buildExtensions {
-    return const {
-      r'$lib$': const ['test_db.dart'],
-    };
-  }
-
+class EntityDatabaseGenerator extends Generator {
   @override
-  Future<void> build(BuildStep buildStep) async {
-    final allElements = <ModelVisitor>{};
+  String generate(LibraryReader library, BuildStep buildStep) {
+    final topLevelVarCount = topLevelNumVariables(library).length;
 
-    final resolver = buildStep.resolver;
+    library.allElements.forEach((element) {
+      print(element);
+    });
 
-    final assets = buildStep.findAssets(_allFilesInLib);
+    final list = library.allElements.toList();
 
-    await for (final input in assets) {
-      try {
-        final library = await resolver.libraryFor(input);
-
-        final annotated = LibraryReader(library)
-            .classes
-            .where((e) => entityModelChecker.hasAnnotationOf(e))
-            .map((e) {
-          final visitor = ModelVisitor(
-            model: getEntityModel(e),
-            entityTypes: getAllEntityModelReferences(e),
-            classElement: e,
-          );
-
-          e.visitChildren(visitor);
-          return visitor;
-        });
-
-        allElements.addAll(annotated);
-      } catch (e) {
-        print(EntityRepositoryError('$e'));
-      }
-    }
-
-    final dbGen = GenerateDataBase(allElements);
-
-    final res = dbGen.generate();
-
-    await buildStep.writeAsString(
-      _allFileOutput(buildStep),
-      res,
-    );
+    return '''
+// Source library: ${library.element.source.uri}
+const topLevelNumVarCount = $topLevelVarCount;
+''';
   }
 }
 
