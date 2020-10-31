@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:build/build.dart';
 import 'package:entity_repository/entity_repository.dart';

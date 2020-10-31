@@ -29,7 +29,7 @@ class ModelVisitor extends SimpleElementVisitor {
   String get referenceClassName => '${redirectName}ReferenceLookUp';
 
   /// TODO: remove false, when generator is implemented
-  bool get generateIndicies => false || model?.index?.isNotEmpty;
+  bool get generateIndicies => false; //|| model?.index?.isNotEmpty;
 
   String _sourceCode;
 

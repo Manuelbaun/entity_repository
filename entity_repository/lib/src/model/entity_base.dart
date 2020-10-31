@@ -86,6 +86,7 @@ abstract class EntityBase<T extends EntityBase<T>>
 
   /// Returns a map of with ints as keys and data. It is not a json map!
   Map<int, dynamic> toMap();
+  Map<String, dynamic> toJson();
 
   /// This function takes a map (not JSON MAP) and applies the updates
   /// to the entity. Keys are int.

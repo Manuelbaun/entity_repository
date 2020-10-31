@@ -2,7 +2,6 @@ library entity_repository;
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 

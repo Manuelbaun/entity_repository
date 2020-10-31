@@ -17,7 +17,7 @@ class EntityDatabaseGenerator3 extends Generator {
       print(element);
     });
 
-    final list = library.allElements.toList();
+    // final list = library.allElements.toList();
 
     return '''
 // Source library: ${library.element.source.uri}
@@ -142,7 +142,7 @@ class EntityDatabaseGenerator {
   }
 
   String createEntityConstructor(ModelVisitor v) {
-    final low = v.entityName.toLowerCase();
+    // final low = v.entityName.toLowerCase();
     final normal = v.entityName;
 
     final str = StringBuffer()

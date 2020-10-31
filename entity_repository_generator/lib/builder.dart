@@ -16,8 +16,12 @@ import 'generat_database/entity_database_generator.dart';
 part 'generators/annotated_clazz.dart';
 part 'generators/helper.dart';
 part 'generators/generator.dart';
+
 part 'generators/model_visitor.dart';
 part 'generators/param.dart';
+part 'generators/params/param_base.dart';
+part 'generators/params/param_list.dart';
+part 'generators/params/param_map.dart';
 part 'utils/errors.dart';
 part 'utils/color_print.dart';
 
