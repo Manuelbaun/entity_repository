@@ -73,21 +73,6 @@ class ParamList extends Param {
     return buff.toString();
   }
 
-  String toSerializeRead([String prefix = 'fields']) {
-    return isOrHasEntities
-        ? '..$toRefNamePrivate = (fields[${field.index}] as List)?.cast<String>()'
-        : '..$paramName = (fields[${field.index}] as List)?.cast<${subTypes.first}>()';
-  }
-
-  String toSerializeReadField([String prefix = 'fields']) {
-    final type = subTypes.first;
-    if (isOrHasEntities) {
-      return '$toRefNameGetter: (fields[${field.index}] as List)?.cast<String>()';
-    } else {
-      return '$paramName : (fields[${field.index}] as List)?.cast<$type>()';
-    }
-  }
-
   String toRefsObjects([String prefix = 'obj']) {
     if (isOrHasEntities) {
       final ifString = 'if($paramName != null && $paramName.isNotEmpty)';

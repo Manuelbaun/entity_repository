@@ -69,18 +69,6 @@ class ParamSet extends Param {
     return buff.toString();
   }
 
-  String toSerializeRead([String prefix = 'fields']) {
-    final type = subTypes.first;
-
-    if (isOrHasEntities) {
-      /// [Set to list]
-      return '..$toRefNamePrivate = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
-    } else {
-      /// [Set to list]
-      return '..$paramName = (fields[${field.index}] as List)?.toSet()?.cast<$type>()';
-    }
-  }
-
   String get toRefField_ {
     final type = subTypes.first;
     final setType = isEntityType(type) ? 'Set<String>' : 'Set<$type>';
@@ -99,18 +87,6 @@ class ParamSet extends Param {
     }
 
     return '';
-  }
-
-  String toSerializeReadField([String prefix = 'fields']) {
-    final type = subTypes.first;
-
-    if (isOrHasEntities) {
-      /// [Set to list]
-      return '$toRefNameGetter: (fields[${field.index}] as List)?.toSet()?.cast<String>()';
-    } else {
-      /// [Set to list]
-      return '$paramName : (fields[${field.index}] as List)?.toSet()?.cast<$type>()';
-    }
   }
 
   String toFieldFromMap([String prefix = 'fields']) {

@@ -99,14 +99,6 @@ class ParamMap extends Param {
     return buff.toString();
   }
 
-  String toSerializeRead([String prefix = 'fields']) {
-    final keyType = keyIsEntity ? 'String' : subTypes.first;
-    final valueType = valueIsEntity ? 'String' : subTypes.last;
-    final fieldName = isOrHasEntities ? toRefNamePrivate : paramName;
-
-    return '..$fieldName = (fields[${field.index}] as Map)?.cast<$keyType, $valueType>()';
-  }
-
   String toRefsObjects([String prefix = 'obj']) {
     final ifString = 'if($paramName != null && $paramName.isNotEmpty)';
 
@@ -119,15 +111,6 @@ class ParamMap extends Param {
     }
 
     return '';
-  }
-
-// merge ??? with upper
-  String toSerializeReadField([String prefix = 'fields']) {
-    final key = keyIsEntity ? 'String' : subTypes.first;
-    final value = valueIsEntity ? 'String' : subTypes.last;
-    final fieldName = (isOrHasEntities) ? toRefNameGetter : paramName;
-
-    return '$fieldName : ($prefix[${field.index}] as Map)?.cast<$key, $value>()';
   }
 
   String toFieldFromMap([String prefix = 'fields']) {

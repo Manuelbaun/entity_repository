@@ -66,9 +66,6 @@ abstract class ParamBase {
   String toSerializeWrite([String prefix = 'obj']);
   String toRefsObjects([String prefix = 'obj']);
 
-  String toSerializeReadField([String prefix = 'fields']);
-  String toSerializeRead([String prefix = 'fields']);
-
   String toFieldFromMap([String prefix = 'fields']);
 
   String toEquality([String prefix = 'o']);

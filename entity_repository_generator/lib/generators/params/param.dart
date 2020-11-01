@@ -167,20 +167,8 @@ class Param implements ParamBase {
     return buff.toString();
   }
 
-  String toSerializeRead([String prefix = 'fields']) {
-    return isEntity
-        ? '..$toRefNamePrivate = ($prefix[${field.index}] as String)'
-        : '..$paramName = $prefix[${field.index}] as $typeRaw';
-  }
-
   String toRefsObjects([String prefix = 'obj']) =>
       isEntity ? 'if($paramName != null) $prefix.add($paramName);' : '';
-
-  String toSerializeReadField([String prefix = 'fields']) {
-    return isEntity
-        ? '$toRefNameGetter : ($prefix[${field.index}] as String)'
-        : '$paramName : $prefix[${field.index}] as $typeRaw';
-  }
 
   String toFieldFromMap([String prefix = 'fields']) {
     var str = isEntity
