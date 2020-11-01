@@ -21,6 +21,7 @@ abstract class Car extends _$Car {
   }) = _Car;
 
   static Car fromMap(Map<int, dynamic> fields) => _Car.fromMap(fields);
+  static Car fromJson(Map<String, dynamic> fields) => _Car.fromJson(fields);
 
   @override
   String toString() {
