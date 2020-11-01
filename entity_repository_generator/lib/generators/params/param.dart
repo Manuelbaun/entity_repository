@@ -75,7 +75,8 @@ class Param implements ParamBase {
   }
 
   /// Utility
-  String get typeName => typeRaw.getDisplayString();
+  /// TODO: change, nullableSuffix is *
+  String get typeName => typeRaw.getDisplayString(withNullability: false);
   String get paramNamePrivate => '_$paramName';
   String get paramNameThis => 'this.$paramName';
   String get toParamInit => '$typeRaw $paramName';

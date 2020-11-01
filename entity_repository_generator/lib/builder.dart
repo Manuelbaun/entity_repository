@@ -5,13 +5,13 @@ import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:ansicolor/ansicolor.dart';
-import 'package:meta/meta.dart';
 import 'package:analyzer/dart/element/element.dart';
 
 import 'package:entity_repository/entity_repository.dart';
 
 import 'generat_database/database_aggregated_builder.dart';
 import 'generat_database/entity_database_generator.dart';
+part 'errors/generator_error.dart';
 
 part 'generators/annotated_clazz.dart';
 part 'generators/helper.dart';
@@ -21,7 +21,6 @@ part 'generators/sub_generators/serializer_adapter.dart';
 
 part 'generators/model_visitor.dart';
 part 'generators/params/param.dart';
-// part 'generators/params/param_copy.dart';
 part 'generators/params/param_base.dart';
 part 'generators/params/param_list.dart';
 part 'generators/params/param_map.dart';

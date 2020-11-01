@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:pedantic/pedantic.dart';
 import 'package:build/build.dart';
-import 'package:entity_repository/entity_repository.dart';
+// import 'package:entity_repository/entity_repository.dart';
 import 'package:entity_repository_generator/builder.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
@@ -79,29 +79,25 @@ class DatabaseBuilderAggregated implements Builder {
 
         allElements.addAll(annotated);
       } catch (e) {
-        log.severe(EntityRepositoryError('$e'));
+        log.severe(EntityRepositorGeneratorError('$e'));
       }
     }
 
     final res = generator.generate(allElements);
     final outputId = _fileOutputLocaiton(buildStep);
-    var formattedOutput;
+
     try {
-      formattedOutput = formatOutput(res);
+      final trimmed = res.replaceAll('*', '');
+      final formattedOutput = formatOutput(trimmed);
+      // TODO: Remove this here!!! and use the normal formattedOutout
+
+      unawaited(buildStep.writeAsString(outputId, formattedOutput));
     } catch (e, stack) {
       log.severe(
-        '''
-An error `${e.runtimeType}` occurred while formatting the generated source for
-  ''',
+        'An error `${e.runtimeType}` occurred while formatting the generated source for',
         e,
         stack,
       );
-    }
-
-    try {
-      unawaited(buildStep.writeAsString(outputId, formattedOutput));
-    } catch (e) {
-      log.shout(e);
     }
   }
 }

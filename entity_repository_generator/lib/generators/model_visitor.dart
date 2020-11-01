@@ -4,9 +4,9 @@ part of entity_repository_generator;
 /// it will be stored in the [ClassParams]
 class ModelVisitor extends SimpleElementVisitor {
   ModelVisitor({
-    @required this.entityTypes,
-    @required this.model,
-    @required this.classElement,
+    this.entityTypes,
+    this.model,
+    this.classElement,
   })  : assert(entityTypes != null),
         assert(model != null);
 
@@ -23,8 +23,9 @@ class ModelVisitor extends SimpleElementVisitor {
   DartType _className;
   String redirectName;
 
-  String get entityName => _className.getDisplayString();
-  String get entityNameLowerCase => _className.getDisplayString().toLowerCase();
+  /// TODO: change, nullableSuffix is *
+  String get entityName => _className.getDisplayString(withNullability: false);
+  String get entityNameLowerCase => entityName.toLowerCase();
   String get adapterName => '\$${entityName}Adapter';
   String get referenceClassName => '${redirectName}ReferenceLookUp';
 

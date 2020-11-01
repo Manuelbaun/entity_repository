@@ -21,7 +21,9 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(SerializerAdapter.generate(visitor));
 
     final str = res.toString();
-    return str;
+
+    final str2 = str.replaceAll('*', '');
+    return str2;
   }
 
   StringBuffer generateAbstractClassInterface(ModelVisitor visitor) {
