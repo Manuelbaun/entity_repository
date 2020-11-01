@@ -44,6 +44,12 @@ void compare(EntityDatabase db, EntityDatabase db2) {
         print('Not Equal : ${ent.runtimeType}');
         print(entry.toJson());
         print(ent.toJson());
+      } else {
+        print('Equal : ${ent.id} - ${entry.id}');
+        if (ent.id == "song1") {
+          print(entry.toMap());
+          print(ent.toMap());
+        }
       }
     }
   }
@@ -60,7 +66,7 @@ Future<void> main() async {
   /// Setup Sync
   db.synchronizer.onAtomUpdate = (a) async {
     // final aJson = a.toJson();
-    // print(aJson);
+    print(a);
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
     await db2.synchronizer.receivedRemoteAtom(aa);
@@ -148,11 +154,7 @@ Future<void> addComplexNestedObject(EntityDatabase db) async {
     ..age = 50
     ..name = 'Peter';
 
-  db
-      .createTag(
-        id: "myNewTag",
-      )
-      .upsert();
+  db.createTag(id: "myNewTag").upsert();
 
   //
   db.createPerson(
@@ -184,8 +186,10 @@ Future<void> addComplexNestedObject(EntityDatabase db) async {
     translator: [p2],
     transpose: 0,
   )..repo = db.songRepository;
-
   await song.upsert();
+
+  song.copyright = "Hello jajaksjdkajskdjfk ";
+  await song.update();
 }
 
 Future<void> storeCars(EntityDatabase db) async {
