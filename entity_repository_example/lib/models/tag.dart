@@ -10,4 +10,5 @@ abstract class Tag extends _$Tag {
   factory Tag({@Field(0) String id}) = _Tag;
 
   static Tag fromMap(Map<int, dynamic> fields) => _Tag.fromMap(fields);
+  static Tag fromJson(Map<String, dynamic> fields) => _Tag.fromJson(fields);
 }

@@ -20,4 +20,6 @@ abstract class Person implements _$Person {
   }) = _Person;
 
   static Person fromMap(Map<int, dynamic> fields) => _Person.fromMap(fields);
+  static Person fromJson(Map<String, dynamic> fields) =>
+      _Person.fromJson(fields);
 }

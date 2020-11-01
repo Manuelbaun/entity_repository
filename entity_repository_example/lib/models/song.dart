@@ -26,4 +26,5 @@ abstract class Song extends _$Song {
   }) = _Song;
 
   static Song fromMap(Map<int, dynamic> fields) => _Song.fromMap(fields);
+  static Song fromJson(Map<String, dynamic> fields) => _Song.fromJson(fields);
 }
