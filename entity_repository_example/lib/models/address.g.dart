@@ -122,7 +122,6 @@ class _Address extends EntityBase<Address> implements Address {
 
   @override
   String toString() =>
-// ignore: lines_longer_than_80_chars
       'Address(id: $id, street: $street, houseNumber: $houseNumber)';
 }
 

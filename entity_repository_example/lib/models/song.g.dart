@@ -199,8 +199,8 @@ class _Song extends EntityBase<Song> implements Song {
   @override
   set authors(List<Person> authors) {
     _authors = authors;
-    authorsRefs = authors?.map((e) => e.id)?.toList();
-    setKeyValue(9, authorsRefs);
+    _authorsRefs = authors?.map((e) => e.id)?.toList();
+    setKeyValue(9, _authorsRefs);
   }
 
   List<int> _authors2;
@@ -233,8 +233,8 @@ class _Song extends EntityBase<Song> implements Song {
   @override
   set translator(List<Person> translator) {
     _translator = translator;
-    translatorRefs = translator?.map((e) => e.id)?.toList();
-    setKeyValue(12, translatorRefs);
+    _translatorRefs = translator?.map((e) => e.id)?.toList();
+    setKeyValue(12, _translatorRefs);
   }
 
   List<Tag> _tags;
@@ -245,8 +245,8 @@ class _Song extends EntityBase<Song> implements Song {
   @override
   set tags(List<Tag> tags) {
     _tags = tags;
-    tagsRefs = tags?.map((e) => e.id)?.toList();
-    setKeyValue(13, tagsRefs);
+    _tagsRefs = tags?.map((e) => e.id)?.toList();
+    setKeyValue(13, _tagsRefs);
   }
 
   factory _Song.fromMap(Map<int, dynamic> fields) {
@@ -262,9 +262,9 @@ class _Song extends EntityBase<Song> implements Song {
         ccli: fields[8] as String,
         authors2: (fields[10] as List)?.cast<int>(),
         copyright: fields[11] as String)
-      ..authorsRefs = (fields[9] as List)?.cast<String>()
-      ..translatorRefs = (fields[12] as List)?.cast<String>()
-      ..tagsRefs = (fields[13] as List)?.cast<String>();
+      .._authorsRefs = (fields[9] as List)?.cast<String>()
+      .._translatorRefs = (fields[12] as List)?.cast<String>()
+      .._tagsRefs = (fields[13] as List)?.cast<String>();
   }
 
   @override
@@ -318,7 +318,7 @@ class _Song extends EntityBase<Song> implements Song {
     if (authors != null && authors.isNotEmpty) {
       obj[9] = authorsRefs;
     }
-    if (authors2 != null) {
+    if (authors2 != null && authors2.isNotEmpty) {
       obj[10] = authors2;
     }
     if (copyright != null) {
@@ -367,7 +367,7 @@ class _Song extends EntityBase<Song> implements Song {
     if (authors != null && authors.isNotEmpty) {
       obj['authors'] = authorsRefs;
     }
-    if (authors2 != null) {
+    if (authors2 != null && authors2.isNotEmpty) {
       obj['authors2'] = authors2;
     }
     if (copyright != null) {
@@ -409,7 +409,7 @@ class _Song extends EntityBase<Song> implements Song {
       _ccli = fields[8] as String;
     }
     if (fields.containsKey(9)) {
-      authorsRefs = (fields[9] as List)?.cast<String>();
+      _authorsRefs = (fields[9] as List)?.cast<String>();
     }
     if (fields.containsKey(10)) {
       _authors2 = (fields[10] as List)?.cast<int>();
@@ -418,10 +418,10 @@ class _Song extends EntityBase<Song> implements Song {
       _copyright = fields[11] as String;
     }
     if (fields.containsKey(12)) {
-      translatorRefs = (fields[12] as List)?.cast<String>();
+      _translatorRefs = (fields[12] as List)?.cast<String>();
     }
     if (fields.containsKey(13)) {
-      tagsRefs = (fields[13] as List)?.cast<String>();
+      _tagsRefs = (fields[13] as List)?.cast<String>();
     }
   }
 
@@ -465,32 +465,40 @@ class _Song extends EntityBase<Song> implements Song {
 
   @override
   String toString() =>
-// ignore: lines_longer_than_80_chars
       'Song(id: $id, title: $title, bpm: $bpm, transpose: $transpose, songKey: $songKey, capo: $capo, lyrics: $lyrics, notes: $notes, ccli: $ccli, authors: ${authorsRefs}, authors2: $authors2, copyright: $copyright, translator: ${translatorRefs}, tags: ${tagsRefs})';
 
   ///
   /// Generate the reference look up
   ///
-  List<String> authorsRefs;
-  List<String> translatorRefs;
-  List<String> tagsRefs;
+  List<String> _authorsRefs;
+
+  List<String> _translatorRefs;
+
+  List<String> _tagsRefs;
+  List<String> get authorsRefs =>
+      _authorsRefs ??= authors?.map((e) => e.id)?.toList();
+
+  List<String> get translatorRefs =>
+      _translatorRefs ??= translator?.map((e) => e.id)?.toList();
+
+  List<String> get tagsRefs => _tagsRefs ??= tags?.map((e) => e.id)?.toList();
   List<Person> _lookUpAuthors() {
-    if (authorsRefs != null) {
-      return locator.get<Person>().findMany(authorsRefs).toList();
+    if (_authorsRefs != null) {
+      return locator.get<Person>().findMany(_authorsRefs).toList();
     }
     return [];
   }
 
   List<Person> _lookUpTranslator() {
-    if (translatorRefs != null) {
-      return locator.get<Person>().findMany(translatorRefs).toList();
+    if (_translatorRefs != null) {
+      return locator.get<Person>().findMany(_translatorRefs).toList();
     }
     return [];
   }
 
   List<Tag> _lookUpTags() {
-    if (tagsRefs != null) {
-      return locator.get<Tag>().findMany(tagsRefs).toList();
+    if (_tagsRefs != null) {
+      return locator.get<Tag>().findMany(_tagsRefs).toList();
     }
     return [];
   }

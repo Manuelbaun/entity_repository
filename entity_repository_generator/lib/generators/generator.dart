@@ -21,7 +21,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateSerializerAdapter(visitor));
 
     final str = res.toString();
-
+    // print(str);
     return str;
   }
 
@@ -50,8 +50,9 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('/// ')
       ..writeln('/// Generate the reference look up ')
       ..writeln('/// ')
-      ..writeAll(visitor.paramsEntities.map((e) => e.toReferenceField), '\n')
-      ..writeAll(visitor.paramsEntities.map((e) => e.toLookupMethod()), '\n');
+      ..writeAll(visitor.paramsEntities.map((e) => e.toRefField_), '\n\n')
+      ..writeAll(visitor.paramsEntities.map((e) => e.toRefFieldGetter), '\n\n')
+      ..writeAll(visitor.paramsEntities.map((e) => e.toLookupMethod()), '\n\n');
 
     return buff;
   }
@@ -65,7 +66,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateClassCopyConstructor(visitor))
       // class fields
       ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
-
       // methods
       ..write(generateFactoryFromMap(visitor))
       ..write(generateGetAllReferenceObjects(visitor))
@@ -75,7 +75,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
       ..write(generateReferenceLookup(visitor))
-      ..writeln('}'); // end
+      // end
+      ..writeln('}');
 
     return buff;
   }
@@ -108,7 +109,8 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('return ${visitor.redirectName}(')
       ..writeln('id:id ?? this.id,')
       ..writeAll(
-          visitor.params.map((e) => '${e.name}: ${e.name} ?? this.${e.name}'),
+          visitor.params.map(
+              (e) => '${e.paramName}: ${e.paramName} ?? this.${e.paramName}'),
           ',')
       ..writeln(');')
       ..writeln('}');
@@ -120,7 +122,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final buff = StringBuffer()
       ..writeln('\n@override')
       ..writeln('String toString() => ')
-      ..writeln('// ignore: lines_longer_than_80_chars')
       ..write("'${visitor.entityName}(id: \$id")
       ..write(visitor.params.isNotEmpty ? ', ' : '')
       ..writeAll(visitor.params.map((e) => e.stringfy), ', ')
@@ -142,15 +143,24 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateFactoryFromMap(ModelVisitor visitor) {
+    final allFields = visitor.paramsNonEntity.map((e) {
+      final res = e.toSerializeReadField();
+      return res;
+    });
+
+    final allReads = visitor.paramsEntities.map((e) {
+      final res = e.toSerializeRead();
+      return res;
+    });
+
     final buff = StringBuffer()
       ..write('\n\n')
       ..write('factory ${visitor.redirectName}')
       ..write('.fromMap(Map<int, dynamic> fields) {')
       ..writeln('return ${visitor.redirectName}(id: fields[0] as String,')
-      ..writeAll(
-          visitor.paramsNonEntity.map((e) => e.toSerializeReadField), ',\n')
+      ..writeAll(allFields, ',\n')
       ..write(')')
-      ..writeAll(visitor.paramsEntities.map((e) => e.toSerializeRead), '\n')
+      ..writeAll(allReads, '\n')
       ..write(';}');
 
     return buff;
@@ -163,7 +173,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('\n\n@override')
       ..writeln('Set<${(EntityBase).$name}> getAllRefObjects() {')
       ..writeln('final obj = <${(EntityBase).$name}>{};\n')
-      ..writeAll(visitor.params.map((e) => e.toRefsObjects), '\n')
+      ..writeAll(visitor.params.map((e) => e.toRefsObjects()), '\n')
       ..writeln('return obj;')
       ..writeln('}');
 
@@ -171,31 +181,35 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   }
 
   StringBuffer generateToMap(ModelVisitor visitor) {
+    ///Write bin
     final buff = StringBuffer()
-
-      ///Write bin
       ..writeln('\n\n@override')
       ..writeln('Map<int, dynamic> toMap() {')
       ..writeln('final obj = <int, dynamic>{};')
       ..writeln('/// store the id as field 0')
       ..writeln('obj[0] = id;\n')
-      ..writeAll(visitor.params.map((e) => e.toMapEntry), '\n')
+      ..writeAll(visitor.params.map((e) => e.toMapEntry()), '\n')
       ..writeln('return obj;')
       ..writeln('}');
 
     return buff;
   }
 
+  /// TODO: merge generateTojson
   StringBuffer generateToJson(ModelVisitor visitor) {
-    final buff = StringBuffer()
+    final allJsonFields = visitor.params.map((e) {
+      final res = e.toMapEntry(isJson: true);
+      return res;
+    });
 
-      ///Write bin
+    ///Write bin
+    final buff = StringBuffer()
       ..writeln('\n\n@override')
       ..writeln('Map<String, dynamic> toJson() {')
       ..writeln('final obj = <String, dynamic>{};')
       ..writeln('/// store the id as field 0')
       ..writeln("obj['id'] = id;\n")
-      ..writeAll(visitor.params.map((e) => e.toMapEntryJson), '\n')
+      ..writeAll(allJsonFields, '\n')
       ..writeln('return obj;')
       ..writeln('}');
 
@@ -208,7 +222,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ///Write bin
       ..writeln('\n\n@override')
       ..writeln('void applyUpdates(Map<int, dynamic> fields) {')
-      ..writeAll(visitor.params.map((e) => e.toFieldFromMap), '\n')
+      ..writeAll(visitor.params.map((e) => e.toFieldFromMap()), '\n')
       ..writeln('}');
 
     // final str = buff.toString();
@@ -223,17 +237,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('return o is ${visitor.redirectName} &&')
       ..write('o.id == id')
       ..write(visitor.params.isNotEmpty ? ' && ' : '')
-      ..writeAll(visitor.params.map((e) {
-        if (e.type.isDartCoreList) {
-          return 'listEquality(o.${e.name}, ${e.name})';
-        } else if (e.type.isDartCoreSet) {
-          return 'setEquality(o.${e.name}, ${e.name})';
-        } else if (e.type.isDartCoreMap) {
-          return 'mapEquality(o.${e.name}, ${e.name})';
-        }
-
-        return 'o.${e.name} == ${e.name}';
-      }), ' && ')
+      ..writeAll(visitor.params.map((e) => e.toEquality()), ' && ')
       ..writeln(';}')
 
       /// hashCode Gen
@@ -241,7 +245,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('int get hashCode {')
       ..writeln('return id.hashCode')
       ..write(visitor.params.isNotEmpty ? ' ^ ' : '')
-      ..writeAll(visitor.params.map((e) => '${e.name}.hashCode'), ' ^ ')
+      ..writeAll(visitor.params.map((e) => '${e.paramName}.hashCode'), ' ^ ')
       ..write(';')
       ..writeln('}');
 

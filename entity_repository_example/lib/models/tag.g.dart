@@ -77,9 +77,7 @@ class _Tag extends EntityBase<Tag> implements Tag {
   }
 
   @override
-  String toString() =>
-// ignore: lines_longer_than_80_chars
-      'Tag(id: $id)';
+  String toString() => 'Tag(id: $id)';
 }
 
 /// The serialize adapter of type [_Tag]

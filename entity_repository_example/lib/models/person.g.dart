@@ -97,8 +97,8 @@ class _Person extends EntityBase<Person> implements Person {
   @override
   set address(Address address) {
     _address = address;
-    addressRefs = address?.id;
-    setKeyValue(3, addressRefs);
+    _addressRefs = address?.id;
+    setKeyValue(3, _addressRefs);
   }
 
   List<Person> _friends;
@@ -109,8 +109,8 @@ class _Person extends EntityBase<Person> implements Person {
   @override
   set friends(List<Person> friends) {
     _friends = friends;
-    friendsRefs = friends?.map((e) => e.id)?.toList();
-    setKeyValue(4, friendsRefs);
+    _friendsRefs = friends?.map((e) => e.id)?.toList();
+    setKeyValue(4, _friendsRefs);
   }
 
   Set<Person> _friends5;
@@ -121,8 +121,8 @@ class _Person extends EntityBase<Person> implements Person {
   @override
   set friends5(Set<Person> friends5) {
     _friends5 = friends5;
-    friends5Refs = friends5?.map((e) => e.id);
-    setKeyValue(5, friends5Refs);
+    _friends5Refs = friends5?.map((e) => e.id)?.toSet();
+    setKeyValue(5, _friends5Refs);
   }
 
   Map<int, Address> _a5sf;
@@ -133,8 +133,8 @@ class _Person extends EntityBase<Person> implements Person {
   @override
   set a5sf(Map<int, Address> a5sf) {
     _a5sf = a5sf;
-    a5sfRefs = a5sf?.map((key, value) => MapEntry(key, value.id));
-    setKeyValue(6, a5sfRefs);
+    _a5sfRefs = a5sf?.map((key, value) => MapEntry(key, value.id));
+    setKeyValue(6, _a5sfRefs);
   }
 
   Map<Person, Address> _p2a;
@@ -145,8 +145,8 @@ class _Person extends EntityBase<Person> implements Person {
   @override
   set p2a(Map<Person, Address> p2a) {
     _p2a = p2a;
-    p2aRefs = p2a?.map((key, value) => MapEntry(key.id, value.id));
-    setKeyValue(7, p2aRefs);
+    _p2aRefs = p2a?.map((key, value) => MapEntry(key.id, value.id));
+    setKeyValue(7, _p2aRefs);
   }
 
   factory _Person.fromMap(Map<int, dynamic> fields) {
@@ -154,11 +154,11 @@ class _Person extends EntityBase<Person> implements Person {
         id: fields[0] as String,
         name: fields[1] as String,
         age: fields[2] as int)
-      ..addressRefs = (fields[3] as String)
-      ..friendsRefs = (fields[4] as List)?.cast<String>()
-      ..friends5Refs = (fields[5] as List)?.toSet()?.cast<String>()
-      ..a5sfRefs = (fields[6] as Map)?.cast<int, String>()
-      ..p2aRefs = (fields[7] as Map)?.cast<String, String>();
+      .._addressRefs = (fields[3] as String)
+      .._friendsRefs = (fields[4] as List)?.cast<String>()
+      .._friends5Refs = (fields[5] as List)?.toSet()?.cast<String>()
+      .._a5sfRefs = (fields[6] as Map)?.cast<int, String>()
+      .._p2aRefs = (fields[7] as Map)?.cast<String, String>();
   }
 
   @override
@@ -252,19 +252,19 @@ class _Person extends EntityBase<Person> implements Person {
       _age = fields[2] as int;
     }
     if (fields.containsKey(3)) {
-      addressRefs = (fields[3] as String);
+      _addressRefs = (fields[3] as String);
     }
     if (fields.containsKey(4)) {
-      friendsRefs = (fields[4] as List)?.cast<String>();
+      _friendsRefs = (fields[4] as List)?.cast<String>();
     }
     if (fields.containsKey(5)) {
-      friends5Refs = (fields[5] as List)?.toSet()?.cast<String>();
+      _friends5Refs = (fields[5] as List)?.toSet()?.cast<String>();
     }
     if (fields.containsKey(6)) {
-      a5sfRefs = (fields[6] as Map)?.cast<int, String>();
+      _a5sfRefs = (fields[6] as Map)?.cast<int, String>();
     }
     if (fields.containsKey(7)) {
-      p2aRefs = (fields[7] as Map)?.cast<String, String>();
+      _p2aRefs = (fields[7] as Map)?.cast<String, String>();
     }
   }
 
@@ -296,43 +296,56 @@ class _Person extends EntityBase<Person> implements Person {
 
   @override
   String toString() =>
-// ignore: lines_longer_than_80_chars
       'Person(id: $id, name: $name, age: $age, address: ${addressRefs}, friends: ${friendsRefs}, friends5: ${friends5Refs}, a5sf: ${a5sfRefs}, p2a: ${p2aRefs})';
 
   ///
   /// Generate the reference look up
   ///
-  String addressRefs;
-  List<String> friendsRefs;
-  Set<String> friends5Refs;
-  Map<int, String> a5sfRefs;
-  Map<String, String> p2aRefs;
+  String _addressRefs;
+
+  List<String> _friendsRefs;
+
+  Set<String> _friends5Refs;
+
+  Map<int, String> _a5sfRefs;
+
+  Map<String, String> _p2aRefs;
+  String get addressRefs => _addressRefs ??= address?.id;
+
+  List<String> get friendsRefs =>
+      _friendsRefs ??= friends?.map((e) => e.id)?.toList();
+
+  Set<String> get friends5Refs =>
+      _friends5Refs ??= friends5?.map((e) => e.id)?.toSet();
+
+  Map<int, String> get a5sfRefs =>
+      _a5sfRefs ??= a5sf?.map((key, value) => MapEntry(key, value.id));
+
+  Map<String, String> get p2aRefs =>
+      _p2aRefs ??= p2a?.map((key, value) => MapEntry(key.id, value.id));
   Address _lookUpAddress() {
-    return locator.get<Address>().findOne(addressRefs);
+    return locator.get<Address>().findOne(_addressRefs);
   }
 
   List<Person> _lookUpFriends() {
-    if (friendsRefs != null) {
-      return locator.get<Person>().findMany(friendsRefs).toList();
+    if (_friendsRefs != null) {
+      return locator.get<Person>().findMany(_friendsRefs).toList();
     }
     return [];
   }
 
   Set<Person> _lookUpFriends5() {
-    if (friends5Refs != null) {
-      return locator.get<Person>().findMany(friends5Refs).toSet();
+    if (_friends5Refs != null) {
+      return locator.get<Person>().findMany(_friends5Refs).toSet();
     }
     return {};
   }
 
   Map<int, Address> _lookUpA5sf() {
-    if (a5sfRefs != null) {
+    if (_a5sfRefs != null) {
       final map = <int, Address>{};
-      for (final entry in a5sfRefs.entries) {
-        final v1 = entry.key;
-        final v2 = locator.get<Address>().findOne(entry.value);
-
-        map[v1] = v2;
+      for (final entry in _a5sfRefs.entries) {
+        map[entry.key] = locator.get<Address>().findOne(entry.value);
       }
 
       return map;
@@ -341,13 +354,11 @@ class _Person extends EntityBase<Person> implements Person {
   }
 
   Map<Person, Address> _lookUpP2a() {
-    if (p2aRefs != null) {
+    if (_p2aRefs != null) {
       final map = <Person, Address>{};
-      for (final entry in p2aRefs.entries) {
-        final v1 = locator.get<Person>().findOne(entry.key);
-        final v2 = locator.get<Address>().findOne(entry.value);
-
-        map[v1] = v2;
+      for (final entry in _p2aRefs.entries) {
+        map[locator.get<Person>().findOne(entry.key)] =
+            locator.get<Address>().findOne(entry.value);
       }
 
       return map;

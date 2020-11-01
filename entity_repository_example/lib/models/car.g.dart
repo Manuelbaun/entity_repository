@@ -77,8 +77,8 @@ class _Car extends EntityBase<Car> implements Car {
   @override
   set owner(Person owner) {
     _owner = owner;
-    ownerRefs = owner?.id;
-    setKeyValue(4, ownerRefs);
+    _ownerRefs = owner?.id;
+    setKeyValue(4, _ownerRefs);
   }
 
   factory _Car.fromMap(Map<int, dynamic> fields) {
@@ -87,7 +87,7 @@ class _Car extends EntityBase<Car> implements Car {
         model: fields[1] as String,
         type: fields[2] as String,
         buildYear: fields[3] as int)
-      ..ownerRefs = (fields[4] as String);
+      .._ownerRefs = (fields[4] as String);
   }
 
   @override
@@ -154,7 +154,7 @@ class _Car extends EntityBase<Car> implements Car {
       _buildYear = fields[3] as int;
     }
     if (fields.containsKey(4)) {
-      ownerRefs = (fields[4] as String);
+      _ownerRefs = (fields[4] as String);
     }
   }
 
@@ -180,15 +180,15 @@ class _Car extends EntityBase<Car> implements Car {
 
   @override
   String toString() =>
-// ignore: lines_longer_than_80_chars
       'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${ownerRefs})';
 
   ///
   /// Generate the reference look up
   ///
-  String ownerRefs;
+  String _ownerRefs;
+  String get ownerRefs => _ownerRefs ??= owner?.id;
   Person _lookUpOwner() {
-    return locator.get<Person>().findOne(ownerRefs);
+    return locator.get<Person>().findOne(_ownerRefs);
   }
 }
 

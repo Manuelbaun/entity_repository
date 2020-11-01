@@ -27,6 +27,28 @@ void clearDB(EntityConfiguration db) async {
   }
 }
 
+void compare(EntityDatabase db, EntityDatabase db2) {
+  for (final repo in db.repositoryLocator.values) {
+    final allEntries = repo.findAll();
+    final repo2 = db2.repositoryLocator.getRepoByTypeId(repo.typeId);
+    final allEntries2 = repo2.findAll();
+
+    if (allEntries.length != allEntries2.length) {
+      print('xxx Lengths are different');
+    }
+
+    for (final entry in allEntries) {
+      final ent = repo2.findOne(entry.id);
+
+      if (entry != ent) {
+        print('Not Equal : ${ent.runtimeType}');
+        print(entry.toJson());
+        print(ent.toJson());
+      }
+    }
+  }
+}
+
 ///
 /// MAIN
 ///
@@ -36,8 +58,8 @@ Future<void> main() async {
 
   /// Setup Sync
   db.synchronizer.onAtomUpdate = (a) async {
-    final aJson = a.toJson();
-    print(aJson);
+    // final aJson = a.toJson();
+    // print(aJson);
     final bytes = msgpackEncode(a);
     final aa = msgpackDecode<Atom>(bytes);
     await db2.synchronizer.receivedRemoteAtom(aa);
@@ -45,8 +67,6 @@ Future<void> main() async {
 
   await db.initRepository();
   await db2.initRepository();
-
-  printAll(db);
 
   await clearDB(db);
   await clearDB(db2);
@@ -56,12 +76,12 @@ Future<void> main() async {
   await addComplexNestedObject(db);
 
   s.stop();
-
-  printAll(db);
-  print('---------------------------------');
-  printAll(db2);
-
   print('Open DB: ${s.elapsedMilliseconds} ms');
+
+  print('---------------------------------');
+  print('---------------------------------');
+  compare(db, db2);
+
   await db.close();
   await db2.close();
 }
@@ -176,4 +196,10 @@ Future<void> storeCars(EntityDatabase db) async {
     Car(id: '5', buildYear: 2013, type: 'MAN', model: 'LKW'),
   ];
   await db.carRepository.insertMany(cars, override: true);
+}
+
+class Test {
+  List<List<List<String>>> deepNested;
+
+  Map<String, List<Test>> deppN;
 }

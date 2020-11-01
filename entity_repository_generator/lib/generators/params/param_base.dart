@@ -1,38 +1,32 @@
 part of entity_repository_generator;
 
 abstract class ParamBase {
-  Field field;
-  String name;
-  InterfaceType type;
-  Set<InterfaceType> subTypes = {};
-
-  Map<InterfaceType, AnnotatedClazz> _entityTypes;
+  final Field field;
+  final String paramName;
+  final InterfaceType type;
+  final Map<InterfaceType, AnnotatedClazz> entityTypes;
 
   ParamBase({
-    this.name,
+    this.paramName,
     this.field,
     this.type,
-    Map<InterfaceType, AnnotatedClazz> entityTypes,
-  }) : _entityTypes = entityTypes {
-    if (type.isDartCoreList || type.isDartCoreSet || type.isDartCoreMap) {
-      subTypes = getAllTypes(type).toSet();
-    }
-  }
+    this.entityTypes,
+  });
 
   /// The basic imple
-  bool get isEntity => _isEntityParam(type);
-  bool _isEntityParam(InterfaceType type) {
-    final anno = _entityTypes[type];
-    return anno != null;
-  }
+  bool get isEntity;
 
   bool get hasSubType;
 
   String get stringfy;
 
+  String get typeName;
+
+  String get _paramName;
+
   String get toParamInit;
 
-  String get toParamInitThis;
+  String get paramNameThis;
 
   String get toParamInitPrivate;
 
@@ -50,40 +44,32 @@ abstract class ParamBase {
 
   String get toPrivateFieldGetterSetter;
 
-  String get toReferenceNameGetter;
+  String get toRefNameGetter;
 
-  String get toReferenceNamePrivate;
+  String get _toRefName;
 
   String get toLookUpMethodName;
 
   String toLookupMethod();
 
-  String get toReferenceFieldPrivate;
+  String get toRefField_;
 
-  String get toReferenceFieldGetter;
+  String get toRefFieldGetter;
 
-  bool get containsEntities;
+  // bool get containsEntities;
 
   // general, if set field
-  String get mapEntityToIdsRefs;
+  String get toRefIdIfExist;
 
-  /// serialize
-  ///
-  /// ..writeByte(...)
-  /// ..write(...)
-  String toSerializeWrite([String prefix = 'obj.']);
+  String toSerializeWrite([String prefix = 'obj']);
+  String toMapEntry({String prefix = 'obj', bool isJson = false});
+  String toRefsObjects([String prefix = 'obj']);
 
-  String get toSerializeRead;
+  String toSerializeReadField([String prefix = 'fields']);
+  String toSerializeRead([String prefix = 'fields']);
+  String toFieldFromMap([String prefix = 'fields']);
 
-  String get toMapEntry;
-
-  String get toMapEntryJson;
-
-  String get toRefsObjects;
-
-  String get toSerializeReadField;
-
-  String get toFieldFromMap;
+  String toEquality([String prefix = 'o']);
 
   @override
   String toString() => toPublicField;

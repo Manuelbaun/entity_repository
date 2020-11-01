@@ -151,7 +151,7 @@ class EntityDatabaseGenerator {
       ..writeAll(v.params.map((e) => e.toParamInit), ',')
       ..write('}) => ')
       ..write('new ${normal}(id:id,')
-      ..writeAll(v.params.map((e) => '${e.name}:${e.name}'), ',')
+      ..writeAll(v.params.map((e) => '${e.paramName}:${e.paramName}'), ',')
       ..writeln(')..repo = _${v.repoNameLowerCase};');
 
     return str.toString();

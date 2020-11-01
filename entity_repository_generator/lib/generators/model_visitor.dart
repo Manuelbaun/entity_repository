@@ -33,14 +33,14 @@ class ModelVisitor extends SimpleElementVisitor {
 
   String _sourceCode;
 
-  List<Param> get params => _allParams;
-  List<Param> get paramsNonEntity => _nonEnitityParam;
-  List<Param> get paramsEntities => _entityParam;
+  List<ParamBase> get params => _allParams;
+  List<ParamBase> get paramsNonEntity => _nonEnitityParam;
+  List<ParamBase> get paramsEntities => _entityParam;
   bool get hasEntityReference => _entityParam.isNotEmpty;
 
-  final _allParams = <Param>[];
-  final _nonEnitityParam = <Param>[];
-  final _entityParam = <Param>[];
+  final _allParams = <ParamBase>[];
+  final _nonEnitityParam = <ParamBase>[];
+  final _entityParam = <ParamBase>[];
 
   @override
   void visitConstructorElement(ConstructorElement element) {
@@ -69,15 +69,16 @@ class ModelVisitor extends SimpleElementVisitor {
             ''' Please choose another one.''');
       }
 
-      final p = Param(
+      final p = Param.genericFactory(
         field: field,
         name: par.displayName,
         type: par.type as InterfaceType,
-        entitiesTypes: entityTypes,
+        entityTypes: entityTypes,
       );
 
-      final res = _isEntityType(p);
-      if (res) {
+      // final res = _isEntityType(p);
+
+      if (p.isOrHasEntities) {
         _entityParam.add(p);
       } else {
         _nonEnitityParam.add(p);
@@ -134,22 +135,22 @@ class ModelVisitor extends SimpleElementVisitor {
     throw GeneratorError('''${type.element} must be an abstract class!''');
   }
 
-  bool _isEntityType(Param par) {
-    if (par.hasSubType) {
-      final res = par.subTypes.firstWhere(_testType, orElse: () => null);
+  // bool _isEntityType(ParamBase par) {
+  //   if (par.hasSubType) {
+  //     final res = par.subTypes.firstWhere(_testType, orElse: () => null);
 
-      if (res != null) {
-        return true;
-      }
-    } else {
-      return _testType(par.type);
-    }
-    return false;
-  }
+  //     if (res != null) {
+  //       return true;
+  //     }
+  //   } else {
+  //     return _testType(par.type);
+  //   }
+  //   return false;
+  // }
 
-  bool _testType(InterfaceType type) {
-    final anno = entityTypes[type];
-    return anno != null;
-    // && anno.model.repository;
-  }
+  // bool _testType(InterfaceType type) {
+  //   final anno = entityTypes[type];
+  //   return anno != null;
+  //   // && anno.model.repository;
+  // }
 }

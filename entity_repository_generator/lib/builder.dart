@@ -18,10 +18,12 @@ part 'generators/helper.dart';
 part 'generators/generator.dart';
 
 part 'generators/model_visitor.dart';
-part 'generators/param.dart';
+part 'generators/params/param.dart';
+// part 'generators/params/param_copy.dart';
 part 'generators/params/param_base.dart';
 part 'generators/params/param_list.dart';
 part 'generators/params/param_map.dart';
+part 'generators/params/param_set.dart';
 part 'utils/errors.dart';
 part 'utils/color_print.dart';
 

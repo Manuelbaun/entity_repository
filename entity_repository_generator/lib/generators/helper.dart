@@ -181,3 +181,9 @@ extension TypeX on Type {
     return str2[0];
   }
 }
+
+extension on String {
+  String capitalize() {
+    return this[0].toUpperCase() + this.substring(1);
+  }
+}
