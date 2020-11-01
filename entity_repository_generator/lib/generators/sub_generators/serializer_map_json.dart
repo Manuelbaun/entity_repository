@@ -8,10 +8,11 @@ class SerializerMapJson {
     String generateMapEntry(ParamBase p) {
       final mapAccess = isJson ? "'${p.paramName}'" : p.field.index;
 
-      final addCondition = p.hasSubType ? '&& ${p.paramName}.isNotEmpty' : '';
       final fieldName = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
+
+      final addCondition = p.hasSubType ? '&& $fieldName.isNotEmpty' : '';
       return """
-        if(${p.paramName} != null $addCondition) {
+        if($fieldName != null $addCondition) {
           $prefix[$mapAccess] = $fieldName;
         }""";
     }

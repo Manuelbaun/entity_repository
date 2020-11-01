@@ -84,6 +84,11 @@ class ParamSet extends Param {
   @override
   String toString() => toPublicField;
 
-  @override
-  String get toEquality => 'setEquality(o.${paramName}, ${paramName})';
+  String get toEquality {
+    if (isOrHasEntities) {
+      return 'setEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+    }
+
+    return 'setEquality(o.${paramName}, ${paramName})';
+  }
 }

@@ -205,19 +205,19 @@ class _Person extends EntityBase<Person> implements Person {
     if (age != null) {
       map[2] = age;
     }
-    if (address != null) {
+    if (addressRefs != null) {
       map[3] = addressRefs;
     }
-    if (friends != null && friends.isNotEmpty) {
+    if (friendsRefs != null && friendsRefs.isNotEmpty) {
       map[4] = friendsRefs;
     }
-    if (friends5 != null && friends5.isNotEmpty) {
+    if (friends5Refs != null && friends5Refs.isNotEmpty) {
       map[5] = friends5Refs;
     }
-    if (a5sf != null && a5sf.isNotEmpty) {
+    if (a5sfRefs != null && a5sfRefs.isNotEmpty) {
       map[6] = a5sfRefs;
     }
-    if (p2a != null && p2a.isNotEmpty) {
+    if (p2aRefs != null && p2aRefs.isNotEmpty) {
       map[7] = p2aRefs;
     }
     return map;
@@ -235,19 +235,19 @@ class _Person extends EntityBase<Person> implements Person {
     if (age != null) {
       map['age'] = age;
     }
-    if (address != null) {
+    if (addressRefs != null) {
       map['address'] = addressRefs;
     }
-    if (friends != null && friends.isNotEmpty) {
+    if (friendsRefs != null && friendsRefs.isNotEmpty) {
       map['friends'] = friendsRefs;
     }
-    if (friends5 != null && friends5.isNotEmpty) {
+    if (friends5Refs != null && friends5Refs.isNotEmpty) {
       map['friends5'] = friends5Refs;
     }
-    if (a5sf != null && a5sf.isNotEmpty) {
+    if (a5sfRefs != null && a5sfRefs.isNotEmpty) {
       map['a5sf'] = a5sfRefs;
     }
-    if (p2a != null && p2a.isNotEmpty) {
+    if (p2aRefs != null && p2aRefs.isNotEmpty) {
       map['p2a'] = p2aRefs;
     }
     return map;
@@ -285,11 +285,11 @@ class _Person extends EntityBase<Person> implements Person {
         o.id == id &&
         o.name == name &&
         o.age == age &&
-        o.address == address &&
-        listEquality(o.friends, friends) &&
-        setEquality(o.friends5, friends5) &&
-        mapEquality(o.a5sf, a5sf) &&
-        mapEquality(o.p2a, p2a);
+        o.addressRefs == addressRefs &&
+        listEquality(o.friendsRefs, friendsRefs) &&
+        setEquality(o.friends5Refs, friends5Refs) &&
+        mapEquality(o.a5sfRefs, a5sfRefs) &&
+        mapEquality(o.p2aRefs, p2aRefs);
   }
 
   @override

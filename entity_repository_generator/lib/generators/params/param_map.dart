@@ -101,8 +101,13 @@ class ParamMap extends Param {
     return 'if($prefix.containsKey(${field.index})) { $str; }';
   }
 
-  @override
-  String get toEquality => 'mapEquality(o.${paramName}, ${paramName})';
+  String get toEquality {
+    if (isOrHasEntities) {
+      return 'mapEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+    }
+
+    return 'mapEquality(o.${paramName}, ${paramName})';
+  }
 
   @override
   String toString() => toPublicField;

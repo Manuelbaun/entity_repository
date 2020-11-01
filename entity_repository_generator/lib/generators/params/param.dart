@@ -174,5 +174,11 @@ class Param implements ParamBase {
   String toString() => toPublicField;
 
   @override
-  String get toEquality => 'o.${paramName} == $paramName';
+  String get toEquality {
+    if (isOrHasEntities) {
+      return 'o.${toRefNameGetter} == $toRefNameGetter';
+    }
+
+    return 'o.${paramName} == $paramName';
+  }
 }

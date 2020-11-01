@@ -332,7 +332,7 @@ class _Song extends EntityBase<Song> implements Song {
     if (ccli != null) {
       map[8] = ccli;
     }
-    if (authors != null && authors.isNotEmpty) {
+    if (authorsRefs != null && authorsRefs.isNotEmpty) {
       map[9] = authorsRefs;
     }
     if (authors2 != null && authors2.isNotEmpty) {
@@ -341,10 +341,10 @@ class _Song extends EntityBase<Song> implements Song {
     if (copyright != null) {
       map[11] = copyright;
     }
-    if (translator != null && translator.isNotEmpty) {
+    if (translatorRefs != null && translatorRefs.isNotEmpty) {
       map[12] = translatorRefs;
     }
-    if (tags != null && tags.isNotEmpty) {
+    if (tagsRefs != null && tagsRefs.isNotEmpty) {
       map[13] = tagsRefs;
     }
     return map;
@@ -380,7 +380,7 @@ class _Song extends EntityBase<Song> implements Song {
     if (ccli != null) {
       map['ccli'] = ccli;
     }
-    if (authors != null && authors.isNotEmpty) {
+    if (authorsRefs != null && authorsRefs.isNotEmpty) {
       map['authors'] = authorsRefs;
     }
     if (authors2 != null && authors2.isNotEmpty) {
@@ -389,10 +389,10 @@ class _Song extends EntityBase<Song> implements Song {
     if (copyright != null) {
       map['copyright'] = copyright;
     }
-    if (translator != null && translator.isNotEmpty) {
+    if (translatorRefs != null && translatorRefs.isNotEmpty) {
       map['translator'] = translatorRefs;
     }
-    if (tags != null && tags.isNotEmpty) {
+    if (tagsRefs != null && tagsRefs.isNotEmpty) {
       map['tags'] = tagsRefs;
     }
     return map;
@@ -454,11 +454,11 @@ class _Song extends EntityBase<Song> implements Song {
         o.lyrics == lyrics &&
         o.notes == notes &&
         o.ccli == ccli &&
-        listEquality(o.authors, authors) &&
+        listEquality(o.authorsRefs, authorsRefs) &&
         listEquality(o.authors2, authors2) &&
         o.copyright == copyright &&
-        listEquality(o.translator, translator) &&
-        listEquality(o.tags, tags);
+        listEquality(o.translatorRefs, translatorRefs) &&
+        listEquality(o.tagsRefs, tagsRefs);
   }
 
   @override

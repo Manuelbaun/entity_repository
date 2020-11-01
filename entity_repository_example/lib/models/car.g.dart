@@ -122,7 +122,7 @@ class _Car extends EntityBase<Car> implements Car {
     if (buildYear != null) {
       map[3] = buildYear;
     }
-    if (owner != null) {
+    if (ownerRefs != null) {
       map[4] = ownerRefs;
     }
     return map;
@@ -143,7 +143,7 @@ class _Car extends EntityBase<Car> implements Car {
     if (buildYear != null) {
       map['buildYear'] = buildYear;
     }
-    if (owner != null) {
+    if (ownerRefs != null) {
       map['owner'] = ownerRefs;
     }
     return map;
@@ -173,7 +173,7 @@ class _Car extends EntityBase<Car> implements Car {
         o.model == model &&
         o.type == type &&
         o.buildYear == buildYear &&
-        o.owner == owner;
+        o.ownerRefs == ownerRefs;
   }
 
   @override

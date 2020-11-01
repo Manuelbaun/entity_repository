@@ -81,8 +81,13 @@ class ParamList extends Param {
     return 'if(fields.containsKey(${field.index})) { $str; }';
   }
 
-  @override
-  String get toEquality => 'listEquality(o.${paramName}, ${paramName})';
+  String get toEquality {
+    if (isOrHasEntities) {
+      return 'listEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+    }
+
+    return 'listEquality(o.${paramName}, ${paramName})';
+  }
 
   @override
   String toString() => toPublicField;
