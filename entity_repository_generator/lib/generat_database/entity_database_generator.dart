@@ -2,29 +2,29 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:build/build.dart';
-import 'package:entity_repository_generator/utils/top_level.dart';
-import 'package:source_gen/source_gen.dart';
+// import 'package:build/build.dart';
+// import 'package:entity_repository_generator/utils/top_level.dart';
+// import 'package:source_gen/source_gen.dart';
 
 import '../builder.dart';
 
-class EntityDatabaseGenerator3 extends Generator {
-  @override
-  String generate(LibraryReader library, BuildStep buildStep) {
-    final topLevelVarCount = topLevelNumVariables(library).length;
+// class EntityDatabaseGenerator3 extends Generator {
+//   @override
+//   String generate(LibraryReader library, BuildStep buildStep) {
+//     final topLevelVarCount = topLevelNumVariables(library).length;
 
-    library.allElements.forEach((element) {
-      print(element);
-    });
+//     library.allElements.forEach((element) {
+//       print(element);
+//     });
 
-    // final list = library.allElements.toList();
+//     // final list = library.allElements.toList();
 
-    return '''
-// Source library: ${library.element.source.uri}
-const topLevelNumVarCount = $topLevelVarCount;
-''';
-  }
-}
+//     return '''
+// // Source library: ${library.element.source.uri}
+// const topLevelNumVarCount = $topLevelVarCount;
+// ''';
+//   }
+// }
 
 class EntityDatabaseGenerator {
   EntityDatabaseGenerator() : super();

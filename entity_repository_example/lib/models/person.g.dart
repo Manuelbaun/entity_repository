@@ -355,7 +355,9 @@ class _Person extends EntityBase<Person> implements Person {
     if (_a5sfRefs != null) {
       final map = <int, Address>{};
       for (final entry in _a5sfRefs.entries) {
-        map[entry.key] = locator.get<Address>().findOne(entry.value);
+        final key = entry.key;
+        final value = locator.get<Address>().findOne(entry.value);
+        map[key] = value;
       }
 
       return map;
@@ -367,8 +369,9 @@ class _Person extends EntityBase<Person> implements Person {
     if (_p2aRefs != null) {
       final map = <Person, Address>{};
       for (final entry in _p2aRefs.entries) {
-        map[locator.get<Person>().findOne(entry.key)] =
-            locator.get<Address>().findOne(entry.value);
+        final key = locator.get<Person>().findOne(entry.key);
+        final value = locator.get<Address>().findOne(entry.value);
+        map[key] = value;
       }
 
       return map;

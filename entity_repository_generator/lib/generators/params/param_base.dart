@@ -22,7 +22,7 @@ abstract class ParamBase {
 
   bool get hasSubType;
 
-  String get stringfy;
+  String get asString;
 
   String get typeName;
 
@@ -67,7 +67,7 @@ abstract class ParamBase {
 
   String toFieldFromMap([String prefix = 'fields']);
 
-  String toEquality([String prefix = 'o']);
+  String get toEquality;
 
   @override
   String toString() => toPublicField;

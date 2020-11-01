@@ -47,24 +47,22 @@ class ParamMap extends Param {
   }
 
   String toLookupMethod() {
-    final key = subTypes.first;
-    final value = subTypes.last;
-
-    final assignKey =
-        keyIsEntity ? 'locator.get<$key>().findOne(entry.key)' : 'entry.key';
+    final assignKey = keyIsEntity
+        ? 'locator.get<$keyTypeRaw>().findOne(entry.key)'
+        : 'entry.key';
 
     final assignValue = valueIsEntity
-        ? 'locator.get<$value>().findOne(entry.value)'
+        ? 'locator.get<$valueTypeRaw>().findOne(entry.value)'
         : 'entry.value';
 
-    // final v1 = $assignKey;
-    // final v2 = $assignValue;
     return '''
       $typeRaw $toLookUpMethodName {
         if($toRefNamePrivate != null){
-          final map = <$key, $value>{} ;
+          final map = <$keyTypeRaw, $valueTypeRaw>{};
           for(final entry in $toRefNamePrivate.entries) {
-            map[$assignKey] = $assignValue;
+            final key = $assignKey;
+            final value = $assignValue;
+            map[key] = value ;
           }
 
           return map;
@@ -74,16 +72,11 @@ class ParamMap extends Param {
   }
 
   String get toRefField_ {
-    final key = keyIsEntity ? 'String' : subTypes.first;
-    final value = valueIsEntity ? 'String' : subTypes.last;
-    return 'Map<$key, $value> $toRefNamePrivate;';
+    return 'Map<$keyType, $valueType> $toRefNamePrivate;';
   }
 
   String get toRefFieldGetter {
-    final t1 = keyIsEntity ? 'String' : subTypes.first;
-    final t2 = valueIsEntity ? 'String' : subTypes.last;
-
-    return 'Map<$t1, $t2> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
+    return 'Map<$keyType, $valueType> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
 
   String toRefsObjects([String prefix = 'obj']) {
@@ -101,27 +94,15 @@ class ParamMap extends Param {
   }
 
   String toFieldFromMap([String prefix = 'fields']) {
-    final key = keyIsEntity ? 'String' : subTypes.first;
-    final value = valueIsEntity ? 'String' : subTypes.last;
     final fieldName = (isOrHasEntities) ? toRefNamePrivate : '_$paramName';
 
     final str =
-        '$fieldName = ($prefix[${field.index}] as Map)?.cast<$key, $value>()';
+        '$fieldName = ($prefix[${field.index}] as Map)?.cast<$keyType, $valueType>()';
     return 'if($prefix.containsKey(${field.index})) { $str; }';
   }
 
-  String get stringfy {
-    if (isOrHasEntities) {
-      return '$paramName: \${$toRefNameGetter}';
-    } else {
-      return '$paramName: \${$paramName?.map((key, value) => MapEntry(key, value))}';
-    }
-  }
-
   @override
-  String toEquality([String prefix = 'o']) {
-    return 'mapEquality(o.${paramName}, ${paramName})';
-  }
+  String get toEquality => 'mapEquality(o.${paramName}, ${paramName})';
 
   @override
   String toString() => toPublicField;

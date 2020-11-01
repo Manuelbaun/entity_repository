@@ -42,7 +42,9 @@ class Param implements ParamBase {
   }
 
   /// is true, when this param is an entity type
+  /// /// TODO: Change the API
   bool isOrHasEntities = false;
+
   bool get isEntity => isEntityType(typeRaw);
   bool isEntityType(InterfaceType type) => entityTypes[type] != null;
 
@@ -162,16 +164,15 @@ class Param implements ParamBase {
     return 'if($prefix.containsKey(${field.index})) { $str; }';
   }
 
-  String get stringfy {
-    if (isEntity) return '$paramName: \${$toRefNameGetter}';
-    return '$paramName: \$$paramName';
+  String get asString {
+    return isOrHasEntities
+        ? '$paramName: \${$toRefNameGetter}'
+        : '$paramName: \$$paramName';
   }
 
   @override
   String toString() => toPublicField;
 
   @override
-  String toEquality([String prefix = 'o']) {
-    return 'o.${paramName} == $paramName';
-  }
+  String get toEquality => 'o.${paramName} == $paramName';
 }

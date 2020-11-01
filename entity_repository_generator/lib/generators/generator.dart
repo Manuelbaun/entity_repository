@@ -21,7 +21,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..write(SerializerAdapter.generate(visitor));
 
     final str = res.toString();
-    // print(str);
     return str;
   }
 
@@ -126,7 +125,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('String toString() => ')
       ..write("'${visitor.entityName}(id: \$id")
       ..write(visitor.params.isNotEmpty ? ', ' : '')
-      ..writeAll(visitor.params.map((e) => e.stringfy), ', ')
+      ..writeAll(visitor.params.map((e) => e.asString), ', ')
       ..write(")'")
       ..write(';');
 
@@ -146,8 +145,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateGetAllReferenceObjects(ModelVisitor visitor) {
     final buff = StringBuffer()
-
-      ///Write bin
       ..writeln('\n\n@override')
       ..writeln('Set<${(EntityBase).$name}> getAllRefObjects() {')
       ..writeln('final obj = <${(EntityBase).$name}>{};\n')
@@ -160,14 +157,11 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
   StringBuffer generateApplyUpdates(ModelVisitor visitor) {
     final buff = StringBuffer()
-
-      ///Write bin
       ..writeln('\n\n@override')
       ..writeln('void applyUpdates(Map<int, dynamic> fields) {')
       ..writeAll(visitor.params.map((e) => e.toFieldFromMap()), '\n')
       ..writeln('}');
 
-    // final str = buff.toString();
     return buff;
   }
 
@@ -179,7 +173,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('return o is ${visitor.redirectName} &&')
       ..write('o.id == id')
       ..write(visitor.params.isNotEmpty ? ' && ' : '')
-      ..writeAll(visitor.params.map((e) => e.toEquality()), ' && ')
+      ..writeAll(visitor.params.map((e) => e.toEquality), ' && ')
       ..writeln(';}')
 
       /// hashCode Gen

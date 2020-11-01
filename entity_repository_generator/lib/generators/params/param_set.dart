@@ -21,12 +21,9 @@ class ParamSet extends Param {
 
   String get toRefIdIfExist {
     return isEntityType(subTypes.first)
-        // ? '$paramName?.map((e) => e.id)?.toList()'
         ? '$paramName?.map((e) => e.id)?.toSet()'
         : paramName;
   }
-
-  // String get toLookUpMethodName => '_lookUp${paramName.capitalize()}()';
 
   String get toPrivateFieldGetterSetter {
     final buff = StringBuffer()
@@ -52,8 +49,7 @@ class ParamSet extends Param {
   }
 
   String get toRefField_ {
-    final type = subTypes.first;
-    final setType = isEntityType(type) ? 'Set<String>' : 'Set<$type>';
+    final setType = isOrHasEntities ? 'Set<String>' : typeRaw;
     return '$setType $toRefNamePrivate;';
   }
 
@@ -85,16 +81,9 @@ class ParamSet extends Param {
     return 'if(fields.containsKey(${field.index})) { $str; }';
   }
 
-  String get stringfy {
-    if (isOrHasEntities) return '$paramName: \${$toRefNameGetter}';
-    return '$paramName: \$$paramName';
-  }
-
   @override
   String toString() => toPublicField;
 
   @override
-  String toEquality([String prefix = 'o']) {
-    return 'setEquality(o.${paramName}, ${paramName})';
-  }
+  String get toEquality => 'setEquality(o.${paramName}, ${paramName})';
 }
