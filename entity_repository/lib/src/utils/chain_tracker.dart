@@ -32,7 +32,8 @@ class ChainTracker {
 
       _isTracking = false;
 
-      print(_chainCounter);
+      /// TODO: add logger, or tracker
+      // print(_chainCounter);
 
       _chain.clear();
       _chainCounter.clear();
