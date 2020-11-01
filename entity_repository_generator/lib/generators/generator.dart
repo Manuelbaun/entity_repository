@@ -67,10 +67,12 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       // class fields
       ..writeAll(visitor.params.map((e) => e.toPrivateFieldGetterSetter), '\n')
       // methods
-      ..write(generateFactoryFromMap(visitor))
+      ..write(SerializerMapJson.generateFactoryFromMapJson(visitor))
+      ..write(
+          SerializerMapJson.generateFactoryFromMapJson(visitor, isJson: true))
       ..write(generateGetAllReferenceObjects(visitor))
-      ..write(generateToMap(visitor))
-      ..write(generateToJson(visitor))
+      ..write(SerializerMapJson.generateToMapJson(visitor))
+      ..write(SerializerMapJson.generateToMapJson(visitor, isJson: true))
       ..write(generateApplyUpdates(visitor))
       ..write(generateClassEquality(visitor))
       ..write(generateClassToString(visitor))
@@ -142,29 +144,29 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateFactoryFromMap(ModelVisitor visitor) {
-    final allFields = visitor.paramsNonEntity.map((e) {
-      final res = e.toSerializeReadField();
-      return res;
-    });
+  // StringBuffer generateFactoryFromMap(ModelVisitor visitor) {
+  //   final allFields = visitor.paramsNonEntity.map((e) {
+  //     final res = e.toSerializeReadField();
+  //     return res;
+  //   });
 
-    final allReads = visitor.paramsEntities.map((e) {
-      final res = e.toSerializeRead();
-      return res;
-    });
+  //   final allReads = visitor.paramsEntities.map((e) {
+  //     final res = e.toSerializeRead();
+  //     return res;
+  //   });
 
-    final buff = StringBuffer()
-      ..write('\n\n')
-      ..write('factory ${visitor.redirectName}')
-      ..write('.fromMap(Map<int, dynamic> fields) {')
-      ..writeln('return ${visitor.redirectName}(id: fields[0] as String,')
-      ..writeAll(allFields, ',\n')
-      ..write(')')
-      ..writeAll(allReads, '\n')
-      ..write(';}');
+  //   final buff = StringBuffer()
+  //     ..write('\n\n')
+  //     ..write('factory ${visitor.redirectName}')
+  //     ..write('.fromMap(Map<int, dynamic> fields) {')
+  //     ..writeln('return ${visitor.redirectName}(id: fields[0] as String,')
+  //     ..writeAll(allFields, ',\n')
+  //     ..write(')')
+  //     ..writeAll(allReads, '\n')
+  //     ..write(';}');
 
-    return buff;
-  }
+  //   return buff;
+  // }
 
   StringBuffer generateGetAllReferenceObjects(ModelVisitor visitor) {
     final buff = StringBuffer()
@@ -180,41 +182,41 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  StringBuffer generateToMap(ModelVisitor visitor) {
-    ///Write bin
-    final buff = StringBuffer()
-      ..writeln('\n\n@override')
-      ..writeln('Map<int, dynamic> toMap() {')
-      ..writeln('final obj = <int, dynamic>{};')
-      ..writeln('/// store the id as field 0')
-      ..writeln('obj[0] = id;\n')
-      ..writeAll(visitor.params.map((e) => e.toMapEntry()), '\n')
-      ..writeln('return obj;')
-      ..writeln('}');
+  // StringBuffer generateToMap(ModelVisitor visitor) {
+  //   ///Write bin
+  //   final buff = StringBuffer()
+  //     ..writeln('\n\n@override')
+  //     ..writeln('Map<int, dynamic> toMap() {')
+  //     ..writeln('final obj = <int, dynamic>{};')
+  //     ..writeln('/// store the id as field 0')
+  //     ..writeln('obj[0] = id;\n')
+  //     ..writeAll(visitor.params.map((e) => e.toMapEntry()), '\n')
+  //     ..writeln('return obj;')
+  //     ..writeln('}');
 
-    return buff;
-  }
+  //   return buff;
+  // }
 
-  /// TODO: merge generateTojson
-  StringBuffer generateToJson(ModelVisitor visitor) {
-    final allJsonFields = visitor.params.map((e) {
-      final res = e.toMapEntry(isJson: true);
-      return res;
-    });
+  // /// TODO: merge generateTojson
+  // StringBuffer generateToJson(ModelVisitor visitor) {
+  //   final allJsonFields = visitor.params.map((e) {
+  //     final res = e.toMapEntry(isJson: true);
+  //     return res;
+  //   });
 
-    ///Write bin
-    final buff = StringBuffer()
-      ..writeln('\n\n@override')
-      ..writeln('Map<String, dynamic> toJson() {')
-      ..writeln('final obj = <String, dynamic>{};')
-      ..writeln('/// store the id as field 0')
-      ..writeln("obj['id'] = id;\n")
-      ..writeAll(allJsonFields, '\n')
-      ..writeln('return obj;')
-      ..writeln('}');
+  //   ///Write bin
+  //   final buff = StringBuffer()
+  //     ..writeln('\n\n@override')
+  //     ..writeln('Map<String, dynamic> toJson() {')
+  //     ..writeln('final obj = <String, dynamic>{};')
+  //     ..writeln('/// store the id as field 0')
+  //     ..writeln("obj['id'] = id;\n")
+  //     ..writeAll(allJsonFields, '\n')
+  //     ..writeln('return obj;')
+  //     ..writeln('}');
 
-    return buff;
-  }
+  //   return buff;
+  // }
 
   StringBuffer generateApplyUpdates(ModelVisitor visitor) {
     final buff = StringBuffer()

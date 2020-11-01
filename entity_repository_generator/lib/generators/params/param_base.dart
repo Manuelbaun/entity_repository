@@ -3,18 +3,22 @@ part of entity_repository_generator;
 abstract class ParamBase {
   final Field field;
   final String paramName;
-  final InterfaceType type;
+  final InterfaceType typeRaw;
+
+  String get type;
+
   final Map<InterfaceType, AnnotatedClazz> entityTypes;
 
   ParamBase({
     this.paramName,
     this.field,
-    this.type,
+    this.typeRaw,
     this.entityTypes,
   });
 
   /// The basic imple
   bool get isEntity;
+  bool isOrHasEntities = false;
 
   bool get hasSubType;
 
@@ -60,11 +64,11 @@ abstract class ParamBase {
   String get toRefIdIfExist;
 
   String toSerializeWrite([String prefix = 'obj']);
-  String toMapEntry({String prefix = 'obj', bool isJson = false});
   String toRefsObjects([String prefix = 'obj']);
 
   String toSerializeReadField([String prefix = 'fields']);
   String toSerializeRead([String prefix = 'fields']);
+
   String toFieldFromMap([String prefix = 'fields']);
 
   String toEquality([String prefix = 'o']);

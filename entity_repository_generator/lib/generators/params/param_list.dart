@@ -9,11 +9,14 @@ class ParamList extends Param {
   }) : super(
           paramName: name,
           field: field,
-          type: type,
+          typeRaw: type,
           entityTypes: entityTypes,
         );
 
   bool get hasSubType => subTypes.isNotEmpty;
+
+  InterfaceType get subTypeRaw => subTypes.first;
+  String get subType => isOrHasEntities ? 'String' : subTypes.first.toString();
 
   String get toRefIdIfExist {
     return isEntityType(subTypes.first)
@@ -48,7 +51,7 @@ class ParamList extends Param {
     final enType = subTypes.first;
 
     return '''
-      $type $toLookUpMethodName {
+      $typeRaw $toLookUpMethodName {
         if($toRefNamePrivate != null){
           return locator.get<$enType>().findMany($toRefNamePrivate).toList();
         }
@@ -76,15 +79,6 @@ class ParamList extends Param {
         : '..$paramName = (fields[${field.index}] as List)?.cast<${subTypes.first}>()';
   }
 
-  String toRefsObjects([String prefix = 'obj']) {
-    if (isOrHasEntities) {
-      final ifString = 'if($paramName != null && $paramName.isNotEmpty)';
-      return '$ifString {obj.addAll($paramName);}';
-    }
-
-    return '';
-  }
-
   String toSerializeReadField([String prefix = 'fields']) {
     final type = subTypes.first;
     if (isOrHasEntities) {
@@ -92,6 +86,15 @@ class ParamList extends Param {
     } else {
       return '$paramName : (fields[${field.index}] as List)?.cast<$type>()';
     }
+  }
+
+  String toRefsObjects([String prefix = 'obj']) {
+    if (isOrHasEntities) {
+      final ifString = 'if($paramName != null && $paramName.isNotEmpty)';
+      return '$ifString {obj.addAll($paramName);}';
+    }
+
+    return '';
   }
 
   String toFieldFromMap([String prefix = 'fields']) {

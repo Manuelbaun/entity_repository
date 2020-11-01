@@ -11,10 +11,13 @@ class ParamSet extends Param {
   }) : super(
             paramName: name,
             field: field,
-            type: type,
+            typeRaw: type,
             entityTypes: entityTypes);
 
   bool get hasSubType => subTypes.isNotEmpty;
+
+  InterfaceType get subTypeRaw => subTypes.first;
+  String get subType => isOrHasEntities ? 'String' : subTypes.first.toString();
 
   String get toRefIdIfExist {
     return isEntityType(subTypes.first)
@@ -40,7 +43,7 @@ class ParamSet extends Param {
     final enType = subTypes.first;
 
     return '''
-      $type $toLookUpMethodName {
+      $typeRaw $toLookUpMethodName {
         if($toRefNamePrivate != null){
           return locator.get<$enType>().findMany($toRefNamePrivate).toSet();
         }
