@@ -90,10 +90,7 @@ class Param implements ParamBase {
 
   ///
   /// ------------------------------------------------------
-  /// ------------------------------------------------------
-  /// ------------------------------------------------------
   /// These here neets to be overritten
-  ///
   ///
 
   String get toRefIdIfExist => isEntity ? '$paramName?.id' : paramName;
@@ -152,19 +149,6 @@ class Param implements ParamBase {
       throw Exception(
           'Could not find the Type: $typeName in the entity reference list.');
     }
-  }
-
-  /// serialize
-  ///
-  /// ..writeByte(...)
-  /// ..write(...)
-  String toSerializeWrite([String prefix = 'obj']) {
-    final fieldString = isEntity ? toRefNameGetter : paramName;
-    final buff = StringBuffer()
-      ..writeln('..writeByte(${field.index})\n')
-      ..writeln('..write($prefix.$fieldString)\n');
-
-    return buff.toString();
   }
 
   String toRefsObjects([String prefix = 'obj']) =>

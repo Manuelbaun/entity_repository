@@ -59,20 +59,6 @@ class ParamList extends Param {
       }''';
   }
 
-  /// serialize
-  ///
-  /// ..writeByte(...)
-  /// ..write(...)
-  String toSerializeWrite([String prefix = 'obj']) {
-    final fieldString = isOrHasEntities ? toRefNameGetter : paramName;
-
-    final buff = StringBuffer()
-      ..writeln('..writeByte(${field.index})\n')
-      ..writeln('..write($prefix.$fieldString)\n');
-
-    return buff.toString();
-  }
-
   String toRefsObjects([String prefix = 'obj']) {
     if (isOrHasEntities) {
       final ifString = 'if($paramName != null && $paramName.isNotEmpty)';

@@ -18,7 +18,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final res = StringBuffer()
       ..write(generateAbstractClassInterface(visitor))
       ..write(generateClass(visitor))
-      ..write(generateSerializerAdapter(visitor));
+      ..write(SerializerAdapter.generate(visitor));
 
     final str = res.toString();
     // print(str);
@@ -144,30 +144,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     return buff;
   }
 
-  // StringBuffer generateFactoryFromMap(ModelVisitor visitor) {
-  //   final allFields = visitor.paramsNonEntity.map((e) {
-  //     final res = e.toSerializeReadField();
-  //     return res;
-  //   });
-
-  //   final allReads = visitor.paramsEntities.map((e) {
-  //     final res = e.toSerializeRead();
-  //     return res;
-  //   });
-
-  //   final buff = StringBuffer()
-  //     ..write('\n\n')
-  //     ..write('factory ${visitor.redirectName}')
-  //     ..write('.fromMap(Map<int, dynamic> fields) {')
-  //     ..writeln('return ${visitor.redirectName}(id: fields[0] as String,')
-  //     ..writeAll(allFields, ',\n')
-  //     ..write(')')
-  //     ..writeAll(allReads, '\n')
-  //     ..write(';}');
-
-  //   return buff;
-  // }
-
   StringBuffer generateGetAllReferenceObjects(ModelVisitor visitor) {
     final buff = StringBuffer()
 
@@ -181,42 +157,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
 
     return buff;
   }
-
-  // StringBuffer generateToMap(ModelVisitor visitor) {
-  //   ///Write bin
-  //   final buff = StringBuffer()
-  //     ..writeln('\n\n@override')
-  //     ..writeln('Map<int, dynamic> toMap() {')
-  //     ..writeln('final obj = <int, dynamic>{};')
-  //     ..writeln('/// store the id as field 0')
-  //     ..writeln('obj[0] = id;\n')
-  //     ..writeAll(visitor.params.map((e) => e.toMapEntry()), '\n')
-  //     ..writeln('return obj;')
-  //     ..writeln('}');
-
-  //   return buff;
-  // }
-
-  // /// TODO: merge generateTojson
-  // StringBuffer generateToJson(ModelVisitor visitor) {
-  //   final allJsonFields = visitor.params.map((e) {
-  //     final res = e.toMapEntry(isJson: true);
-  //     return res;
-  //   });
-
-  //   ///Write bin
-  //   final buff = StringBuffer()
-  //     ..writeln('\n\n@override')
-  //     ..writeln('Map<String, dynamic> toJson() {')
-  //     ..writeln('final obj = <String, dynamic>{};')
-  //     ..writeln('/// store the id as field 0')
-  //     ..writeln("obj['id'] = id;\n")
-  //     ..writeAll(allJsonFields, '\n')
-  //     ..writeln('return obj;')
-  //     ..writeln('}');
-
-  //   return buff;
-  // }
 
   StringBuffer generateApplyUpdates(ModelVisitor visitor) {
     final buff = StringBuffer()
@@ -250,62 +190,6 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeAll(visitor.params.map((e) => '${e.paramName}.hashCode'), ' ^ ')
       ..write(';')
       ..writeln('}');
-
-    return buff;
-  }
-
-  StringBuffer generateSerializerAdapter(ModelVisitor visitor) {
-    final buff = StringBuffer();
-
-    const readerField = '''
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };''';
-
-    buff
-      ..writeln('/// The serialize adapter of type [${visitor.redirectName}]')
-      ..write('class ${visitor.adapterName} implements ')
-      ..write('${(Serializer).$name}<${visitor.redirectName}> {')
-      ..write('${visitor.adapterName}(this.repo);')
-      ..writeln('final RepositoryBase<${visitor.entityName}> repo;')
-      ..writeln('@override\n final int typeId = ${visitor.model.typeId};\n')
-
-      /// read bin
-      ..writeln('@override')
-      ..writeln('${visitor.redirectName} read(BinaryReader reader) {')
-      ..writeln(readerField)
-      ..write('\n\n')
-      ..writeln('return ${visitor.redirectName}.fromMap(fields)..repo = repo')
-      ..writeln(';}')
-
-      ///Write bin
-      ..writeln('\n\n@override')
-      ..writeln(
-          'void write(BinaryWriter writer, ${visitor.redirectName} obj) {')
-      ..writeln('writer')
-      ..writeln('..writeByte(${visitor.params.length + 1})')
-      ..writeln('..writeByte(0)')
-      ..writeln('..write(obj.id)')
-      ..writeAll(visitor.params.map((e) => e.toSerializeWrite()), '\n')
-      ..writeln(';}')
-      ..write(generateSerializerAdapterEquality(visitor))
-      ..write('}');
-
-    return buff;
-  }
-
-  StringBuffer generateSerializerAdapterEquality(ModelVisitor visitor) {
-    final buff = StringBuffer()..write('''@override
-    int get hashCode => typeId.hashCode;
-
-    @override
-    bool operator ==(Object other) =>
-        identical(this, other) ||
-        other is ${visitor.adapterName} &&
-            runtimeType == other.runtimeType &&
-            typeId == other.typeId;
-            ''');
 
     return buff;
   }

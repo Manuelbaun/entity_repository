@@ -51,24 +51,6 @@ class ParamSet extends Param {
       }''';
   }
 
-  /// serialize
-  ///
-  /// ..writeByte(...)
-  /// ..write(...)
-  String toSerializeWrite([String prefix = 'obj']) {
-    var fieldString = isOrHasEntities ? toRefNameGetter : paramName;
-
-    // if (type.isDartCoreSet) {
-    fieldString += '?.toList()';
-    // }
-
-    final buff = StringBuffer()
-      ..writeln('..writeByte(${field.index})\n')
-      ..writeln('..write($prefix.$fieldString)\n');
-
-    return buff.toString();
-  }
-
   String get toRefField_ {
     final type = subTypes.first;
     final setType = isEntityType(type) ? 'Set<String>' : 'Set<$type>';

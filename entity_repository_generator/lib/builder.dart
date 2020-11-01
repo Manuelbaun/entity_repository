@@ -17,6 +17,7 @@ part 'generators/annotated_clazz.dart';
 part 'generators/helper.dart';
 part 'generators/generator.dart';
 part 'generators/sub_generators/serializer_map_json.dart';
+part 'generators/sub_generators/serializer_adapter.dart';
 
 part 'generators/model_visitor.dart';
 part 'generators/params/param.dart';

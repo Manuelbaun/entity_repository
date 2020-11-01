@@ -86,19 +86,6 @@ class ParamMap extends Param {
     return 'Map<$t1, $t2> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
 
-  /// serialize
-  /// TODO: check is this is also generic???
-  ///
-  String toSerializeWrite([String prefix = 'obj']) {
-    var fieldString = isOrHasEntities ? toRefNameGetter : paramName;
-
-    final buff = StringBuffer()
-      ..writeln('..writeByte(${field.index})\n')
-      ..writeln('..write($prefix.$fieldString)\n');
-
-    return buff.toString();
-  }
-
   String toRefsObjects([String prefix = 'obj']) {
     final ifString = 'if($paramName != null && $paramName.isNotEmpty)';
 

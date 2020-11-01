@@ -63,7 +63,6 @@ abstract class ParamBase {
   // general, if set field
   String get toRefIdIfExist;
 
-  String toSerializeWrite([String prefix = 'obj']);
   String toRefsObjects([String prefix = 'obj']);
 
   String toFieldFromMap([String prefix = 'fields']);
