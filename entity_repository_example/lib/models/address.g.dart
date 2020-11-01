@@ -53,8 +53,15 @@ class _Address extends EntityBase<Address> implements Address {
   factory _Address.fromMap(Map<int, dynamic> fields) {
     return _Address(
         id: fields[0] as String,
-        street: fields[1] as String,
-        houseNumber: fields[2] as int);
+        street: (fields[1] as String),
+        houseNumber: (fields[2] as int));
+  }
+
+  factory _Address.fromJson(Map<String, dynamic> fields) {
+    return _Address(
+        id: fields['id'] as String,
+        street: (fields['street'] as String),
+        houseNumber: (fields['houseNumber'] as int));
   }
 
   @override
@@ -66,34 +73,32 @@ class _Address extends EntityBase<Address> implements Address {
 
   @override
   Map<int, dynamic> toMap() {
-    final obj = <int, dynamic>{};
+    final map = <int, dynamic>{};
 
     /// store the id as field 0
-    obj[0] = id;
-
+    map[0] = id;
     if (street != null) {
-      obj[1] = street;
+      map[1] = street;
     }
     if (houseNumber != null) {
-      obj[2] = houseNumber;
+      map[2] = houseNumber;
     }
-    return obj;
+    return map;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    final obj = <String, dynamic>{};
+    final map = <String, dynamic>{};
 
     /// store the id as field 0
-    obj['id'] = id;
-
+    map['id'] = id;
     if (street != null) {
-      obj['street'] = street;
+      map['street'] = street;
     }
     if (houseNumber != null) {
-      obj['houseNumber'] = houseNumber;
+      map['houseNumber'] = houseNumber;
     }
-    return obj;
+    return map;
   }
 
   @override

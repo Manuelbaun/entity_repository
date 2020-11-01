@@ -35,6 +35,12 @@ class _Tag extends EntityBase<Tag> implements Tag {
     );
   }
 
+  factory _Tag.fromJson(Map<String, dynamic> fields) {
+    return _Tag(
+      id: fields['id'] as String,
+    );
+  }
+
   @override
   Set<EntityBase> getAllRefObjects() {
     final obj = <EntityBase>{};
@@ -44,22 +50,20 @@ class _Tag extends EntityBase<Tag> implements Tag {
 
   @override
   Map<int, dynamic> toMap() {
-    final obj = <int, dynamic>{};
+    final map = <int, dynamic>{};
 
     /// store the id as field 0
-    obj[0] = id;
-
-    return obj;
+    map[0] = id;
+    return map;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    final obj = <String, dynamic>{};
+    final map = <String, dynamic>{};
 
     /// store the id as field 0
-    obj['id'] = id;
-
-    return obj;
+    map['id'] = id;
+    return map;
   }
 
   @override

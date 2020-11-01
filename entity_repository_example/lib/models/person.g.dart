@@ -152,13 +152,25 @@ class _Person extends EntityBase<Person> implements Person {
   factory _Person.fromMap(Map<int, dynamic> fields) {
     return _Person(
         id: fields[0] as String,
-        name: fields[1] as String,
-        age: fields[2] as int)
+        name: (fields[1] as String),
+        age: (fields[2] as int))
       .._addressRefs = (fields[3] as String)
       .._friendsRefs = (fields[4] as List)?.cast<String>()
-      .._friends5Refs = (fields[5] as List)?.toSet()?.cast<String>()
+      .._friends5Refs = (fields[5] as List)?.cast<String>()?.toSet()
       .._a5sfRefs = (fields[6] as Map)?.cast<int, String>()
       .._p2aRefs = (fields[7] as Map)?.cast<String, String>();
+  }
+
+  factory _Person.fromJson(Map<String, dynamic> fields) {
+    return _Person(
+        id: fields['id'] as String,
+        name: (fields['name'] as String),
+        age: (fields['age'] as int))
+      .._addressRefs = (fields['address'] as String)
+      .._friendsRefs = (fields['friends'] as List)?.cast<String>()
+      .._friends5Refs = (fields['friends5'] as List)?.cast<String>()?.toSet()
+      .._a5sfRefs = (fields['a5sf'] as Map)?.cast<int, String>()
+      .._p2aRefs = (fields['p2a'] as Map)?.cast<String, String>();
   }
 
   @override
@@ -183,64 +195,62 @@ class _Person extends EntityBase<Person> implements Person {
 
   @override
   Map<int, dynamic> toMap() {
-    final obj = <int, dynamic>{};
+    final map = <int, dynamic>{};
 
     /// store the id as field 0
-    obj[0] = id;
-
+    map[0] = id;
     if (name != null) {
-      obj[1] = name;
+      map[1] = name;
     }
     if (age != null) {
-      obj[2] = age;
+      map[2] = age;
     }
     if (address != null) {
-      obj[3] = addressRefs;
+      map[3] = addressRefs;
     }
     if (friends != null && friends.isNotEmpty) {
-      obj[4] = friendsRefs;
+      map[4] = friendsRefs;
     }
     if (friends5 != null && friends5.isNotEmpty) {
-      obj[5] = friends5Refs;
+      map[5] = friends5Refs;
     }
     if (a5sf != null && a5sf.isNotEmpty) {
-      obj[6] = a5sfRefs;
+      map[6] = a5sfRefs;
     }
     if (p2a != null && p2a.isNotEmpty) {
-      obj[7] = p2aRefs;
+      map[7] = p2aRefs;
     }
-    return obj;
+    return map;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    final obj = <String, dynamic>{};
+    final map = <String, dynamic>{};
 
     /// store the id as field 0
-    obj['id'] = id;
-
+    map['id'] = id;
     if (name != null) {
-      obj['name'] = name;
+      map['name'] = name;
     }
     if (age != null) {
-      obj['age'] = age;
+      map['age'] = age;
     }
     if (address != null) {
-      obj['address'] = addressRefs;
+      map['address'] = addressRefs;
     }
     if (friends != null && friends.isNotEmpty) {
-      obj['friends'] = friendsRefs;
+      map['friends'] = friendsRefs;
     }
     if (friends5 != null && friends5.isNotEmpty) {
-      obj['friends5'] = friends5Refs;
+      map['friends5'] = friends5Refs;
     }
     if (a5sf != null && a5sf.isNotEmpty) {
-      obj['a5sf'] = a5sfRefs;
+      map['a5sf'] = a5sfRefs;
     }
     if (p2a != null && p2a.isNotEmpty) {
-      obj['p2a'] = p2aRefs;
+      map['p2a'] = p2aRefs;
     }
-    return obj;
+    return map;
   }
 
   @override

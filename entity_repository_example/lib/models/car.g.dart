@@ -84,10 +84,19 @@ class _Car extends EntityBase<Car> implements Car {
   factory _Car.fromMap(Map<int, dynamic> fields) {
     return _Car(
         id: fields[0] as String,
-        model: fields[1] as String,
-        type: fields[2] as String,
-        buildYear: fields[3] as int)
+        model: (fields[1] as String),
+        type: (fields[2] as String),
+        buildYear: (fields[3] as int))
       .._ownerRefs = (fields[4] as String);
+  }
+
+  factory _Car.fromJson(Map<String, dynamic> fields) {
+    return _Car(
+        id: fields['id'] as String,
+        model: (fields['model'] as String),
+        type: (fields['type'] as String),
+        buildYear: (fields['buildYear'] as int))
+      .._ownerRefs = (fields['owner'] as String);
   }
 
   @override
@@ -100,46 +109,44 @@ class _Car extends EntityBase<Car> implements Car {
 
   @override
   Map<int, dynamic> toMap() {
-    final obj = <int, dynamic>{};
+    final map = <int, dynamic>{};
 
     /// store the id as field 0
-    obj[0] = id;
-
+    map[0] = id;
     if (model != null) {
-      obj[1] = model;
+      map[1] = model;
     }
     if (type != null) {
-      obj[2] = type;
+      map[2] = type;
     }
     if (buildYear != null) {
-      obj[3] = buildYear;
+      map[3] = buildYear;
     }
     if (owner != null) {
-      obj[4] = ownerRefs;
+      map[4] = ownerRefs;
     }
-    return obj;
+    return map;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    final obj = <String, dynamic>{};
+    final map = <String, dynamic>{};
 
     /// store the id as field 0
-    obj['id'] = id;
-
+    map['id'] = id;
     if (model != null) {
-      obj['model'] = model;
+      map['model'] = model;
     }
     if (type != null) {
-      obj['type'] = type;
+      map['type'] = type;
     }
     if (buildYear != null) {
-      obj['buildYear'] = buildYear;
+      map['buildYear'] = buildYear;
     }
     if (owner != null) {
-      obj['owner'] = ownerRefs;
+      map['owner'] = ownerRefs;
     }
-    return obj;
+    return map;
   }
 
   @override

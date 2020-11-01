@@ -252,19 +252,37 @@ class _Song extends EntityBase<Song> implements Song {
   factory _Song.fromMap(Map<int, dynamic> fields) {
     return _Song(
         id: fields[0] as String,
-        title: fields[1] as String,
-        bpm: fields[2] as int,
-        transpose: fields[3] as int,
-        songKey: fields[4] as String,
-        capo: fields[5] as int,
-        lyrics: fields[6] as String,
-        notes: fields[7] as String,
-        ccli: fields[8] as String,
+        title: (fields[1] as String),
+        bpm: (fields[2] as int),
+        transpose: (fields[3] as int),
+        songKey: (fields[4] as String),
+        capo: (fields[5] as int),
+        lyrics: (fields[6] as String),
+        notes: (fields[7] as String),
+        ccli: (fields[8] as String),
         authors2: (fields[10] as List)?.cast<int>(),
-        copyright: fields[11] as String)
+        copyright: (fields[11] as String))
       .._authorsRefs = (fields[9] as List)?.cast<String>()
       .._translatorRefs = (fields[12] as List)?.cast<String>()
       .._tagsRefs = (fields[13] as List)?.cast<String>();
+  }
+
+  factory _Song.fromJson(Map<String, dynamic> fields) {
+    return _Song(
+        id: fields['id'] as String,
+        title: (fields['title'] as String),
+        bpm: (fields['bpm'] as int),
+        transpose: (fields['transpose'] as int),
+        songKey: (fields['songKey'] as String),
+        capo: (fields['capo'] as int),
+        lyrics: (fields['lyrics'] as String),
+        notes: (fields['notes'] as String),
+        ccli: (fields['ccli'] as String),
+        authors2: (fields['authors2'] as List)?.cast<int>(),
+        copyright: (fields['copyright'] as String))
+      .._authorsRefs = (fields['authors'] as List)?.cast<String>()
+      .._translatorRefs = (fields['translator'] as List)?.cast<String>()
+      .._tagsRefs = (fields['tags'] as List)?.cast<String>();
   }
 
   @override
@@ -286,100 +304,98 @@ class _Song extends EntityBase<Song> implements Song {
 
   @override
   Map<int, dynamic> toMap() {
-    final obj = <int, dynamic>{};
+    final map = <int, dynamic>{};
 
     /// store the id as field 0
-    obj[0] = id;
-
+    map[0] = id;
     if (title != null) {
-      obj[1] = title;
+      map[1] = title;
     }
     if (bpm != null) {
-      obj[2] = bpm;
+      map[2] = bpm;
     }
     if (transpose != null) {
-      obj[3] = transpose;
+      map[3] = transpose;
     }
     if (songKey != null) {
-      obj[4] = songKey;
+      map[4] = songKey;
     }
     if (capo != null) {
-      obj[5] = capo;
+      map[5] = capo;
     }
     if (lyrics != null) {
-      obj[6] = lyrics;
+      map[6] = lyrics;
     }
     if (notes != null) {
-      obj[7] = notes;
+      map[7] = notes;
     }
     if (ccli != null) {
-      obj[8] = ccli;
+      map[8] = ccli;
     }
     if (authors != null && authors.isNotEmpty) {
-      obj[9] = authorsRefs;
+      map[9] = authorsRefs;
     }
     if (authors2 != null && authors2.isNotEmpty) {
-      obj[10] = authors2;
+      map[10] = authors2;
     }
     if (copyright != null) {
-      obj[11] = copyright;
+      map[11] = copyright;
     }
     if (translator != null && translator.isNotEmpty) {
-      obj[12] = translatorRefs;
+      map[12] = translatorRefs;
     }
     if (tags != null && tags.isNotEmpty) {
-      obj[13] = tagsRefs;
+      map[13] = tagsRefs;
     }
-    return obj;
+    return map;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    final obj = <String, dynamic>{};
+    final map = <String, dynamic>{};
 
     /// store the id as field 0
-    obj['id'] = id;
-
+    map['id'] = id;
     if (title != null) {
-      obj['title'] = title;
+      map['title'] = title;
     }
     if (bpm != null) {
-      obj['bpm'] = bpm;
+      map['bpm'] = bpm;
     }
     if (transpose != null) {
-      obj['transpose'] = transpose;
+      map['transpose'] = transpose;
     }
     if (songKey != null) {
-      obj['songKey'] = songKey;
+      map['songKey'] = songKey;
     }
     if (capo != null) {
-      obj['capo'] = capo;
+      map['capo'] = capo;
     }
     if (lyrics != null) {
-      obj['lyrics'] = lyrics;
+      map['lyrics'] = lyrics;
     }
     if (notes != null) {
-      obj['notes'] = notes;
+      map['notes'] = notes;
     }
     if (ccli != null) {
-      obj['ccli'] = ccli;
+      map['ccli'] = ccli;
     }
     if (authors != null && authors.isNotEmpty) {
-      obj['authors'] = authorsRefs;
+      map['authors'] = authorsRefs;
     }
     if (authors2 != null && authors2.isNotEmpty) {
-      obj['authors2'] = authors2;
+      map['authors2'] = authors2;
     }
     if (copyright != null) {
-      obj['copyright'] = copyright;
+      map['copyright'] = copyright;
     }
     if (translator != null && translator.isNotEmpty) {
-      obj['translator'] = translatorRefs;
+      map['translator'] = translatorRefs;
     }
     if (tags != null && tags.isNotEmpty) {
-      obj['tags'] = tagsRefs;
+      map['tags'] = tagsRefs;
     }
-    return obj;
+    return map;
   }
 
   @override
