@@ -41,8 +41,8 @@ class ParamSet extends Param {
 
     return '''
       $type $toLookUpMethodName {
-        if($_toRefName != null){
-          return locator.get<$enType>().findMany($_toRefName).toSet();
+        if($toRefNamePrivate != null){
+          return locator.get<$enType>().findMany($toRefNamePrivate).toSet();
         }
         return {};
       }''';
@@ -71,46 +71,23 @@ class ParamSet extends Param {
 
     if (isOrHasEntities) {
       /// [Set to list]
-      return '..$_toRefName = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
+      return '..$toRefNamePrivate = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
     } else {
       /// [Set to list]
       return '..$paramName = (fields[${field.index}] as List)?.toSet()?.cast<$type>()';
     }
   }
 
-  /// apply condition if null or empty=> should not be in the map
-  /// TODO: Check again
-  /// TODO: merge toMapEntry and to MapEntry JSON!!!
-  // String toMapEntry([String prefix = 'obj']) {
-  //   var condition = '$paramName != null ';
-  //   var str = '$prefix[${field.index}] = ';
-
-  //   if (isOrHasEntities) {
-  //     condition += '&& $paramName.isNotEmpty';
-  //     str += toRefNameGetter;
-  //   }
-
-  //   return 'if($condition) {$str;}';
-  // }
-
   String get toRefField_ {
     final type = subTypes.first;
     final setType = isEntityType(type) ? 'Set<String>' : 'Set<$type>';
-    return '$setType $_toRefName;';
+    return '$setType $toRefNamePrivate;';
   }
 
   String get toRefFieldGetter {
     final type = isEntityType(subTypes.first) ? 'String' : subTypes.first;
-    return 'Set<$type> get $toRefNameGetter => $_toRefName ??= $toRefIdIfExist;';
+    return 'Set<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
-
-  // // TODO Merge with toMapEntry
-  // String toMapEntryJson([String prefix = 'obj']) {
-  //   var condition = '$paramName != null && $paramName.isNotEmpty';
-  //   var str = "$prefix['$paramName'] = $toRefNameGetter";
-
-  //   return 'if($condition) {$str;}';
-  // }
 
   String toRefsObjects([String prefix = 'obj']) {
     if (isOrHasEntities) {
@@ -139,7 +116,7 @@ class ParamSet extends Param {
 
     if (isOrHasEntities) {
       str =
-          '$_toRefName = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
+          '$toRefNamePrivate = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
     } else {
       str =
           '_$paramName = (fields[${field.index}] as List)?.toSet()?.cast<$type>()';

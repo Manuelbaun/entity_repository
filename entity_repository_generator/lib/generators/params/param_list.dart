@@ -24,12 +24,12 @@ class ParamList extends Param {
   String get toRefField_ {
     final type = subTypes.first;
     final setType = isEntityType(type) ? 'List<String>' : 'List<$type>';
-    return '$setType $_toRefName;';
+    return '$setType $toRefNamePrivate;';
   }
 
   String get toRefFieldGetter {
     final type = isEntityType(subTypes.first) ? 'String' : subTypes.first;
-    return 'List<$type> get $toRefNameGetter => $_toRefName ??= $toRefIdIfExist;';
+    return 'List<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
   // String get toLookUpMethodName => '_lookUp${paramName.capitalize()}()';
 
@@ -49,8 +49,8 @@ class ParamList extends Param {
 
     return '''
       $type $toLookUpMethodName {
-        if($_toRefName != null){
-          return locator.get<$enType>().findMany($_toRefName).toList();
+        if($toRefNamePrivate != null){
+          return locator.get<$enType>().findMany($toRefNamePrivate).toList();
         }
         return [];
       }''';
@@ -72,19 +72,9 @@ class ParamList extends Param {
 
   String toSerializeRead([String prefix = 'fields']) {
     return isOrHasEntities
-        ? '..$_toRefName = (fields[${field.index}] as List)?.cast<String>()'
+        ? '..$toRefNamePrivate = (fields[${field.index}] as List)?.cast<String>()'
         : '..$paramName = (fields[${field.index}] as List)?.cast<${subTypes.first}>()';
   }
-
-  // /// apply condition if null or empty=> should not be in the map
-  // String toMapEntry({String prefix = 'obj', bool isJson = false}) {
-  //   final mapAccess = isJson ? paramName : field.index;
-
-  //   return """
-  // if($paramName != null && $paramName.isNotEmpty) {
-  //   $prefix[$mapAccess] = ${isOrHasEntities ? toRefNameGetter : paramName};
-  // }""";
-  // }
 
   String toRefsObjects([String prefix = 'obj']) {
     if (isOrHasEntities) {
@@ -109,7 +99,8 @@ class ParamList extends Param {
     final type = subTypes.first;
 
     if (isOrHasEntities) {
-      str = '$_toRefName = (fields[${field.index}] as List)?.cast<String>()';
+      str =
+          '$toRefNamePrivate = (fields[${field.index}] as List)?.cast<String>()';
     } else {
       str = '_$paramName = (fields[${field.index}] as List)?.cast<$type>()';
     }

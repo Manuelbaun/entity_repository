@@ -68,19 +68,19 @@ class Param implements ParamBase {
 
   /// Utility
   String get typeName => type.getDisplayString();
-  String get _paramName => '_$paramName';
+  String get paramNamePrivate => '_$paramName';
   String get paramNameThis => 'this.$paramName';
   String get toParamInit => '$type $paramName';
-  String get toParamInitPrivate => '$_paramName = $paramName';
+  String get toParamInitPrivate => '$paramNamePrivate = $paramName';
   String get toPublicFieldGet => '$type get $paramName;';
   String get toPublicField => '$type $paramName;';
   String get toPublicFieldOverride => '@override\n$type $paramName;';
-  String get toPrivateField => '$type $_paramName;';
+  String get toPrivateField => '$type $paramNamePrivate;';
   String get toRefNameGetter => '${paramName}Refs';
-  String get _toRefName => '_${paramName}Refs';
-  String get toRefField_ => 'String $_toRefName;';
+  String get toRefNamePrivate => '_${paramName}Refs';
+  String get toRefField_ => 'String $toRefNamePrivate;';
   String get toRefFieldGetter =>
-      'String get $toRefNameGetter => $_toRefName ??= $toRefIdIfExist;';
+      'String get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
 
   ///
   /// ------------------------------------------------------
@@ -111,8 +111,8 @@ class Param implements ParamBase {
 
     if (isOrHasEntities) {
       buff
-        ..writeln('$_toRefName = $toRefIdIfExist;')
-        ..writeln('setKeyValue(${field.index}, $_toRefName);');
+        ..writeln('$toRefNamePrivate = $toRefIdIfExist;')
+        ..writeln('setKeyValue(${field.index}, $toRefNamePrivate);');
     } else {
       buff.writeln('setKeyValue(${field.index}, $paramName);');
     }
@@ -139,7 +139,7 @@ class Param implements ParamBase {
   String toLookupMethod() {
     if (isEntity) {
       return '''$type $toLookUpMethodName {
-        return locator.get<$typeName>().findOne($_toRefName);
+        return locator.get<$typeName>().findOne($toRefNamePrivate);
       }''';
     } else {
       /// TODO: THis should not happen
@@ -163,7 +163,7 @@ class Param implements ParamBase {
 
   String toSerializeRead([String prefix = 'fields']) {
     return isEntity
-        ? '..$_toRefName = ($prefix[${field.index}] as String)'
+        ? '..$toRefNamePrivate = ($prefix[${field.index}] as String)'
         : '..$paramName = $prefix[${field.index}] as $type';
   }
 
@@ -189,7 +189,7 @@ class Param implements ParamBase {
 
   String toFieldFromMap([String prefix = 'fields']) {
     var str = isEntity
-        ? '$_toRefName = ($prefix[${field.index}] as String)'
+        ? '$toRefNamePrivate = ($prefix[${field.index}] as String)'
         : '_$paramName = $prefix[${field.index}] as $type';
 
     return 'if($prefix.containsKey(${field.index})) { $str; }';
@@ -208,69 +208,3 @@ class Param implements ParamBase {
     return 'o.${paramName} == $paramName';
   }
 }
-
-// String toLookupMethod() {
-//   final typeName = type.getDisplayString();
-
-//   String method;
-
-//   if (subTypes.isEmpty) {
-//     if (isEntity) {
-//       method = '''$type $toLookUpMethodName {
-//         return locator.get<$typeName>().findOne($_toRefName);
-//       }''';
-//     } else {
-//       throw Exception(
-//           'Could not find the Type: $typeName in the entity reference list.');
-//     }
-//   } else if (type.isDartCoreList) {
-//     final enType = subTypes.first;
-//     method = '''
-//       $type $toLookUpMethodName {
-//         if($_toRefName != null){
-
-//           return locator.get<$enType>().findMany($_toRefName).toList();
-//         }
-//         return [];
-//       }''';
-//   } else if (type.isDartCoreSet) {
-//     final enType = subTypes.first;
-//     method = '''
-//       $type $toLookUpMethodName {
-//         if($_toRefName != null){
-//           return locator.get<$enType>().findMany($_toRefName).toSet();
-//         }
-//         return {};
-//       }''';
-//   } else if (type.isDartCoreMap) {
-//     final type1 = subTypes.first;
-//     final type2 = subTypes.last;
-
-//     final ass1 = _isEntityParam(type1)
-//         ? 'locator.get<$type1>().findOne(entry.key)'
-//         : 'entry.key';
-
-//     final ass2 = _isEntityParam(type2)
-//         ? 'locator.get<$type2>().findOne(entry.value)'
-//         : 'entry.value';
-
-//     method = '''
-//       $type $toLookUpMethodName {
-
-//         if($_toRefName != null){
-//           final map = <$type1, $type2>{} ;
-//           for(final entry in $_toRefName.entries) {
-//             final v1 = $ass1;
-//             final v2 = $ass2;
-
-//             map[v1] = v2;
-//           }
-
-//           return map;
-//         }
-//         return {};
-//       }''';
-//   }
-
-//   return method;
-// }

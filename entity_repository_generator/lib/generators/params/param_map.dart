@@ -55,9 +55,9 @@ class ParamMap extends Param {
     // final v2 = $assignValue;
     return '''
       $type $toLookUpMethodName {
-        if($_toRefName != null){
+        if($toRefNamePrivate != null){
           final map = <$key, $value>{} ;
-          for(final entry in $_toRefName.entries) {
+          for(final entry in $toRefNamePrivate.entries) {
             map[$assignKey] = $assignValue;
           }
 
@@ -70,14 +70,14 @@ class ParamMap extends Param {
   String get toRefField_ {
     final key = _keyIsEntity ? 'String' : subTypes.first;
     final value = _valueIsEntity ? 'String' : subTypes.last;
-    return 'Map<$key, $value> $_toRefName;';
+    return 'Map<$key, $value> $toRefNamePrivate;';
   }
 
   String get toRefFieldGetter {
     final t1 = _keyIsEntity ? 'String' : subTypes.first;
     final t2 = _valueIsEntity ? 'String' : subTypes.last;
 
-    return 'Map<$t1, $t2> get $toRefNameGetter => $_toRefName ??= $toRefIdIfExist;';
+    return 'Map<$t1, $t2> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
 
   /// serialize
@@ -96,20 +96,10 @@ class ParamMap extends Param {
   String toSerializeRead([String prefix = 'fields']) {
     final keyType = _keyIsEntity ? 'String' : subTypes.first;
     final valueType = _valueIsEntity ? 'String' : subTypes.last;
-    final fieldName = isOrHasEntities ? _toRefName : paramName;
+    final fieldName = isOrHasEntities ? toRefNamePrivate : paramName;
 
     return '..$fieldName = (fields[${field.index}] as Map)?.cast<$keyType, $valueType>()';
   }
-
-  // /// apply condition if null or empty=> should not be in the map
-  // String toMapEntry({String prefix = 'obj', bool isJson = false}) {
-  //   final mapAccess = isJson ? paramName : field.index;
-
-  //   return """
-  // if($paramName != null && $paramName.isNotEmpty) {
-  //   $prefix[$mapAccess] = ${isOrHasEntities ? toRefNameGetter : paramName};
-  // }""";
-  // }
 
   String toRefsObjects([String prefix = 'obj']) {
     final ifString = 'if($paramName != null && $paramName.isNotEmpty)';
@@ -137,7 +127,7 @@ class ParamMap extends Param {
   String toFieldFromMap([String prefix = 'fields']) {
     final key = _keyIsEntity ? 'String' : subTypes.first;
     final value = _valueIsEntity ? 'String' : subTypes.last;
-    final fieldName = (isOrHasEntities) ? _toRefName : '_$paramName';
+    final fieldName = (isOrHasEntities) ? toRefNamePrivate : '_$paramName';
 
     final str =
         '$fieldName = ($prefix[${field.index}] as Map)?.cast<$key, $value>()';

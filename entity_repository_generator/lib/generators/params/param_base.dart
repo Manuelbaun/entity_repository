@@ -22,7 +22,7 @@ abstract class ParamBase {
 
   String get typeName;
 
-  String get _paramName;
+  String get paramNamePrivate;
 
   String get toParamInit;
 
@@ -46,7 +46,7 @@ abstract class ParamBase {
 
   String get toRefNameGetter;
 
-  String get _toRefName;
+  String get toRefNamePrivate;
 
   String get toLookUpMethodName;
 
@@ -55,8 +55,6 @@ abstract class ParamBase {
   String get toRefField_;
 
   String get toRefFieldGetter;
-
-  // bool get containsEntities;
 
   // general, if set field
   String get toRefIdIfExist;
