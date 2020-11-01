@@ -15,13 +15,13 @@ void measure(Function func) async {
   print('${s.elapsedTicks / run} ticks');
 }
 
-void printAll(EntityConfiguration db) {
+void printAll(EntityDatabaseClass db) {
   for (final repo in db.repositoryLocator.values) {
     repo.findAll().forEach(print);
   }
 }
 
-void clearDB(EntityConfiguration db) async {
+void clearDB(EntityDatabaseClass db) async {
   for (final repo in db.repositoryLocator.values) {
     await repo.clearRepository();
   }
@@ -54,6 +54,7 @@ void compare(EntityDatabase db, EntityDatabase db2) {
 ///
 Future<void> main() async {
   final db = EntityDatabase();
+
   final db2 = EntityDatabase('hive_db2');
 
   /// Setup Sync
@@ -196,10 +197,4 @@ Future<void> storeCars(EntityDatabase db) async {
     Car(id: '5', buildYear: 2013, type: 'MAN', model: 'LKW'),
   ];
   await db.carRepository.insertMany(cars, override: true);
-}
-
-class Test {
-  List<List<List<String>>> deepNested;
-
-  Map<String, List<Test>> deppN;
 }

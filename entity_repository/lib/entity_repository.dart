@@ -76,8 +76,8 @@ T msgpackDecode<T>(Uint8List v) =>
 ///
 /// must be extended
 ///
-abstract class EntityConfiguration {
-  EntityConfiguration(String path) {
+abstract class EntityDatabaseClass {
+  EntityDatabaseClass(String path) {
     localHive = HiveImpl()..init(path);
 
     repositoryLocator = RepositoryLocator();

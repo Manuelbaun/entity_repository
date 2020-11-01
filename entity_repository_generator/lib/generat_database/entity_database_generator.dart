@@ -56,20 +56,28 @@ class EntityDatabaseGenerator {
     return str.toString();
   }
 
-  String writeInterfaceRepository(ModelVisitor v) {
-    return 'abstract class I${v.repoName} implements RepositoryBase<${v.entityName}> {}';
+  StringBuffer writeInterfaceRepository(ModelVisitor v) {
+    final str = StringBuffer()
+      ..write('abstract class I${v.repoName} ')
+      ..write('implements RepositoryBase<${v.entityName}>')
+      ..write('{')
+      ..write(generateEntityFactorySignature(v))
+      ..write(';')
+      ..write('}');
+
+    return str;
   }
 
   StringBuffer writeRepositorHive(ModelVisitor v) {
-    final str = StringBuffer();
-
-    str
+    final str = StringBuffer()
       ..write('class ${v.repoName} ')
       ..write('extends RepositoryHive<${v.entityName}>')
       ..write('implements I${v.repoName} {')
       ..write('${v.repoName}(HiveInterface hiveInstance,')
       ..writeln('EntityMapFactory<EntityBase> fac,)')
-      ..writeln(': super(hiveInstance, fac, ${v.model.typeId});}');
+      ..writeln(': super(hiveInstance, fac, ${v.model.typeId});')
+      ..write(generateEntityCreateMethod(v, useThis: true))
+      ..write('}');
 
     return str;
   }
@@ -81,7 +89,7 @@ class EntityDatabaseGenerator {
       ..writeln('/// ')
       ..writeln('/// The database')
       ..writeln('/// ')
-      ..writeln('class EntityDatabase extends EntityConfiguration {')
+      ..writeln('class EntityDatabase extends EntityDatabaseClass {')
       ..writeln("EntityDatabase([String path = './hive_db']) : super(path);\n")
 
       /// generate init
@@ -109,7 +117,12 @@ class EntityDatabaseGenerator {
       ..write('\n\n')
 
       /// repo accessors
-      ..writeAll(models.map(createEntityConstructor), '\n')
+      ..writeln('///')
+      ..writeln(
+          '/// These methods will be redirected, once the dart team fixes')
+      ..writeln('/// the auto completion for typedef function signigtures')
+      ..writeln('/// ')
+      ..writeAll(models.map(generateEntityCreateMethod), '\n')
       ..write('\n\n')
 
       /// generete close
@@ -141,19 +154,31 @@ class EntityDatabaseGenerator {
     ''';
   }
 
-  String createEntityConstructor(ModelVisitor v) {
-    // final low = v.entityName.toLowerCase();
-    final normal = v.entityName;
+  /// TODO:
+  /// Remote the generateEntityCreateMethod from the
+  String generateEntityCreateMethod(ModelVisitor v, {bool useThis = false}) {
+    final name = v.entityName;
+    final repo = useThis ? 'this' : '_${v.repoNameLowerCase}';
 
     final str = StringBuffer()
-      ..write('$normal create${normal}({')
-      ..write('String id,')
-      ..writeAll(v.params.map((e) => e.toParamInit), ',')
-      ..write('}) => ')
-      ..write('new ${normal}(id:id,')
+      ..write(generateEntityFactorySignature(v, withName: !useThis))
+      ..write(' => ')
+      ..write('new ${name}(id:id,')
       ..writeAll(v.params.map((e) => '${e.paramName}:${e.paramName}'), ',')
-      ..writeln(')..repo = _${v.repoNameLowerCase};');
+      ..writeln(')..repo = $repo;');
 
     return str.toString();
+  }
+
+  StringBuffer generateEntityFactorySignature(ModelVisitor v,
+      {bool withName = false}) {
+    final name = withName ? v.entityName : '';
+
+    final str = StringBuffer()
+      ..write('${v.entityName} create${name}({')
+      ..write('String id,')
+      ..writeAll(v.params.map((e) => e.toParamInit), ',')
+      ..write('})');
+    return str;
   }
 }

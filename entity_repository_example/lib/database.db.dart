@@ -8,15 +8,50 @@ import 'package:entity_repository_example/models/tag.dart';
 ///
 /// Create the interfaces of the repositories
 ///
-abstract class IAddressRepository implements RepositoryBase<Address> {}
+abstract class IAddressRepository implements RepositoryBase<Address> {
+  Address create({String id, String street, int houseNumber});
+}
 
-abstract class ICarRepository implements RepositoryBase<Car> {}
+abstract class ICarRepository implements RepositoryBase<Car> {
+  Car create(
+      {String id, String model, String type, int buildYear, Person owner});
+}
 
-abstract class IPersonRepository implements RepositoryBase<Person> {}
+abstract class IPersonRepository implements RepositoryBase<Person> {
+  Person create(
+      {String id,
+      String name,
+      int age,
+      Address address,
+      List<Person> friends,
+      Set<Person> friends5,
+      Map<int, Address> a5sf,
+      Map<Person, Address> p2a});
+}
 
-abstract class ISongRepository implements RepositoryBase<Song> {}
+abstract class ISongRepository implements RepositoryBase<Song> {
+  Song create(
+      {String id,
+      String title,
+      int bpm,
+      int transpose,
+      String songKey,
+      int capo,
+      String lyrics,
+      String notes,
+      String ccli,
+      List<Person> authors,
+      List<int> authors2,
+      String copyright,
+      List<Person> translator,
+      List<Tag> tags});
+}
 
-abstract class ITagRepository implements RepositoryBase<Tag> {}
+abstract class ITagRepository implements RepositoryBase<Tag> {
+  Tag create({
+    String id,
+  });
+}
 
 ///
 /// Create the concrete repository classes
@@ -27,6 +62,9 @@ class AddressRepository extends RepositoryHive<Address>
     HiveInterface hiveInstance,
     EntityMapFactory<EntityBase> fac,
   ) : super(hiveInstance, fac, 12);
+  Address create({String id, String street, int houseNumber}) =>
+      new Address(id: id, street: street, houseNumber: houseNumber)
+        ..repo = this;
 }
 
 class CarRepository extends RepositoryHive<Car> implements ICarRepository {
@@ -34,6 +72,15 @@ class CarRepository extends RepositoryHive<Car> implements ICarRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<EntityBase> fac,
   ) : super(hiveInstance, fac, 11);
+  Car create(
+          {String id,
+          String model,
+          String type,
+          int buildYear,
+          Person owner}) =>
+      new Car(
+          id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+        ..repo = this;
 }
 
 class PersonRepository extends RepositoryHive<Person>
@@ -42,6 +89,25 @@ class PersonRepository extends RepositoryHive<Person>
     HiveInterface hiveInstance,
     EntityMapFactory<EntityBase> fac,
   ) : super(hiveInstance, fac, 10);
+  Person create(
+          {String id,
+          String name,
+          int age,
+          Address address,
+          List<Person> friends,
+          Set<Person> friends5,
+          Map<int, Address> a5sf,
+          Map<Person, Address> p2a}) =>
+      new Person(
+          id: id,
+          name: name,
+          age: age,
+          address: address,
+          friends: friends,
+          friends5: friends5,
+          a5sf: a5sf,
+          p2a: p2a)
+        ..repo = this;
 }
 
 class SongRepository extends RepositoryHive<Song> implements ISongRepository {
@@ -49,6 +115,37 @@ class SongRepository extends RepositoryHive<Song> implements ISongRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<EntityBase> fac,
   ) : super(hiveInstance, fac, 14);
+  Song create(
+          {String id,
+          String title,
+          int bpm,
+          int transpose,
+          String songKey,
+          int capo,
+          String lyrics,
+          String notes,
+          String ccli,
+          List<Person> authors,
+          List<int> authors2,
+          String copyright,
+          List<Person> translator,
+          List<Tag> tags}) =>
+      new Song(
+          id: id,
+          title: title,
+          bpm: bpm,
+          transpose: transpose,
+          songKey: songKey,
+          capo: capo,
+          lyrics: lyrics,
+          notes: notes,
+          ccli: ccli,
+          authors: authors,
+          authors2: authors2,
+          copyright: copyright,
+          translator: translator,
+          tags: tags)
+        ..repo = this;
 }
 
 class TagRepository extends RepositoryHive<Tag> implements ITagRepository {
@@ -56,12 +153,18 @@ class TagRepository extends RepositoryHive<Tag> implements ITagRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<EntityBase> fac,
   ) : super(hiveInstance, fac, 13);
+  Tag create({
+    String id,
+  }) =>
+      new Tag(
+        id: id,
+      )..repo = this;
 }
 
 ///
 /// The database
 ///
-class EntityDatabase extends EntityConfiguration {
+class EntityDatabase extends EntityDatabaseClass {
   EntityDatabase([String path = './hive_db']) : super(path);
 
   Future<void> initRepository() async {
@@ -109,6 +212,10 @@ class EntityDatabase extends EntityConfiguration {
   ITagRepository _tagRepository;
   ITagRepository get tagRepository => _tagRepository;
 
+  ///
+  /// These methods will be redirected, once the dart team fixes
+  /// the auto completion for typedef function signigtures
+  ///
   Address createAddress({String id, String street, int houseNumber}) =>
       new Address(id: id, street: street, houseNumber: houseNumber)
         ..repo = _addressRepository;
