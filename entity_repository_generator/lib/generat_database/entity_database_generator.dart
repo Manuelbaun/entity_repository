@@ -74,7 +74,7 @@ class EntityDatabaseGenerator {
       ..write('extends RepositoryHive<${v.entityName}>')
       ..write('implements I${v.repoName} {')
       ..write('${v.repoName}(HiveInterface hiveInstance,')
-      ..writeln('EntityMapFactory<EntityBase> fac,)')
+      ..writeln('EntityMapFactory<${v.entityName}> fac,)')
       ..writeln(': super(hiveInstance, fac, ${v.model.typeId});')
       ..write(generateEntityCreateMethod(v, useThis: true))
       ..write('}');

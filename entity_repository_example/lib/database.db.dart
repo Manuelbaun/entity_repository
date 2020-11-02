@@ -60,7 +60,7 @@ class AddressRepository extends RepositoryHive<Address>
     implements IAddressRepository {
   AddressRepository(
     HiveInterface hiveInstance,
-    EntityMapFactory<EntityBase> fac,
+    EntityMapFactory<Address> fac,
   ) : super(hiveInstance, fac, 12);
   Address create({String id, String street, int houseNumber}) =>
       new Address(id: id, street: street, houseNumber: houseNumber)
@@ -70,7 +70,7 @@ class AddressRepository extends RepositoryHive<Address>
 class CarRepository extends RepositoryHive<Car> implements ICarRepository {
   CarRepository(
     HiveInterface hiveInstance,
-    EntityMapFactory<EntityBase> fac,
+    EntityMapFactory<Car> fac,
   ) : super(hiveInstance, fac, 11);
   Car create(
           {String id,
@@ -87,7 +87,7 @@ class PersonRepository extends RepositoryHive<Person>
     implements IPersonRepository {
   PersonRepository(
     HiveInterface hiveInstance,
-    EntityMapFactory<EntityBase> fac,
+    EntityMapFactory<Person> fac,
   ) : super(hiveInstance, fac, 10);
   Person create(
           {String id,
@@ -113,7 +113,7 @@ class PersonRepository extends RepositoryHive<Person>
 class SongRepository extends RepositoryHive<Song> implements ISongRepository {
   SongRepository(
     HiveInterface hiveInstance,
-    EntityMapFactory<EntityBase> fac,
+    EntityMapFactory<Song> fac,
   ) : super(hiveInstance, fac, 14);
   Song create(
           {String id,
@@ -151,7 +151,7 @@ class SongRepository extends RepositoryHive<Song> implements ISongRepository {
 class TagRepository extends RepositoryHive<Tag> implements ITagRepository {
   TagRepository(
     HiveInterface hiveInstance,
-    EntityMapFactory<EntityBase> fac,
+    EntityMapFactory<Tag> fac,
   ) : super(hiveInstance, fac, 13);
   Tag create({
     String id,
