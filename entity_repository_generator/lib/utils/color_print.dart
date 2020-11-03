@@ -1,6 +1,11 @@
 part of entity_repository_generator;
 
-class Print {
+class ColorPrint {
+  static toYellow(dynamic msg) {
+    final color = AnsiPen()..yellow();
+    return color(msg.toString());
+  }
+
   static void yellow(dynamic msg) {
     final color = AnsiPen()..yellow();
     print(color(msg.toString()));

@@ -77,14 +77,16 @@ T msgpackDecode<T>(Uint8List v) =>
 /// must be extended
 ///
 abstract class EntityDatabaseClass {
-  EntityDatabaseClass(String path) {
+  EntityDatabaseClass(this.path)
+      : assert(path != null),
+        assert(path.isNotEmpty) {
     localHive = HiveImpl()..init(path);
-
     repositoryLocator = RepositoryLocator();
     chainTracker = ChainTracker();
     synchronizer = Synchronizer(repositoryLocator);
   }
 
+  final String path;
   bool shouldSaveWithSubEntities = true;
 
   RepositoryLocator repositoryLocator;

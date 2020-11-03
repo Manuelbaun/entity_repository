@@ -60,27 +60,30 @@ class DatabaseBuilderAggregated implements Builder {
     final assets = buildStep.findAssets(_allFilesInLib);
 
     await for (final input in assets) {
+      var library;
       try {
-        final library = await resolver.libraryFor(input);
-
-        final annotated = LibraryReader(library)
-            .classes
-            .where((e) => entityModelChecker.hasAnnotationOf(e))
-            .map((e) {
-          final visitor = ModelVisitor(
-            model: getEntityModel(e),
-            entityTypes: getAllEntityModelReferences(e),
-            classElement: e,
-          );
-
-          e.visitChildren(visitor);
-          return visitor;
-        });
-
-        allElements.addAll(annotated);
+        library = await resolver.libraryFor(input);
       } catch (e) {
-        log.severe(EntityRepositorGeneratorError('$e'));
+        log.info(ColorPrint.toYellow(EntityRepositorGeneratorError('$e')));
       }
+
+      if (library == null) continue;
+
+      final annotated = LibraryReader(library)
+          .classes
+          .where((e) => entityModelChecker.hasAnnotationOf(e))
+          .map((e) {
+        final visitor = ModelVisitor(
+          model: getEntityModel(e),
+          entityTypes: getAllEntityModelReferences(e),
+          classElement: e,
+        );
+
+        e.visitChildren(visitor);
+        return visitor;
+      });
+
+      allElements.addAll(annotated);
     }
 
     final res = generator.generate(allElements);
