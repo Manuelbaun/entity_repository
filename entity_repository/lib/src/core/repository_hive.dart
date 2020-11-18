@@ -202,6 +202,9 @@ class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
   }) async {
     assert(entity != null);
 
+    /// since its is a new entity, it needs the repo!
+    entity.repo = this;
+
     if (override || (!override && !_box.containsKey(entity.id))) {
       _syncInsert(entity, fromRemote);
 

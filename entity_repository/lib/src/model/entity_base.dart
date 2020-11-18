@@ -9,8 +9,8 @@ abstract class EntityBase<T extends EntityBase<T>>
   RepositoryBase<T> _repo;
   RepositoryBase<T> get repo => _repo;
 
+  /// debug me...
   set repo(RepositoryBase<T> repo) {
-    /// debug me...
     _repo = repo;
   }
 
