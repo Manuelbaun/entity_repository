@@ -168,7 +168,6 @@ class EntityDatabase extends EntityDatabaseClass {
   EntityDatabase([String path = './hive_db']) : super(path);
 
   Future<void> initRepository() async {
-    init();
     _addressRepository = AddressRepository(localHive, Address.fromMap);
     _carRepository = CarRepository(localHive, Car.fromMap);
     _personRepository = PersonRepository(localHive, Person.fromMap);
