@@ -1,3 +1,7 @@
+# 0.2.0
+* made it work with the generator v.0.2.0
+* applied minor bugfix
+
 # 0.1.6
 * bug fixes 
 * generate repository by default = false

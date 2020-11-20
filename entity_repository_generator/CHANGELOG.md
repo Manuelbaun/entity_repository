@@ -1,3 +1,10 @@
+# 0.2.0
+* bug fixed
+* added generated database class
+* register all repositores automatically
+* added genearted factory methods
+* added simple synchronization
+
 # 0.1.6
 * bugfixes
 * generating repository is false by default
