@@ -5,6 +5,7 @@ import 'package:entity_repository_example/models/car.dart';
 import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
+import 'package:entity_repository_example/utils/encoding_msg_pack.dart';
 
 void measure(Function func) async {
   final s = Stopwatch()..start();

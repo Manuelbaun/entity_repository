@@ -10,7 +10,6 @@ environment:
 dependencies:
   hive: ^1.4.4+1
   meta: ^1.2.4
-  msgpack_dart: ^0.0.7
 
 dev_dependencies:
   # analyzer: ">=0.39.12 <0.40.0"

@@ -1,4 +1,7 @@
-part of entity_repository;
+import 'dart:typed_data';
+
+import 'package:entity_repository/entity_repository.dart';
+import 'package:msgpack_dart/msgpack_dart.dart';
 
 /// Todo: add types
 /// * causal entry
@@ -45,3 +48,13 @@ class _ExtendetDecoder implements ExtDecoder {
     return null;
   }
 }
+
+final _valueEncoder = _ExtendetEncoder();
+final _valueDecoder = _ExtendetDecoder();
+
+/// encodes into bytes
+Uint8List msgpackEncode(dynamic v) => serialize(v, extEncoder: _valueEncoder);
+
+/// decodes bytes into object/types
+T msgpackDecode<T>(Uint8List v) =>
+    deserialize(v, extDecoder: _valueDecoder) as T;

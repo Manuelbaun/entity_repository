@@ -3,11 +3,9 @@ library entity_repository;
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
-import 'package:msgpack_dart/msgpack_dart.dart';
 import 'package:hive/src/hive_impl.dart';
 
 export 'package:hive/hive.dart' show BinaryReader, BinaryWriter, HiveInterface;
@@ -35,7 +33,6 @@ part 'src/sync/syncable.dart';
 
 part 'src/utils/chain_tracker.dart';
 part 'src/utils/data_helper.dart';
-part 'src/utils/encoding_msg_pack.dart';
 part 'src/utils/equality.dart';
 part 'src/utils/nesting_hashing.dart';
 part 'src/utils/id_generator.dart';
@@ -60,16 +57,6 @@ class CustomAdapterTypes {
     return i;
   }
 }
-
-final _valueEncoder = _ExtendetEncoder();
-final _valueDecoder = _ExtendetDecoder();
-
-/// encodes into bytes
-Uint8List msgpackEncode(dynamic v) => serialize(v, extEncoder: _valueEncoder);
-
-/// decodes bytes into object/types
-T msgpackDecode<T>(Uint8List v) =>
-    deserialize(v, extDecoder: _valueDecoder) as T;
 
 /// ********
 /// The Databse configure class

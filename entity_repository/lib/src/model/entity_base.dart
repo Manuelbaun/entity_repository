@@ -64,24 +64,24 @@ abstract class EntityBase<T extends EntityBase<T>>
     return repo.watch(id);
   }
 
-  /**
-   *
-   * If an data model contains also references to other data model
-   * in terms of (1 To N) or (Many To N), this will get all References.
-   *
-   *
-   * TODO: Check for Performance reason, if an class is red before.
-   * if not, do not try to save it.
-   *
-   * See Generator:
-   *
-   * Example
-   * ```dart
-   * class Car {
-   *   [EntityBase] owner;
-   * }
-   * ```
-   */
+  ///
+  ///
+  /// If an data model contains also references to other data model
+  /// in terms of (1 To N) or (Many To N), this will get all References.
+  ///
+  ///
+  /// TODO: Check for Performance reason, if an class is red before.
+  /// if not, do not try to save it.
+  ///
+  /// See Generator:
+  ///
+  /// Example
+  /// ```dart
+  /// class Car {
+  ///   [EntityBase] owner;
+  /// }
+  /// ```
+  ///
   Set<EntityBase> getAllRefObjects();
 
   /// Returns a map of with ints as keys and data. It is not a json map!

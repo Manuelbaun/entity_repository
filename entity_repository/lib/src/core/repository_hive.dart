@@ -107,8 +107,9 @@ class RepositoryHive<T extends EntityBase<T>> implements RepositoryBase<T> {
 
   @pragma('vm:prefer-inline')
   void _syncDeleteMany(Iterable<T> entities, bool fromRemote) {
-    if (!fromRemote && _synchronizer != null)
+    if (!fromRemote && _synchronizer != null) {
       _synchronizer.deleteMany<T>(entities);
+    }
   }
 
   /// This will update the enitiy. If the enitity did not exists prior to that

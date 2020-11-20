@@ -1,3 +1,8 @@
+# 0.2.1
+* removed msg-pack dependency from core
+* (issue with running in browser)
+* fixed static analysis complaining
+
 # 0.2.0
 * made it work with the generator v.0.2.0
 * applied minor bugfix
