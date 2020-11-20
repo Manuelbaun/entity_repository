@@ -12,16 +12,19 @@ dependencies:
   source_gen: ^0.9.8
   entity_repository: ^0.2.0
   ansicolor: ^1.1.0
-
-dev_dependencies:
   analyzer: ^0.40.6
   pedantic: ^1.9.2
+  dart_style: ^1.3.10
+  glob: ^1.2.0
+  path: ^1.7.0
+
+dev_dependencies:
   test: ^1.15.6
   build_runner: ^1.10.3
   build_test: ^1.3.0
 
 analyzer:
   strong-mode: true
-dependency_overrides:
-  entity_repository:
-    path: ..\entity_repository
+# dependency_overrides:
+#   entity_repository:
+#     path: ..\entity_repository

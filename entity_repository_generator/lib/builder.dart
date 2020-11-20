@@ -1,11 +1,11 @@
 library entity_repository_generator;
 
-import 'package:build/build.dart';
-import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
-import 'package:ansicolor/ansicolor.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
+import 'package:source_gen/source_gen.dart';
+import 'package:ansicolor/ansicolor.dart';
 
 import 'package:entity_repository/entity_repository.dart';
 
