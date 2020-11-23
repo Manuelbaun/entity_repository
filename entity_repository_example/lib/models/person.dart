@@ -5,7 +5,7 @@ import 'address.dart';
 
 part 'person.g.dart';
 
-/// asdf
+/// asdf asdfdas
 @EntityModel(AdapterIds.person)
 abstract class Person implements _$Person {
   factory Person({

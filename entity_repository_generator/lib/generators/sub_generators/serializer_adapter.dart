@@ -34,7 +34,7 @@ class SerializerAdapter {
       ..writeln('..writeByte(${visitor.params.length + 1})')
       ..writeln('..writeByte(0)')
       ..writeln('..write(obj.id)')
-      ..writeAll(visitor.params.map((e) => _toSerializeWrite(e)), '\n')
+      ..writeAll(visitor.params.map((e) => e.toSerializerWrite()), '\n')
       ..writeln(';}')
       ..write(_generateSerializerAdapterEquality(visitor))
       ..write('}');
@@ -42,19 +42,19 @@ class SerializerAdapter {
     return buff;
   }
 
-  static String _toSerializeWrite(ParamBase p) {
-    var fieldString = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
+  // static String _toSerializeWrite(ParamBase p) {
+  //   var fieldString = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
 
-    if (p is ParamSet) {
-      fieldString += '?.toList()';
-    }
+  //   if (p is ParamSet) {
+  //     fieldString += '?.toList()';
+  //   }
 
-    final buff = StringBuffer()
-      ..writeln('..writeByte(${p.field.index})\n')
-      ..writeln('..write(obj.$fieldString)\n');
+  //   final buff = StringBuffer()
+  //     ..writeln('..writeByte(${p.field.index})\n')
+  //     ..writeln('..write(obj.$fieldString)\n');
 
-    return buff.toString();
-  }
+  //   return buff.toString();
+  // }
 
   static StringBuffer _generateSerializerAdapterEquality(ModelVisitor visitor) {
     final buff = StringBuffer()..write('''@override

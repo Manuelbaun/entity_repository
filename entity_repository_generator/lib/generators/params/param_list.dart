@@ -1,15 +1,13 @@
 part of entity_repository_generator;
 
 class ParamList extends Param {
-  ParamList({
-    String name,
+  ParamList(
+    ParameterElement parameter, {
     Field field,
-    InterfaceType type,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(
-          paramName: name,
+          parameter,
           field: field,
-          typeRaw: type,
           entityTypes: entityTypes,
         );
 
@@ -91,4 +89,16 @@ class ParamList extends Param {
 
   @override
   String toString() => toPublicField;
+
+  @override
+  String fromMapJson([bool isJson = false]) {
+    // access via json or index numbers!
+    final mapAccess = isJson ? "'${paramName}'" : field.index;
+
+    final assign = '(fields[$mapAccess] as List)?.cast<${subType}>()';
+
+    return isOrHasEntities
+        ? '..$toRefNamePrivate = $assign'
+        : '$paramName : $assign';
+  }
 }

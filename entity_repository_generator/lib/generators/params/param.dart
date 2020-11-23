@@ -6,18 +6,17 @@ part of entity_repository_generator;
  */
 class Param implements ParamBase {
   final Field field;
-  final String paramName;
-  // The actual type of the Param, not processed,
-  final InterfaceType typeRaw;
-
-  String get type => isEntity ? 'String' : typeRaw.toString();
-
+  final ParameterElement parameter;
   final Map<InterfaceType, AnnotatedClazz> entityTypes;
 
-  Param({
-    this.paramName,
+  /// is true, when this param is an entity type
+  /// TODO: Change the API
+  bool _isOrHasEntities = false;
+  bool get isOrHasEntities => _isOrHasEntities;
+
+  Param(
+    this.parameter, {
     this.field,
-    this.typeRaw,
     this.entityTypes,
   }) {
     if (typeRaw.isDartCoreList ||
@@ -28,22 +27,23 @@ class Param implements ParamBase {
 
     /// TODO: refactore this
     if (typeRaw.isDartCoreList && isEntityType(subTypes.first)) {
-      isOrHasEntities = true;
+      _isOrHasEntities = true;
     } else if (typeRaw.isDartCoreSet && isEntityType(subTypes.first)) {
       /// [Set to List]
-      isOrHasEntities = true;
+      _isOrHasEntities = true;
     } else if (typeRaw.isDartCoreMap) {
       if (isEntityType(subTypes.first) || isEntityType(subTypes.last)) {
-        isOrHasEntities = true;
+        _isOrHasEntities = true;
       }
     } else if (isEntity) {
-      isOrHasEntities = true;
+      _isOrHasEntities = true;
     }
   }
 
-  /// is true, when this param is an entity type
-  /// /// TODO: Change the API
-  bool isOrHasEntities = false;
+  // The actual type of the Param, not processed,
+  String get paramName => parameter.displayName;
+  String get type => isEntity ? 'String' : typeRaw.toString();
+  InterfaceType get typeRaw => parameter.type as InterfaceType;
 
   bool get isEntity => isEntityType(typeRaw);
   bool isEntityType(InterfaceType type) => entityTypes[type] != null;
@@ -51,43 +51,23 @@ class Param implements ParamBase {
   Set<InterfaceType> subTypes = {};
   bool get hasSubType => false; //subTypes.isNotEmpty;
 
-  ///
-  /// Factory class
-  ///
-  factory Param.genericFactory({
-    String name,
-    Field field,
-    InterfaceType type,
-    Map<InterfaceType, AnnotatedClazz> entityTypes,
-  }) {
-    if (type.isDartCoreList) {
-      return ParamList(
-          name: name, field: field, type: type, entityTypes: entityTypes);
-    } else if (type.isDartCoreSet) {
-      return ParamSet(
-          name: name, field: field, type: type, entityTypes: entityTypes);
-    } else if (type.isDartCoreMap) {
-      return ParamMap(
-          name: name, field: field, type: type, entityTypes: entityTypes);
-    }
-    return Param(
-        paramName: name, field: field, typeRaw: type, entityTypes: entityTypes);
-  }
-
   /// Utility
   /// TODO: change, nullableSuffix is *
   String get typeName => typeRaw.getDisplayString(withNullability: false);
   String get paramNamePrivate => '_$paramName';
   String get paramNameThis => 'this.$paramName';
+
   String get toParamInit => '$typeRaw $paramName';
-  String get toParamInitPrivate => '$paramNamePrivate = $paramName';
-  String get toPublicFieldGet => '$typeRaw get $paramName;';
-  String get toPublicField => '$typeRaw $paramName;';
-  String get toPublicFieldOverride => '@override\n$typeRaw $paramName;';
   String get toPrivateField => '$typeRaw $paramNamePrivate;';
+  String get toPublicField => '$typeRaw $paramName;';
+
+  String get toPublicFieldGet => '$typeRaw get $paramName;';
+  String get toRefField_ => 'String $toRefNamePrivate;';
+
+  String get toParamInitPrivate => '$paramNamePrivate = $paramName';
+  String get toPublicFieldOverride => '@override\n$typeRaw $paramName;';
   String get toRefNameGetter => '${paramName}Refs';
   String get toRefNamePrivate => '_${paramName}Refs';
-  String get toRefField_ => 'String $toRefNamePrivate;';
   String get toRefFieldGetter =>
       'String get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
 
@@ -158,9 +138,15 @@ class Param implements ParamBase {
       isEntity ? 'if($paramName != null) $prefix.add($paramName);' : '';
 
   String toFieldFromMap([String prefix = 'fields']) {
-    var str = isEntity
-        ? '$toRefNamePrivate = ($prefix[${field.index}] as String)'
-        : '_$paramName = $prefix[${field.index}] as $typeRaw';
+    String str;
+
+    if (isEntity) {
+      str = '$toRefNamePrivate = ($prefix[${field.index}] as String)';
+    } else if (field.converter != null) {
+      str = '$toRefNamePrivate = ($prefix[${field.index}] as String)';
+    } else {
+      str = '_$paramName = $prefix[${field.index}] as $typeRaw';
+    }
 
     return 'if($prefix.containsKey(${field.index})) { $str; }';
   }
@@ -181,5 +167,20 @@ class Param implements ParamBase {
     }
 
     return 'o.${paramName} == $paramName';
+  }
+
+  @override
+  String fromMapJson([bool isJson = false]) {
+    final mapAccess = isJson ? "'${paramName}'" : field.index;
+
+    final fieldy = isOrHasEntities ? '..$toRefNamePrivate =' : '$paramName :';
+    return '$fieldy (fields[$mapAccess] as $type)';
+  }
+
+  get fieldString => isOrHasEntities ? toRefNameGetter : paramName;
+
+  @override
+  String toSerializerWrite() {
+    return '..writeByte(${field.index})\n..write(obj.$fieldString)\n';
   }
 }

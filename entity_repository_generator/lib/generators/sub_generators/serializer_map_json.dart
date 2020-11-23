@@ -38,15 +38,12 @@ class SerializerMapJson {
 
   static StringBuffer generateFactoryFromMapJson(ModelVisitor visitor,
       {bool isJson = false}) {
-    final allFields = visitor.paramsNonEntity.map((p) {
-      final res = SerializerMapJson.toSerializeRead(p,
-          isMapEntry: true, isJson: isJson);
-      return res;
+    final nonEntities = visitor.paramsNonEntity.map((p) {
+      return p.fromMapJson(isJson);
     });
 
-    final allReads = visitor.paramsEntities.map((p) {
-      final res = SerializerMapJson.toSerializeRead(p, isJson: isJson);
-      return res;
+    final entitiesRefs = visitor.paramsEntities.map((p) {
+      return p.fromMapJson(isJson);
     });
 
     final methodName = isJson
@@ -62,9 +59,9 @@ class SerializerMapJson {
       ..write('{')
       ..writeln('return ${visitor.redirectName}(')
       ..writeln('id: $idField as String,')
-      ..writeAll(allFields, ',\n')
+      ..writeAll(nonEntities, ',\n')
       ..write(')')
-      ..writeAll(allReads, '\n')
+      ..writeAll(entitiesRefs, '\n')
       ..write(';}');
 
     return buff;

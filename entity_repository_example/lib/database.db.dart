@@ -1,6 +1,7 @@
 import 'package:entity_repository/entity_repository.dart';
 import 'package:entity_repository_example/models/address.dart';
 import 'package:entity_repository_example/models/car.dart';
+import 'package:entity_repository_example/models/notes.dart';
 import 'package:entity_repository_example/models/person.dart';
 import 'package:entity_repository_example/models/song.dart';
 import 'package:entity_repository_example/models/tag.dart';
@@ -15,6 +16,17 @@ abstract class IAddressRepository implements RepositoryBase<Address> {
 abstract class ICarRepository implements RepositoryBase<Car> {
   Car create(
       {String id, String model, String type, int buildYear, Person owner});
+}
+
+abstract class INotesRepository implements RepositoryBase<Notes> {
+  Notes create(
+      {String id,
+      String title,
+      String content,
+      DateTime created,
+      DateTime edited,
+      Person creator,
+      Person lastEditor});
 }
 
 abstract class IPersonRepository implements RepositoryBase<Person> {
@@ -80,6 +92,31 @@ class CarRepository extends RepositoryHive<Car> implements ICarRepository {
           Person owner}) =>
       new Car(
           id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+        ..repo = this;
+}
+
+class NotesRepository extends RepositoryHive<Notes>
+    implements INotesRepository {
+  NotesRepository(
+    HiveInterface hiveInstance,
+    EntityMapFactory<Notes> fac,
+  ) : super(hiveInstance, fac, 15);
+  Notes create(
+          {String id,
+          String title,
+          String content,
+          DateTime created,
+          DateTime edited,
+          Person creator,
+          Person lastEditor}) =>
+      new Notes(
+          id: id,
+          title: title,
+          content: content,
+          created: created,
+          edited: edited,
+          creator: creator,
+          lastEditor: lastEditor)
         ..repo = this;
 }
 
@@ -170,6 +207,7 @@ class EntityDatabase extends EntityDatabaseClass {
   Future<void> initRepository() async {
     _addressRepository = AddressRepository(localHive, Address.fromMap);
     _carRepository = CarRepository(localHive, Car.fromMap);
+    _notesRepository = NotesRepository(localHive, Notes.fromMap);
     _personRepository = PersonRepository(localHive, Person.fromMap);
     _songRepository = SongRepository(localHive, Song.fromMap);
     _tagRepository = TagRepository(localHive, Tag.fromMap);
@@ -178,6 +216,7 @@ class EntityDatabase extends EntityDatabaseClass {
     localHive
       ..registerAdapter($AddressAdapter(_addressRepository))
       ..registerAdapter($CarAdapter(_carRepository))
+      ..registerAdapter($NotesAdapter(_notesRepository))
       ..registerAdapter($PersonAdapter(_personRepository))
       ..registerAdapter($SongAdapter(_songRepository))
       ..registerAdapter($TagAdapter(_tagRepository));
@@ -185,6 +224,7 @@ class EntityDatabase extends EntityDatabaseClass {
     repositoryLocator
       ..register<Address>(_addressRepository)
       ..register<Car>(_carRepository)
+      ..register<Notes>(_notesRepository)
       ..register<Person>(_personRepository)
       ..register<Song>(_songRepository)
       ..register<Tag>(_tagRepository);
@@ -202,6 +242,9 @@ class EntityDatabase extends EntityDatabaseClass {
 
   ICarRepository _carRepository;
   ICarRepository get carRepository => _carRepository;
+
+  INotesRepository _notesRepository;
+  INotesRepository get notesRepository => _notesRepository;
 
   IPersonRepository _personRepository;
   IPersonRepository get personRepository => _personRepository;
@@ -229,6 +272,24 @@ class EntityDatabase extends EntityDatabaseClass {
       new Car(
           id: id, model: model, type: type, buildYear: buildYear, owner: owner)
         ..repo = _carRepository;
+
+  Notes createNotes(
+          {String id,
+          String title,
+          String content,
+          DateTime created,
+          DateTime edited,
+          Person creator,
+          Person lastEditor}) =>
+      new Notes(
+          id: id,
+          title: title,
+          content: content,
+          created: created,
+          edited: edited,
+          creator: creator,
+          lastEditor: lastEditor)
+        ..repo = _notesRepository;
 
   Person createPerson(
           {String id,

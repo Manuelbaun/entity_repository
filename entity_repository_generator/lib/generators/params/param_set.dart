@@ -3,16 +3,11 @@ part of entity_repository_generator;
 /// TODO: extends from ParamList?
 /// Because many things are the same! => DRY
 class ParamSet extends Param {
-  ParamSet({
-    String name,
+  ParamSet(
+    ParameterElement parameter, {
     Field field,
-    InterfaceType type,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
-  }) : super(
-            paramName: name,
-            field: field,
-            typeRaw: type,
-            entityTypes: entityTypes);
+  }) : super(parameter, field: field, entityTypes: entityTypes);
 
   bool get hasSubType => subTypes.isNotEmpty;
 
@@ -90,5 +85,20 @@ class ParamSet extends Param {
     }
 
     return 'setEquality(o.${paramName}, ${paramName})';
+  }
+
+  @override
+  String fromMapJson([bool isJson = false]) {
+    final mapAccess = isJson ? "'${paramName}'" : field.index;
+
+    final fieldy = isOrHasEntities ? '..$toRefNamePrivate =' : '$paramName :';
+    return '$fieldy (fields[$mapAccess] as List)?.cast<${subType}>()?.toSet()';
+  }
+
+  @override
+  String toSerializerWrite({bool isJson = false, bool isMapEntry = false}) {
+    // Set will be converted to list
+    final fieldString = this.fieldString + '?.toList()';
+    return '..writeByte(${field.index})\n..write(obj.$fieldString)\n';
   }
 }

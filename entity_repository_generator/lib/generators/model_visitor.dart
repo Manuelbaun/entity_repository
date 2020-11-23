@@ -70,11 +70,12 @@ class ModelVisitor extends SimpleElementVisitor {
             ''' Please choose another one.''');
       }
 
-      final p = Param.genericFactory(
+      print(par.declaration);
+
+      final p = ParamBase.genericFactory(
         field: field,
-        name: par.displayName,
-        type: par.type as InterfaceType,
         entityTypes: entityTypes,
+        parameter: par,
       );
 
       // final res = _isEntityType(p);
