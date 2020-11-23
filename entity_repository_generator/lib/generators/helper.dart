@@ -311,8 +311,21 @@ class Helper {
   }
 
   static bool testIfIsOrHasEntites(DartType type) {
-    ALL_ENTITES;
-    //
+    if (type is InterfaceType) {
+      if (type.typeArguments.isEmpty) {
+        return ALL_ENTITES.containsKey(type);
+      } else {
+        for (final t in type.typeArguments) {
+          final subs = testIfIsOrHasEntites(t);
+
+          if (subs) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   static bool isEntityType(InterfaceType type) {
