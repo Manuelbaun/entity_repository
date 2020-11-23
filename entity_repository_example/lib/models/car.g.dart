@@ -161,7 +161,7 @@ class _Car extends EntityBase<Car> implements Car {
       _buildYear = fields[3] as int;
     }
     if (fields.containsKey(4)) {
-      _ownerRefs = (fields[4] as String);
+      _ownerRefs = fields[4] as String;
     }
   }
 

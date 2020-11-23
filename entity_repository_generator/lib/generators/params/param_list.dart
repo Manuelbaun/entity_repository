@@ -23,22 +23,22 @@ class ParamList extends Param {
         : paramName;
   }
 
-  String get toRefField_ {
+  String get toRefFieldPrivate {
     final type = subTypes.first;
     final setType = Helper.isEntityType(type) ? 'List<String>' : 'List<$type>';
-    return '$setType $toRefNamePrivate;';
+    return '$setType $toParamNameRefPrivate;';
   }
 
   String get toRefFieldGetter {
     final type =
         Helper.isEntityType(subTypes.first) ? 'String' : subTypes.first;
-    return 'List<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
+    return 'List<$type> get $toParamNameRef => $toParamNameRefPrivate ??= $toRefIdIfExist;';
   }
   // String get toLookUpMethodName => '_lookUp${paramName.capitalize()}()';
 
   String get toPrivateFieldGetterSetter {
     final buff = StringBuffer()
-      ..write(toPrivateField)
+      ..write(toTypeParamPrivate)
       ..write('\n\n')
       ..write(toGetter)
       ..write('\n\n')
@@ -52,8 +52,8 @@ class ParamList extends Param {
 
     return '''
       $type $toLookUpMethodName {
-        if($toRefNamePrivate != null){
-          return locator.get<$enType>().findMany($toRefNamePrivate).toList();
+        if($toParamNameRefPrivate != null){
+          return locator.get<$enType>().findMany($toParamNameRefPrivate).toList();
         }
         return [];
       }''';
@@ -74,17 +74,17 @@ class ParamList extends Param {
 
     if (isOrHasEntities) {
       str =
-          '$toRefNamePrivate = (fields[${field.index}] as List)?.cast<String>()';
+          '$toParamNameRefPrivate = (fields[${field.index}] as List)?.cast<String>()';
     } else {
       str =
-          '$paramNamePrivate = (fields[${field.index}] as List)?.cast<$type>()';
+          '$toParamNamePrivate = (fields[${field.index}] as List)?.cast<$type>()';
     }
     return 'if(fields.containsKey(${field.index})) { $str; }';
   }
 
   String get toEquality {
     if (isOrHasEntities) {
-      return 'listEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+      return 'listEquality(o.${toParamNameRef}, ${toParamNameRef})';
     }
 
     return 'listEquality(o.${paramName}, ${paramName})';
@@ -101,7 +101,7 @@ class ParamList extends Param {
     final assign = '(fields[$mapAccess] as List)?.cast<${subType}>()';
 
     return isOrHasEntities
-        ? '..$toRefNamePrivate = $assign'
+        ? '..$toParamNameRefPrivate = $assign'
         : '$paramName : $assign';
   }
 }

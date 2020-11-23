@@ -54,7 +54,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
       ..writeln('/// ')
       ..writeln('/// Generate the reference look up ')
       ..writeln('/// ')
-      ..writeAll(visitor.paramsEntities.map((e) => e.toRefField_), '\n\n')
+      ..writeAll(visitor.paramsEntities.map((e) => e.toRefFieldPrivate), '\n\n')
       ..writeAll(visitor.paramsEntities.map((e) => e.toRefFieldGetter), '\n\n')
       ..writeAll(visitor.paramsEntities.map((e) => e.toLookupMethod()), '\n\n');
 
@@ -99,9 +99,9 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
   StringBuffer generateClassConstructor(ModelVisitor visitor) {
     final buff = StringBuffer()
       ..write('${visitor.redirectName}({String id, ')
-      ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
+      ..writeAll(visitor.params.map((e) => e.toTypeParam), ',')
       ..write('}) : ') // constructor
-      ..writeAll(visitor.params.map((e) => e.toParamInitPrivate), ',')
+      ..writeAll(visitor.params.map((e) => e.toParamPrivateAssign), ',')
       ..write(visitor.params.isNotEmpty ? ',' : '')
       ..writeln('super(id);\n');
 
@@ -142,7 +142,7 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     final buff = StringBuffer()
       ..writeln(override ? '\n@override' : '')
       ..writeln('${visitor.entityName} copyWith({String id,')
-      ..writeAll(visitor.params.map((e) => e.toParamInit), ',')
+      ..writeAll(visitor.params.map((e) => e.toTypeParam), ',')
       ..writeln('})');
 
     return buff;

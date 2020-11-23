@@ -177,7 +177,7 @@ class EntityDatabaseGenerator {
     final str = StringBuffer()
       ..write('${v.entityName} create${name}({')
       ..write('String id,')
-      ..writeAll(v.params.map((e) => e.toParamInit), ',')
+      ..writeAll(v.params.map((e) => e.toTypeParam), ',')
       ..write('})');
     return str;
   }

@@ -35,38 +35,61 @@ class Param implements ParamBase {
   /// Utility
   /// TODO: change, nullableSuffix is *
   // String get typeName => typeRaw.getDisplayString(withNullability: false);
-  String get paramNamePrivate => '_$paramName';
-  String get paramNameThis => 'this.$paramName';
 
-  String get toParamInit => '$type $paramName';
-  String get toPrivateField => '$type $paramNamePrivate;';
-  String get toPublicField => '$toParamInit;';
+  /// contains the name with a private _ ::
+  ///
+  /// '_$paramName'
+  String get toParamNamePrivate => '_$paramName';
 
+  /// contains the type and the name ::
+  ///
+  /// '$type $paramName'
+  String get toTypeParam => '$type $paramName';
+
+  /// contains the type and the name and is private ::
+  ///
+  /// '$type $paramNamePrivate;'
+  String get toTypeParamPrivate => '$type $toParamNamePrivate;';
+
+  /// '$toTypeParam;'
+  String get toPublicField => '$toTypeParam;';
+
+  /// '$type get $paramName;'
   String get toPublicFieldGet => '$type get $paramName;';
-  String get toRefField_ => 'String $toRefNamePrivate;';
 
-  String get toParamInitPrivate => '$paramNamePrivate = $paramName';
-  String get toPublicFieldOverride => '@override\n$toPublicField';
+  /// assigns the {paramName} to {paramNamePrivate}
+  String get toParamPrivateAssign => '$toParamNamePrivate = $paramName';
 
-  String get toRefNameGetter => '${paramName}Refs';
-  String get toRefNamePrivate => '_${paramName}Refs';
+  /// '${paramName}Refs'
+  String get toParamNameRef => '${paramName}Refs';
+
+  /// '_$toParamNameRef'
+  String get toParamNameRefPrivate => '_$toParamNameRef';
+
+  /// 'String $toParamNameRefPrivate;'
+  String get toRefFieldPrivate => 'String $toParamNameRefPrivate;';
+
+  /// 'String get $toParamNameRef => $toParamNameRefPrivate ??= $toRefIdIfExist;';
   String get toRefFieldGetter =>
-      'String get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
+      'String get $toParamNameRef => $toParamNameRefPrivate ??= $toRefIdIfExist;';
 
   ///
-  /// ------------------------------------------------------
-  /// These here neets to be overritten
-  ///
-
-  String get toRefIdIfExist => isEntity ? '$paramName?.id' : paramName;
+  String get toRefIdIfExist {
+    print(isEntity);
+    if (isEntity) {
+      return '$paramName?.id';
+    } else {
+      return paramName;
+    }
+  }
 
   String get toGetter {
     final buff = StringBuffer()
       ..writeln('@override')
       ..writeln('$type get $paramName => ')
       ..writeln(isOrHasEntities
-          ? '$paramNamePrivate ??= $toLookUpMethodName;'
-          : '$paramNamePrivate;');
+          ? '$toParamNamePrivate ??= $toLookUpMethodName;'
+          : '$toParamNamePrivate;');
 
     return buff.toString();
   }
@@ -74,13 +97,13 @@ class Param implements ParamBase {
   String get toSetter {
     final buff = StringBuffer()
       ..writeln('@override')
-      ..writeln('set $paramName($toParamInit) {')
-      ..writeln('$paramNamePrivate = $paramName;');
+      ..writeln('set $paramName($toTypeParam) {')
+      ..writeln('$toParamNamePrivate = $paramName;');
 
     if (isOrHasEntities) {
       buff
-        ..writeln('$toRefNamePrivate = $toRefIdIfExist;')
-        ..writeln('setKeyValue(${field.index}, $toRefNamePrivate);');
+        ..writeln('$toParamNameRefPrivate = $toRefIdIfExist;')
+        ..writeln('setKeyValue(${field.index}, $toParamNameRefPrivate);');
     } else {
       buff.writeln('setKeyValue(${field.index}, $paramName);');
     }
@@ -92,7 +115,7 @@ class Param implements ParamBase {
 
   String get toPrivateFieldGetterSetter {
     final buff = StringBuffer()
-      ..write(toPrivateField)
+      ..write(toTypeParamPrivate)
       ..write('\n\n')
       ..write(toGetter)
       ..write('\n\n')
@@ -107,7 +130,7 @@ class Param implements ParamBase {
   String toLookupMethod() {
     if (isEntity) {
       return '''$type $toLookUpMethodName {
-        return locator.get<$type>().findOne($toRefNamePrivate);
+        return locator.get<$type>().findOne($toParamNameRefPrivate);
       }''';
     } else {
       /// TODO: THis should not happen
@@ -120,15 +143,16 @@ class Param implements ParamBase {
       isEntity ? 'if($paramName != null) $prefix.add($paramName);' : '';
 
   String toFieldFromMap([String prefix = 'fields']) {
+    final fieldName = isEntity ? toParamNameRefPrivate : toParamNamePrivate;
     return '''
     if($prefix.containsKey(${field.index})) { 
-      $paramNamePrivate = $prefix[${field.index}] as $typeOrEntityString; 
+      $fieldName = $prefix[${field.index}] as $typeOrEntityString; 
     }''';
   }
 
   String get asString {
     return isOrHasEntities
-        ? '$paramName: \${$toRefNameGetter}'
+        ? '$paramName: \${$toParamNameRef}'
         : '$paramName: \$$paramName';
   }
 
@@ -138,7 +162,7 @@ class Param implements ParamBase {
   @override
   String get toEquality {
     if (isOrHasEntities) {
-      return 'o.${toRefNameGetter} == $toRefNameGetter';
+      return 'o.${toParamNameRef} == $toParamNameRef';
     }
 
     return 'o.${paramName} == $paramName';
@@ -148,12 +172,12 @@ class Param implements ParamBase {
   String fromMapJson([bool isJson = false]) {
     final mapAccess = isJson ? "'${paramName}'" : field.index;
 
-    final fieldy = isEntity ? '..$toRefNamePrivate =' : '$paramName :';
+    final fieldy = isEntity ? '..$toParamNameRefPrivate =' : '$paramName :';
 
     return '$fieldy (fields[$mapAccess] as $typeOrEntityString)';
   }
 
-  get fieldString => isOrHasEntities ? toRefNameGetter : paramName;
+  get fieldString => isOrHasEntities ? toParamNameRef : paramName;
 
   @override
   String toSerializerWrite() {

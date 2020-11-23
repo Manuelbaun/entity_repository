@@ -229,10 +229,10 @@ class _Notes extends EntityBase<Notes> implements Notes {
       _edited = fields[4] as DateTime;
     }
     if (fields.containsKey(5)) {
-      _creatorRefs = (fields[5] as String);
+      _creatorRefs = fields[5] as String;
     }
     if (fields.containsKey(6)) {
-      _lastEditorRefs = (fields[6] as String);
+      _lastEditorRefs = fields[6] as String;
     }
   }
 

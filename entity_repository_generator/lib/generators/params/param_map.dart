@@ -38,7 +38,7 @@ class ParamMap extends Param {
   /// TODO:
   String get toPrivateFieldGetterSetter {
     final buff = StringBuffer()
-      ..write(toPrivateField)
+      ..write(toTypeParamPrivate)
       ..write('\n\n')
       ..write(toGetter)
       ..write('\n\n')
@@ -58,9 +58,9 @@ class ParamMap extends Param {
 
     return '''
       $type $toLookUpMethodName {
-        if($toRefNamePrivate != null){
+        if($toParamNameRefPrivate != null){
           final map = <$keyTypeRaw, $valueTypeRaw>{};
-          for(final entry in $toRefNamePrivate.entries) {
+          for(final entry in $toParamNameRefPrivate.entries) {
             final key = $assignKey;
             final value = $assignValue;
             map[key] = value ;
@@ -72,12 +72,12 @@ class ParamMap extends Param {
       }''';
   }
 
-  String get toRefField_ {
-    return 'Map<$keyType, $valueType> $toRefNamePrivate;';
+  String get toRefFieldPrivate {
+    return 'Map<$keyType, $valueType> $toParamNameRefPrivate;';
   }
 
   String get toRefFieldGetter {
-    return 'Map<$keyType, $valueType> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
+    return 'Map<$keyType, $valueType> get $toParamNameRef => $toParamNameRefPrivate ??= $toRefIdIfExist;';
   }
 
   String toRefsObjects([String prefix = 'obj']) {
@@ -95,7 +95,7 @@ class ParamMap extends Param {
   }
 
   String toFieldFromMap([String prefix = 'fields']) {
-    final fieldName = (isOrHasEntities) ? toRefNamePrivate : '_$paramName';
+    final fieldName = (isOrHasEntities) ? toParamNameRefPrivate : '_$paramName';
 
     final str =
         '$fieldName = ($prefix[${field.index}] as Map)?.cast<$keyType, $valueType>()';
@@ -104,7 +104,7 @@ class ParamMap extends Param {
 
   String get toEquality {
     if (isOrHasEntities) {
-      return 'mapEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+      return 'mapEquality(o.${toParamNameRef}, ${toParamNameRef})';
     }
 
     return 'mapEquality(o.${paramName}, ${paramName})';
@@ -122,7 +122,7 @@ class ParamMap extends Param {
         '(fields[$mapAccess] as Map)?.cast<${keyType}, ${valueType}>()';
 
     return isOrHasEntities
-        ? '..$toRefNamePrivate = $assign'
+        ? '..$toParamNameRefPrivate = $assign'
         : '$paramName : $assign';
   }
 }

@@ -28,7 +28,7 @@ class ParamSet extends Param {
 
   String get toPrivateFieldGetterSetter {
     final buff = StringBuffer()
-      ..write(toPrivateField)
+      ..write(toTypeParamPrivate)
       ..write('\n\n')
       ..write(toGetter)
       ..write('\n\n')
@@ -42,22 +42,22 @@ class ParamSet extends Param {
 
     return '''
       $type $toLookUpMethodName {
-        if($toRefNamePrivate != null){
-          return locator.get<$enType>().findMany($toRefNamePrivate).toSet();
+        if($toParamNameRefPrivate != null){
+          return locator.get<$enType>().findMany($toParamNameRefPrivate).toSet();
         }
         return {};
       }''';
   }
 
-  String get toRefField_ {
+  String get toRefFieldPrivate {
     final setType = isOrHasEntities ? 'Set<String>' : type;
-    return '$setType $toRefNamePrivate;';
+    return '$setType $toParamNameRefPrivate;';
   }
 
   String get toRefFieldGetter {
     final type =
         Helper.isEntityType(subTypes.first) ? 'String' : subTypes.first;
-    return 'Set<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
+    return 'Set<$type> get $toParamNameRef => $toParamNameRefPrivate ??= $toRefIdIfExist;';
   }
 
   String toRefsObjects([String prefix = 'obj']) {
@@ -75,7 +75,7 @@ class ParamSet extends Param {
 
     if (isOrHasEntities) {
       str =
-          '$toRefNamePrivate = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
+          '$toParamNameRefPrivate = (fields[${field.index}] as List)?.toSet()?.cast<String>()';
     } else {
       str =
           '_$paramName = (fields[${field.index}] as List)?.toSet()?.cast<$type>()';
@@ -88,7 +88,7 @@ class ParamSet extends Param {
 
   String get toEquality {
     if (isOrHasEntities) {
-      return 'setEquality(o.${toRefNameGetter}, ${toRefNameGetter})';
+      return 'setEquality(o.${toParamNameRef}, ${toParamNameRef})';
     }
 
     return 'setEquality(o.${paramName}, ${paramName})';
@@ -98,7 +98,8 @@ class ParamSet extends Param {
   String fromMapJson([bool isJson = false]) {
     final mapAccess = isJson ? "'${paramName}'" : field.index;
 
-    final fieldy = isOrHasEntities ? '..$toRefNamePrivate =' : '$paramName :';
+    final fieldy =
+        isOrHasEntities ? '..$toParamNameRefPrivate =' : '$paramName :';
     return '$fieldy (fields[$mapAccess] as List)?.cast<${subType}>()?.toSet()';
   }
 

@@ -262,7 +262,7 @@ class _Person extends EntityBase<Person> implements Person {
       _age = fields[2] as int;
     }
     if (fields.containsKey(3)) {
-      _addressRefs = (fields[3] as String);
+      _addressRefs = fields[3] as String;
     }
     if (fields.containsKey(4)) {
       _friendsRefs = (fields[4] as List)?.cast<String>();

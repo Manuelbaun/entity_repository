@@ -8,7 +8,7 @@ class SerializerMapJson {
     String generateMapEntry(ParamBase p) {
       final mapAccess = isJson ? "'${p.paramName}'" : p.field.index;
 
-      final fieldName = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
+      final fieldName = p.isOrHasEntities ? p.toParamNameRef : p.paramName;
 
       final addCondition = p.hasSubType ? '&& $fieldName.isNotEmpty' : '';
       return """
@@ -89,11 +89,12 @@ class SerializerMapJson {
     }
 
     if (isMapEntry) {
-      final fieldName = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
+      final fieldName = p.isOrHasEntities ? p.toParamNameRef : p.paramName;
       return '$fieldName : (fields[$mapAccess] as $type)$cast';
     } else {
       // if it is entity, or has entites, then take private ref field name;
-      final fieldName = p.isOrHasEntities ? p.toRefNamePrivate : p.paramName;
+      final fieldName =
+          p.isOrHasEntities ? p.toParamNameRefPrivate : p.paramName;
       return '..$fieldName = (fields[$mapAccess] as $type)$cast';
     }
   }
