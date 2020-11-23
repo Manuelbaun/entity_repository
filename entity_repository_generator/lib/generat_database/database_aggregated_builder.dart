@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:pedantic/pedantic.dart';
 import 'package:build/build.dart';
-// import 'package:entity_repository/entity_repository.dart';
 import 'package:entity_repository_generator/builder.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
@@ -71,11 +70,11 @@ class DatabaseBuilderAggregated implements Builder {
 
       final annotated = LibraryReader(library)
           .classes
-          .where((e) => entityModelChecker.hasAnnotationOf(e))
+          .where((e) => Helper.hasEntityModelAnnotation(e))
           .map((e) {
         final visitor = ModelVisitor(
-          model: getEntityModel(e),
-          entityTypes: getAllEntityModelReferences(e),
+          model: Helper.getEntityModel(e),
+          entityTypes: Helper.getAllEntityModelReferences(e),
           classElement: e,
         );
 

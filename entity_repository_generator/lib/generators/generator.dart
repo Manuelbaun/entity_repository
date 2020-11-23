@@ -7,9 +7,12 @@ class EntityRepositoryGenerator extends GeneratorForAnnotation<EntityModel> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
+    final model = Helper.getEntityModel(element);
+    final allEntites = Helper.getAllEntityModelReferences(element);
+
     final visitor = ModelVisitor(
-      model: getEntityModel(element),
-      entityTypes: getAllEntityModelReferences(element),
+      model: model,
+      entityTypes: allEntites,
       classElement: element,
     );
 

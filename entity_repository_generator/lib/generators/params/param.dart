@@ -20,8 +20,7 @@ class Param implements ParamBase {
   /// TODO: Change the API
   bool _isOrHasEntities = false;
   bool get isOrHasEntities => _isOrHasEntities;
-  bool get isEntity => isEntityType(typeRaw);
-  bool isEntityType(InterfaceType type) => entityTypes[type] != null;
+  bool get isEntity => Helper.isEntityType(typeRaw);
 
   // The actual type of the Param, not processed,
   String get paramName => parameter.displayName;

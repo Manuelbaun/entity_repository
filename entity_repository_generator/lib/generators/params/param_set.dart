@@ -8,9 +8,9 @@ class ParamSet extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    subTypes = getAllTypes(typeRaw).toSet();
+    subTypes = Helper.getAllTypes(typeRaw).toSet();
 
-    _isOrHasEntities = isEntityType(subTypes.first);
+    _isOrHasEntities = Helper.isEntityType(subTypes.first);
   }
 
   Set<InterfaceType> subTypes = {};
@@ -21,7 +21,7 @@ class ParamSet extends Param {
   String get subType => isOrHasEntities ? 'String' : subTypes.first.toString();
 
   String get toRefIdIfExist {
-    return isEntityType(subTypes.first)
+    return Helper.isEntityType(subTypes.first)
         ? '$paramName?.map((e) => e.id)?.toSet()'
         : paramName;
   }
@@ -55,7 +55,8 @@ class ParamSet extends Param {
   }
 
   String get toRefFieldGetter {
-    final type = isEntityType(subTypes.first) ? 'String' : subTypes.first;
+    final type =
+        Helper.isEntityType(subTypes.first) ? 'String' : subTypes.first;
     return 'Set<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
 

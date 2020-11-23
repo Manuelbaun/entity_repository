@@ -13,27 +13,46 @@ abstract class _$Car extends EntityBase<Car> {
   String type;
   int buildYear;
   Person owner;
+  List<String> complex;
   Car copyWith(
-      {String id, String model, String type, int buildYear, Person owner});
+      {String id,
+      String model,
+      String type,
+      int buildYear,
+      Person owner,
+      List<String> complex});
 }
 
 class _Car extends EntityBase<Car> implements Car {
-  _Car({String id, String model, String type, int buildYear, Person owner})
+  _Car(
+      {String id,
+      String model,
+      String type,
+      int buildYear,
+      Person owner,
+      List<String> complex})
       : _model = model,
         _type = type,
         _buildYear = buildYear,
         _owner = owner,
+        _complex = complex,
         super(id);
 
   @override
   Car copyWith(
-      {String id, String model, String type, int buildYear, Person owner}) {
+      {String id,
+      String model,
+      String type,
+      int buildYear,
+      Person owner,
+      List<String> complex}) {
     return _Car(
         id: id ?? this.id,
         model: model ?? this.model,
         type: type ?? this.type,
         buildYear: buildYear ?? this.buildYear,
-        owner: owner ?? this.owner);
+        owner: owner ?? this.owner,
+        complex: complex ?? this.complex);
   }
 
   String _model;
@@ -81,12 +100,24 @@ class _Car extends EntityBase<Car> implements Car {
     setKeyValue(4, _ownerRefs);
   }
 
+  List<String> _complex;
+
+  @override
+  List<String> get complex => _complex;
+
+  @override
+  set complex(List<String> complex) {
+    _complex = complex;
+    setKeyValue(6, complex);
+  }
+
   factory _Car.fromMap(Map<int, dynamic> fields) {
     return _Car(
         id: fields[0] as String,
         model: (fields[1] as String),
         type: (fields[2] as String),
-        buildYear: (fields[3] as int))
+        buildYear: (fields[3] as int),
+        complex: (fields[6] as List)?.cast<String>())
       .._ownerRefs = (fields[4] as String);
   }
 
@@ -95,7 +126,8 @@ class _Car extends EntityBase<Car> implements Car {
         id: fields['id'] as String,
         model: (fields['model'] as String),
         type: (fields['type'] as String),
-        buildYear: (fields['buildYear'] as int))
+        buildYear: (fields['buildYear'] as int),
+        complex: (fields['complex'] as List)?.cast<String>())
       .._ownerRefs = (fields['owner'] as String);
   }
 
@@ -125,6 +157,9 @@ class _Car extends EntityBase<Car> implements Car {
     if (ownerRefs != null) {
       map[4] = ownerRefs;
     }
+    if (complex != null && complex.isNotEmpty) {
+      map[6] = complex;
+    }
     return map;
   }
 
@@ -146,6 +181,9 @@ class _Car extends EntityBase<Car> implements Car {
     if (ownerRefs != null) {
       map['owner'] = ownerRefs;
     }
+    if (complex != null && complex.isNotEmpty) {
+      map['complex'] = complex;
+    }
     return map;
   }
 
@@ -163,6 +201,9 @@ class _Car extends EntityBase<Car> implements Car {
     if (fields.containsKey(4)) {
       _ownerRefs = (fields[4] as String);
     }
+    if (fields.containsKey(6)) {
+      _complex = (fields[6] as List)?.cast<String>();
+    }
   }
 
   @override
@@ -173,7 +214,8 @@ class _Car extends EntityBase<Car> implements Car {
         o.model == model &&
         o.type == type &&
         o.buildYear == buildYear &&
-        o.ownerRefs == ownerRefs;
+        o.ownerRefs == ownerRefs &&
+        listEquality(o.complex, complex);
   }
 
   @override
@@ -182,12 +224,13 @@ class _Car extends EntityBase<Car> implements Car {
         model.hashCode ^
         type.hashCode ^
         buildYear.hashCode ^
-        owner.hashCode;
+        owner.hashCode ^
+        complex.hashCode;
   }
 
   @override
   String toString() =>
-      'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${ownerRefs})';
+      'Car(id: $id, model: $model, type: $type, buildYear: $buildYear, owner: ${ownerRefs}, complex: $complex)';
 
   ///
   /// Generate the reference look up
@@ -219,7 +262,7 @@ class $CarAdapter implements Serializer<_Car> {
   @override
   void write(BinaryWriter writer, _Car obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -229,7 +272,9 @@ class $CarAdapter implements Serializer<_Car> {
       ..writeByte(3)
       ..write(obj.buildYear)
       ..writeByte(4)
-      ..write(obj.ownerRefs);
+      ..write(obj.ownerRefs)
+      ..writeByte(6)
+      ..write(obj.complex);
   }
 
   @override

@@ -6,10 +6,10 @@ class ParamList extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    final allTypes = getAllTypes(typeRaw);
+    final allTypes = Helper.getAllTypes(typeRaw);
     subTypes = allTypes.toSet();
 
-    _isOrHasEntities = isEntityType(subTypes.first);
+    _isOrHasEntities = Helper.isEntityType(subTypes.first);
   }
 
   List<InterfaceType> get subTypess => typeRaw.typeArguments;
@@ -20,19 +20,20 @@ class ParamList extends Param {
   String get subType => isOrHasEntities ? 'String' : subTypes.first.toString();
 
   String get toRefIdIfExist {
-    return isEntityType(subTypes.first)
+    return Helper.isEntityType(subTypes.first)
         ? '$paramName?.map((e) => e.id)?.toList()'
         : paramName;
   }
 
   String get toRefField_ {
     final type = subTypes.first;
-    final setType = isEntityType(type) ? 'List<String>' : 'List<$type>';
+    final setType = Helper.isEntityType(type) ? 'List<String>' : 'List<$type>';
     return '$setType $toRefNamePrivate;';
   }
 
   String get toRefFieldGetter {
-    final type = isEntityType(subTypes.first) ? 'String' : subTypes.first;
+    final type =
+        Helper.isEntityType(subTypes.first) ? 'String' : subTypes.first;
     return 'List<$type> get $toRefNameGetter => $toRefNamePrivate ??= $toRefIdIfExist;';
   }
   // String get toLookUpMethodName => '_lookUp${paramName.capitalize()}()';

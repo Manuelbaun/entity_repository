@@ -62,7 +62,7 @@ class ModelVisitor extends SimpleElementVisitor {
     final fieldHelper = <int>{};
     for (final par in element.parameters) {
       if (par.displayName == 'id') continue;
-      final field = getFieldAnn(par);
+      final field = Helper.getFieldAnn(par);
 
       if (!fieldHelper.add(field.index)) {
         throw GeneratorError(
@@ -103,7 +103,7 @@ class ModelVisitor extends SimpleElementVisitor {
   /// constructor.
   String _getRedirectConstructorName(ConstructorElement element) {
     final con = _sourceCode.substring(element.nameOffset);
-    final name = getRedirectedConstructorName(con);
+    final name = Helper.getRedirectedConstructorName(con);
 
     // test on rediceted constructor name
     if (name == null || name.isEmpty) {
@@ -136,23 +136,4 @@ class ModelVisitor extends SimpleElementVisitor {
 
     throw GeneratorError('''${type.element} must be an abstract class!''');
   }
-
-  // bool _isEntityType(ParamBase par) {
-  //   if (par.hasSubType) {
-  //     final res = par.subTypes.firstWhere(_testType, orElse: () => null);
-
-  //     if (res != null) {
-  //       return true;
-  //     }
-  //   } else {
-  //     return _testType(par.type);
-  //   }
-  //   return false;
-  // }
-
-  // bool _testType(InterfaceType type) {
-  //   final anno = entityTypes[type];
-  //   return anno != null;
-  //   // && anno.model.repository;
-  // }
 }

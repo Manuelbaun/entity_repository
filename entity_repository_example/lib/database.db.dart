@@ -15,7 +15,12 @@ abstract class IAddressRepository implements RepositoryBase<Address> {
 
 abstract class ICarRepository implements RepositoryBase<Car> {
   Car create(
-      {String id, String model, String type, int buildYear, Person owner});
+      {String id,
+      String model,
+      String type,
+      int buildYear,
+      Person owner,
+      List<String> complex});
 }
 
 abstract class INotesRepository implements RepositoryBase<Notes> {
@@ -89,9 +94,15 @@ class CarRepository extends RepositoryHive<Car> implements ICarRepository {
           String model,
           String type,
           int buildYear,
-          Person owner}) =>
+          Person owner,
+          List<String> complex}) =>
       new Car(
-          id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+          id: id,
+          model: model,
+          type: type,
+          buildYear: buildYear,
+          owner: owner,
+          complex: complex)
         ..repo = this;
 }
 
@@ -268,9 +279,15 @@ class EntityDatabase extends EntityDatabaseClass {
           String model,
           String type,
           int buildYear,
-          Person owner}) =>
+          Person owner,
+          List<String> complex}) =>
       new Car(
-          id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+          id: id,
+          model: model,
+          type: type,
+          buildYear: buildYear,
+          owner: owner,
+          complex: complex)
         ..repo = _carRepository;
 
   Notes createNotes(

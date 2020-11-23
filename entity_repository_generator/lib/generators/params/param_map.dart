@@ -6,9 +6,9 @@ class ParamMap extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    subTypes = getAllTypes(typeRaw).toSet();
-    _isOrHasEntities =
-        isEntityType(subTypes.first) || isEntityType(subTypes.last);
+    subTypes = Helper.getAllTypes(typeRaw).toSet();
+    _isOrHasEntities = Helper.isEntityType(subTypes.first) ||
+        Helper.isEntityType(subTypes.last);
   }
 
   Set<InterfaceType> subTypes = {};
@@ -18,8 +18,8 @@ class ParamMap extends Param {
   InterfaceType get keyTypeRaw => subTypes.first;
   InterfaceType get valueTypeRaw => subTypes.last;
 
-  bool get keyIsEntity => isEntityType(keyTypeRaw);
-  bool get valueIsEntity => isEntityType(valueTypeRaw);
+  bool get keyIsEntity => Helper.isEntityType(keyTypeRaw);
+  bool get valueIsEntity => Helper.isEntityType(valueTypeRaw);
 
   String get keyType => keyIsEntity ? 'String' : keyTypeRaw.toString();
   String get valueType => valueIsEntity ? 'String' : valueTypeRaw.toString();
