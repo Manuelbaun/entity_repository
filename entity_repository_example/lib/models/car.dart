@@ -5,7 +5,7 @@ import 'person.dart';
 
 part 'car.g.dart';
 
-//asdasdf asdf
+//asdasdf asdf asdsdf
 @EntityModel(
   AdapterIds.car,
   index: [
@@ -19,7 +19,6 @@ abstract class Car extends _$Car {
     @Field(2) String type,
     @Field(3) int buildYear,
     @Field(4) Person owner,
-    @Field(6) List<String> complex,
   }) = _Car;
 
   static Car fromMap(Map<int, dynamic> fields) => _Car.fromMap(fields);
