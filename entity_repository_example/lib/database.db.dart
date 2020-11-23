@@ -74,9 +74,9 @@ class AddressRepository extends RepositoryHive<Address>
     HiveInterface hiveInstance,
     EntityMapFactory<Address> fac,
   ) : super(hiveInstance, fac, 12);
+  @override
   Address create({String id, String street, int houseNumber}) =>
-      new Address(id: id, street: street, houseNumber: houseNumber)
-        ..repo = this;
+      Address(id: id, street: street, houseNumber: houseNumber)..repo = this;
 }
 
 class CarRepository extends RepositoryHive<Car> implements ICarRepository {
@@ -84,14 +84,14 @@ class CarRepository extends RepositoryHive<Car> implements ICarRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<Car> fac,
   ) : super(hiveInstance, fac, 11);
+  @override
   Car create(
           {String id,
           String model,
           String type,
           int buildYear,
           Person owner}) =>
-      new Car(
-          id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+      Car(id: id, model: model, type: type, buildYear: buildYear, owner: owner)
         ..repo = this;
 }
 
@@ -101,6 +101,7 @@ class NotesRepository extends RepositoryHive<Notes>
     HiveInterface hiveInstance,
     EntityMapFactory<Notes> fac,
   ) : super(hiveInstance, fac, 15);
+  @override
   Notes create(
           {String id,
           String title,
@@ -109,7 +110,7 @@ class NotesRepository extends RepositoryHive<Notes>
           DateTime edited,
           Person creator,
           Person lastEditor}) =>
-      new Notes(
+      Notes(
           id: id,
           title: title,
           content: content,
@@ -126,6 +127,7 @@ class PersonRepository extends RepositoryHive<Person>
     HiveInterface hiveInstance,
     EntityMapFactory<Person> fac,
   ) : super(hiveInstance, fac, 10);
+  @override
   Person create(
           {String id,
           String name,
@@ -135,7 +137,7 @@ class PersonRepository extends RepositoryHive<Person>
           Set<Person> friends5,
           Map<int, Address> a5sf,
           Map<Person, Address> p2a}) =>
-      new Person(
+      Person(
           id: id,
           name: name,
           age: age,
@@ -152,6 +154,7 @@ class SongRepository extends RepositoryHive<Song> implements ISongRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<Song> fac,
   ) : super(hiveInstance, fac, 14);
+  @override
   Song create(
           {String id,
           String title,
@@ -167,7 +170,7 @@ class SongRepository extends RepositoryHive<Song> implements ISongRepository {
           String copyright,
           List<Person> translator,
           List<Tag> tags}) =>
-      new Song(
+      Song(
           id: id,
           title: title,
           bpm: bpm,
@@ -190,10 +193,11 @@ class TagRepository extends RepositoryHive<Tag> implements ITagRepository {
     HiveInterface hiveInstance,
     EntityMapFactory<Tag> fac,
   ) : super(hiveInstance, fac, 13);
+  @override
   Tag create({
     String id,
   }) =>
-      new Tag(
+      Tag(
         id: id,
       )..repo = this;
 }
@@ -259,20 +263,22 @@ class EntityDatabase extends EntityDatabaseClass {
   /// These methods will be redirected, once the dart team fixes
   /// the auto completion for typedef function signigtures
   ///
+  @override
   Address createAddress({String id, String street, int houseNumber}) =>
-      new Address(id: id, street: street, houseNumber: houseNumber)
+      Address(id: id, street: street, houseNumber: houseNumber)
         ..repo = _addressRepository;
 
+  @override
   Car createCar(
           {String id,
           String model,
           String type,
           int buildYear,
           Person owner}) =>
-      new Car(
-          id: id, model: model, type: type, buildYear: buildYear, owner: owner)
+      Car(id: id, model: model, type: type, buildYear: buildYear, owner: owner)
         ..repo = _carRepository;
 
+  @override
   Notes createNotes(
           {String id,
           String title,
@@ -281,7 +287,7 @@ class EntityDatabase extends EntityDatabaseClass {
           DateTime edited,
           Person creator,
           Person lastEditor}) =>
-      new Notes(
+      Notes(
           id: id,
           title: title,
           content: content,
@@ -291,6 +297,7 @@ class EntityDatabase extends EntityDatabaseClass {
           lastEditor: lastEditor)
         ..repo = _notesRepository;
 
+  @override
   Person createPerson(
           {String id,
           String name,
@@ -300,7 +307,7 @@ class EntityDatabase extends EntityDatabaseClass {
           Set<Person> friends5,
           Map<int, Address> a5sf,
           Map<Person, Address> p2a}) =>
-      new Person(
+      Person(
           id: id,
           name: name,
           age: age,
@@ -311,6 +318,7 @@ class EntityDatabase extends EntityDatabaseClass {
           p2a: p2a)
         ..repo = _personRepository;
 
+  @override
   Song createSong(
           {String id,
           String title,
@@ -326,7 +334,7 @@ class EntityDatabase extends EntityDatabaseClass {
           String copyright,
           List<Person> translator,
           List<Tag> tags}) =>
-      new Song(
+      Song(
           id: id,
           title: title,
           bpm: bpm,
@@ -343,10 +351,11 @@ class EntityDatabase extends EntityDatabaseClass {
           tags: tags)
         ..repo = _songRepository;
 
+  @override
   Tag createTag({
     String id,
   }) =>
-      new Tag(
+      Tag(
         id: id,
       )..repo = _tagRepository;
 

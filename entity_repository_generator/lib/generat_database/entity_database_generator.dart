@@ -161,9 +161,10 @@ class EntityDatabaseGenerator {
     final repo = useThis ? 'this' : '_${v.repoNameLowerCase}';
 
     final str = StringBuffer()
+      ..writeln('@override')
       ..write(generateEntityFactorySignature(v, withName: !useThis))
       ..write(' => ')
-      ..write('new ${name}(id:id,')
+      ..write('${name}(id:id,')
       ..writeAll(v.params.map((e) => '${e.paramName}:${e.paramName}'), ',')
       ..writeln(')..repo = $repo;');
 
