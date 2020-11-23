@@ -6,13 +6,11 @@ class ParamList extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    final allTypes = Helper.getAllTypes(typeRaw);
+    final allTypes = Helper.getAllTypes(rawType);
     subTypes = allTypes.toSet();
 
     _isOrHasEntities = Helper.isEntityType(subTypes.first);
   }
-
-  List<InterfaceType> get subTypess => typeRaw.typeArguments;
 
   Set<InterfaceType> subTypes = {};
   bool get hasSubType => subTypes.isNotEmpty;
@@ -53,7 +51,7 @@ class ParamList extends Param {
     final enType = subTypes.first;
 
     return '''
-      $typeRaw $toLookUpMethodName {
+      $type $toLookUpMethodName {
         if($toRefNamePrivate != null){
           return locator.get<$enType>().findMany($toRefNamePrivate).toList();
         }

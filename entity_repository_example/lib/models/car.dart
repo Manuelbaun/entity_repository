@@ -5,7 +5,6 @@ import 'person.dart';
 
 part 'car.g.dart';
 
-//asdasdf asdf asdsdf
 @EntityModel(
   AdapterIds.car,
   index: [

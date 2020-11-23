@@ -8,7 +8,7 @@ class ParamSet extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    subTypes = Helper.getAllTypes(typeRaw).toSet();
+    subTypes = Helper.getAllTypes(rawType).toSet();
 
     _isOrHasEntities = Helper.isEntityType(subTypes.first);
   }
@@ -41,7 +41,7 @@ class ParamSet extends Param {
     final enType = subTypes.first;
 
     return '''
-      $typeRaw $toLookUpMethodName {
+      $type $toLookUpMethodName {
         if($toRefNamePrivate != null){
           return locator.get<$enType>().findMany($toRefNamePrivate).toSet();
         }
@@ -50,7 +50,7 @@ class ParamSet extends Param {
   }
 
   String get toRefField_ {
-    final setType = isOrHasEntities ? 'Set<String>' : typeRaw;
+    final setType = isOrHasEntities ? 'Set<String>' : type;
     return '$setType $toRefNamePrivate;';
   }
 

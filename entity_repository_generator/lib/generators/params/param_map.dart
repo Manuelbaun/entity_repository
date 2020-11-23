@@ -6,7 +6,7 @@ class ParamMap extends Param {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
   }) : super(parameter, field: field, entityTypes: entityTypes) {
-    subTypes = Helper.getAllTypes(typeRaw).toSet();
+    subTypes = Helper.getAllTypes(rawType).toSet();
     _isOrHasEntities = Helper.isEntityType(subTypes.first) ||
         Helper.isEntityType(subTypes.last);
   }
@@ -57,7 +57,7 @@ class ParamMap extends Param {
         : 'entry.value';
 
     return '''
-      $typeRaw $toLookUpMethodName {
+      $type $toLookUpMethodName {
         if($toRefNamePrivate != null){
           final map = <$keyTypeRaw, $valueTypeRaw>{};
           for(final entry in $toRefNamePrivate.entries) {

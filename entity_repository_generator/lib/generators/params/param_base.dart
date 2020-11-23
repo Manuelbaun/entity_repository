@@ -27,14 +27,14 @@ abstract class ParamBase {
 
   String get paramName;
   String get type;
-  InterfaceType get typeRaw;
+
+  @deprecated
+  InterfaceType get rawType;
+
   bool get isOrHasEntities;
-
   bool get isEntity;
-
   bool get hasSubType;
   String get asString;
-  String get typeName;
   String get paramNamePrivate;
   String get toParamInit;
   String get paramNameThis;

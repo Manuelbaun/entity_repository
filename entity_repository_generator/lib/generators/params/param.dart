@@ -20,26 +20,29 @@ class Param implements ParamBase {
   /// TODO: Change the API
   bool _isOrHasEntities = false;
   bool get isOrHasEntities => _isOrHasEntities;
-  bool get isEntity => Helper.isEntityType(typeRaw);
+  bool get isEntity => Helper.isEntityType(rawType);
 
   // The actual type of the Param, not processed,
   String get paramName => parameter.displayName;
-  String get type => isEntity ? 'String' : typeRaw.toString();
-  InterfaceType get typeRaw => parameter.type as InterfaceType;
+  String get type => rawType.getDisplayString(withNullability: false);
+  String get typeOrEntityString => isEntity ? 'String' : type;
+
+  @deprecated
+  InterfaceType get rawType => parameter.type as InterfaceType;
 
   bool get hasSubType => false; //subTypes.isNotEmpty;
 
   /// Utility
   /// TODO: change, nullableSuffix is *
-  String get typeName => typeRaw.getDisplayString(withNullability: false);
+  // String get typeName => typeRaw.getDisplayString(withNullability: false);
   String get paramNamePrivate => '_$paramName';
   String get paramNameThis => 'this.$paramName';
 
-  String get toParamInit => '$typeRaw $paramName';
-  String get toPrivateField => '$typeRaw $paramNamePrivate;';
+  String get toParamInit => '$type $paramName';
+  String get toPrivateField => '$type $paramNamePrivate;';
   String get toPublicField => '$toParamInit;';
 
-  String get toPublicFieldGet => '$typeRaw get $paramName;';
+  String get toPublicFieldGet => '$type get $paramName;';
   String get toRefField_ => 'String $toRefNamePrivate;';
 
   String get toParamInitPrivate => '$paramNamePrivate = $paramName';
@@ -60,7 +63,7 @@ class Param implements ParamBase {
   String get toGetter {
     final buff = StringBuffer()
       ..writeln('@override')
-      ..writeln('$typeRaw get $paramName => ')
+      ..writeln('$type get $paramName => ')
       ..writeln(isOrHasEntities
           ? '$paramNamePrivate ??= $toLookUpMethodName;'
           : '$paramNamePrivate;');
@@ -103,13 +106,13 @@ class Param implements ParamBase {
 
   String toLookupMethod() {
     if (isEntity) {
-      return '''$typeRaw $toLookUpMethodName {
-        return locator.get<$typeName>().findOne($toRefNamePrivate);
+      return '''$type $toLookUpMethodName {
+        return locator.get<$type>().findOne($toRefNamePrivate);
       }''';
     } else {
       /// TODO: THis should not happen
-      throw Exception(
-          'Could not find the Type: $typeName in the entity reference list.');
+      throw EntityRepositorGeneratorError(
+          'Could not find the Type: $type in the entity reference list.');
     }
   }
 
@@ -117,17 +120,10 @@ class Param implements ParamBase {
       isEntity ? 'if($paramName != null) $prefix.add($paramName);' : '';
 
   String toFieldFromMap([String prefix = 'fields']) {
-    String str;
-
-    if (isEntity) {
-      str = '$toRefNamePrivate = ($prefix[${field.index}] as String)';
-    } else if (field.converter != null) {
-      str = '$toRefNamePrivate = ($prefix[${field.index}] as String)';
-    } else {
-      str = '$paramNamePrivate = $prefix[${field.index}] as $typeRaw';
-    }
-
-    return 'if($prefix.containsKey(${field.index})) { $str; }';
+    return '''
+    if($prefix.containsKey(${field.index})) { 
+      $paramNamePrivate = $prefix[${field.index}] as $typeOrEntityString; 
+    }''';
   }
 
   String get asString {
@@ -152,8 +148,9 @@ class Param implements ParamBase {
   String fromMapJson([bool isJson = false]) {
     final mapAccess = isJson ? "'${paramName}'" : field.index;
 
-    final fieldy = isOrHasEntities ? '..$toRefNamePrivate =' : '$paramName :';
-    return '$fieldy (fields[$mapAccess] as $type)';
+    final fieldy = isEntity ? '..$toRefNamePrivate =' : '$paramName :';
+
+    return '$fieldy (fields[$mapAccess] as $typeOrEntityString)';
   }
 
   get fieldString => isOrHasEntities ? toRefNameGetter : paramName;
