@@ -42,20 +42,6 @@ class SerializerAdapter {
     return buff;
   }
 
-  // static String _toSerializeWrite(ParamBase p) {
-  //   var fieldString = p.isOrHasEntities ? p.toRefNameGetter : p.paramName;
-
-  //   if (p is ParamSet) {
-  //     fieldString += '?.toList()';
-  //   }
-
-  //   final buff = StringBuffer()
-  //     ..writeln('..writeByte(${p.field.index})\n')
-  //     ..writeln('..write(obj.$fieldString)\n');
-
-  //   return buff.toString();
-  // }
-
   static StringBuffer _generateSerializerAdapterEquality(ModelVisitor visitor) {
     final buff = StringBuffer()..write('''@override
     int get hashCode => typeId.hashCode;

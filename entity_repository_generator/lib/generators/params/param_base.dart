@@ -51,7 +51,6 @@ abstract class ParamBase {
   String get toLookUpMethodName;
   String get toRefField_;
   String get toRefFieldGetter;
-  // general, if set field
   String get toRefIdIfExist;
   String get toEquality;
 

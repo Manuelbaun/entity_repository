@@ -5,15 +5,18 @@ class ParamList extends Param {
     ParameterElement parameter, {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
-  }) : super(
-          parameter,
-          field: field,
-          entityTypes: entityTypes,
-        );
+  }) : super(parameter, field: field, entityTypes: entityTypes) {
+    final allTypes = getAllTypes(typeRaw);
+    subTypes = allTypes.toSet();
 
+    _isOrHasEntities = isEntityType(subTypes.first);
+  }
+
+  List<InterfaceType> get subTypess => typeRaw.typeArguments;
+
+  Set<InterfaceType> subTypes = {};
   bool get hasSubType => subTypes.isNotEmpty;
 
-  InterfaceType get subTypeRaw => subTypes.first;
   String get subType => isOrHasEntities ? 'String' : subTypes.first.toString();
 
   String get toRefIdIfExist {
@@ -74,7 +77,8 @@ class ParamList extends Param {
       str =
           '$toRefNamePrivate = (fields[${field.index}] as List)?.cast<String>()';
     } else {
-      str = '_$paramName = (fields[${field.index}] as List)?.cast<$type>()';
+      str =
+          '$paramNamePrivate = (fields[${field.index}] as List)?.cast<$type>()';
     }
     return 'if(fields.containsKey(${field.index})) { $str; }';
   }

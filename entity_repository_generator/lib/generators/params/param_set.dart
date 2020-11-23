@@ -7,7 +7,13 @@ class ParamSet extends Param {
     ParameterElement parameter, {
     Field field,
     Map<InterfaceType, AnnotatedClazz> entityTypes,
-  }) : super(parameter, field: field, entityTypes: entityTypes);
+  }) : super(parameter, field: field, entityTypes: entityTypes) {
+    subTypes = getAllTypes(typeRaw).toSet();
+
+    _isOrHasEntities = isEntityType(subTypes.first);
+  }
+
+  Set<InterfaceType> subTypes = {};
 
   bool get hasSubType => subTypes.isNotEmpty;
 

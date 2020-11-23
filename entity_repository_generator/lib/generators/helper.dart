@@ -108,6 +108,7 @@ EntityModel getEntityModel(Element element, {bool addGlobal = true}) {
 }
 
 /// runs through all sub types
+/// TODO: Fix me one day, this does not work properly!!!!
 List<InterfaceType> getAllTypes(DartType type) {
   final list = <InterfaceType>[];
 
@@ -116,7 +117,8 @@ List<InterfaceType> getAllTypes(DartType type) {
       list.add(type);
     } else {
       for (final t in type.typeArguments) {
-        list.addAll(getAllTypes(t));
+        final subs = getAllTypes(t);
+        list.addAll(subs);
       }
     }
   }

@@ -5,6 +5,13 @@ part of entity_repository_generator;
  * It can be a simple primitive or also another entity case
  */
 class Param implements ParamBase {
+  Param(this.parameter, {this.field, this.entityTypes}) {
+    _isOrHasEntities = isEntity;
+  }
+
+  ///
+  /// Members
+  ///
   final Field field;
   final ParameterElement parameter;
   final Map<InterfaceType, AnnotatedClazz> entityTypes;
@@ -13,42 +20,14 @@ class Param implements ParamBase {
   /// TODO: Change the API
   bool _isOrHasEntities = false;
   bool get isOrHasEntities => _isOrHasEntities;
-
-  Param(
-    this.parameter, {
-    this.field,
-    this.entityTypes,
-  }) {
-    if (typeRaw.isDartCoreList ||
-        typeRaw.isDartCoreSet ||
-        typeRaw.isDartCoreMap) {
-      subTypes = getAllTypes(typeRaw).toSet();
-    }
-
-    /// TODO: refactore this
-    if (typeRaw.isDartCoreList && isEntityType(subTypes.first)) {
-      _isOrHasEntities = true;
-    } else if (typeRaw.isDartCoreSet && isEntityType(subTypes.first)) {
-      /// [Set to List]
-      _isOrHasEntities = true;
-    } else if (typeRaw.isDartCoreMap) {
-      if (isEntityType(subTypes.first) || isEntityType(subTypes.last)) {
-        _isOrHasEntities = true;
-      }
-    } else if (isEntity) {
-      _isOrHasEntities = true;
-    }
-  }
+  bool get isEntity => isEntityType(typeRaw);
+  bool isEntityType(InterfaceType type) => entityTypes[type] != null;
 
   // The actual type of the Param, not processed,
   String get paramName => parameter.displayName;
   String get type => isEntity ? 'String' : typeRaw.toString();
   InterfaceType get typeRaw => parameter.type as InterfaceType;
 
-  bool get isEntity => isEntityType(typeRaw);
-  bool isEntityType(InterfaceType type) => entityTypes[type] != null;
-
-  Set<InterfaceType> subTypes = {};
   bool get hasSubType => false; //subTypes.isNotEmpty;
 
   /// Utility
@@ -59,13 +38,14 @@ class Param implements ParamBase {
 
   String get toParamInit => '$typeRaw $paramName';
   String get toPrivateField => '$typeRaw $paramNamePrivate;';
-  String get toPublicField => '$typeRaw $paramName;';
+  String get toPublicField => '$toParamInit;';
 
   String get toPublicFieldGet => '$typeRaw get $paramName;';
   String get toRefField_ => 'String $toRefNamePrivate;';
 
   String get toParamInitPrivate => '$paramNamePrivate = $paramName';
-  String get toPublicFieldOverride => '@override\n$typeRaw $paramName;';
+  String get toPublicFieldOverride => '@override\n$toPublicField';
+
   String get toRefNameGetter => '${paramName}Refs';
   String get toRefNamePrivate => '_${paramName}Refs';
   String get toRefFieldGetter =>
@@ -83,8 +63,8 @@ class Param implements ParamBase {
       ..writeln('@override')
       ..writeln('$typeRaw get $paramName => ')
       ..writeln(isOrHasEntities
-          ? '_$paramName ??= $toLookUpMethodName;'
-          : '_$paramName;');
+          ? '$paramNamePrivate ??= $toLookUpMethodName;'
+          : '$paramNamePrivate;');
 
     return buff.toString();
   }
@@ -92,8 +72,8 @@ class Param implements ParamBase {
   String get toSetter {
     final buff = StringBuffer()
       ..writeln('@override')
-      ..writeln('set $paramName($typeRaw $paramName) {')
-      ..writeln('_$paramName = $paramName;');
+      ..writeln('set $paramName($toParamInit) {')
+      ..writeln('$paramNamePrivate = $paramName;');
 
     if (isOrHasEntities) {
       buff
@@ -145,7 +125,7 @@ class Param implements ParamBase {
     } else if (field.converter != null) {
       str = '$toRefNamePrivate = ($prefix[${field.index}] as String)';
     } else {
-      str = '_$paramName = $prefix[${field.index}] as $typeRaw';
+      str = '$paramNamePrivate = $prefix[${field.index}] as $typeRaw';
     }
 
     return 'if($prefix.containsKey(${field.index})) { $str; }';
